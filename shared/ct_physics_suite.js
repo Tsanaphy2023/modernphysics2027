@@ -505,6 +505,58 @@
     document.addEventListener('input', refreshHud);
     document.addEventListener('change', refreshHud);
     document.addEventListener('click', () => setTimeout(refreshHud, 40));
+
+    // Top-right 2D/3D & AR quick controls inside every 3D viewport
+    if (!document.getElementById('ct-stage-toolbar')) {
+      const tb = document.createElement('div');
+      tb.id = 'ct-stage-toolbar';
+      tb.innerHTML = `
+        <button type="button" id="ct-dim-toggle" class="ct-stage-btn" title="สลับโหมด 3D / 2D Simulation">🧊 3D</button>
+        <button type="button" id="ct-stage-ar-btn" class="ct-stage-btn ar" title="เปิดโหมด AR ควบคุมด้วยกล้องและท่าทาง">🥽 AR</button>
+      `;
+      stage.appendChild(tb);
+
+      const overlay2d = document.createElement('div');
+      overlay2d.id = 'ct-2d-overlay';
+      overlay2d.style.display = 'none';
+      stage.appendChild(overlay2d);
+
+      let is2d = false;
+      const dimBtn = tb.querySelector('#ct-dim-toggle');
+      dimBtn.addEventListener('click', async (e) => {
+        e.stopPropagation();
+        is2d = !is2d;
+        dimBtn.textContent = is2d ? '📐 2D' : '🧊 3D';
+        dimBtn.classList.toggle('active', is2d);
+        if (!is2d) {
+          overlay2d.style.display = 'none';
+          return;
+        }
+        if (!window.MP27Lecture) {
+          await new Promise((res) => {
+            const s = document.createElement('script');
+            s.src = '../shared/lecture_theory.js';
+            s.onload = res;
+            s.onerror = res;
+            document.head.appendChild(s);
+          });
+        }
+        const lect = window.MP27Lecture?.LECTURE_DATA?.[modKey];
+        overlay2d.innerHTML = `
+          <div class="ct-2d-card">
+            <div class="ct-2d-head">📐 2D SIMULATION VIEW · ${esc(cfg.title)}</div>
+            <div class="ct-2d-svg">${lect ? lect.svg : '<p>กำลังโหลดภาพจำลอง 2D...</p>'}</div>
+          </div>
+        `;
+        overlay2d.style.display = 'grid';
+        trackTelemetry('toggle_2d_3d', { mode: '2d' });
+      });
+
+      tb.querySelector('#ct-stage-ar-btn').addEventListener('click', (e) => {
+        e.stopPropagation();
+        launchArXrView();
+      });
+    }
   }
 
   async function launchArXrView() {
