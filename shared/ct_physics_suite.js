@@ -556,6 +556,165 @@
     }
   }
 
+  const QUIZ_STORAGE_KEY = 'mp27_mod_quiz_v1';
+
+  function loadModuleQuizStore() {
+    try { return JSON.parse(localStorage.getItem(QUIZ_STORAGE_KEY) || '{}') || {}; } catch (_) { return {}; }
+  }
+
+  function saveModuleQuizStore(obj) {
+    try { localStorage.setItem(QUIZ_STORAGE_KEY, JSON.stringify(obj)); } catch (_) {}
+  }
+
+  function refreshQuizButtons() {
+    const store = loadModuleQuizStore()[modKey] || {};
+    const preBtn = document.getElementById('ct-mod-pre-btn');
+    const postBtn = document.getElementById('ct-mod-post-btn');
+    if (preBtn) preBtn.textContent = store.pre ? `✓ Pre (${store.pre.correct}/10)` : '📝 Pre-Test (10)';
+    if (postBtn) postBtn.textContent = store.post ? `✓ Post (${store.post.correct}/10)` : '🎯 Post-Test (10)';
+  }
+
+  async function openModuleQuiz(phase) {
+    if (!window.MP27ModuleQuizBank) {
+      await new Promise((resolve) => {
+        const s = document.createElement('script');
+        s.src = '../shared/module_quiz_bank.js';
+        s.onload = resolve;
+        s.onerror = resolve;
+        document.head.appendChild(s);
+      });
+    }
+    const bankMod = window.MP27ModuleQuizBank && window.MP27ModuleQuizBank[modKey];
+    if (!bankMod || !bankMod[phase]) {
+      alert('ไม่พบคลังข้อสอบสำหรับปฏิบัติการนี้');
+      return;
+    }
+
+    const questions = bankMod[phase];
+    const startMs = Date.now();
+    document.getElementById('ct-mod-quiz-modal')?.remove();
+
+    const modal = document.createElement('div');
+    modal.id = 'ct-mod-quiz-modal';
+    modal.style.cssText = 'position:fixed;inset:0;z-index:100000;background:rgba(2,6,23,0.82);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:16px;';
+
+    const qHtml = questions.map((item, idx) => `
+      <div class="ct-qz-item" style="background:rgba(15,23,42,0.86);border:1px solid #334155;border-radius:10px;padding:12px 14px;margin-bottom:10px;">
+        <div style="font-size:11px;color:#38bdf8;font-weight:700;margin-bottom:4px;">ข้อ ${idx + 1}/10 · ${esc(item.topic)}</div>
+        <div style="font-size:13.5px;color:#f8fafc;font-weight:600;line-height:1.5;margin-bottom:8px;">${esc(item.q)}</div>
+        <div style="display:grid;gap:6px;">
+          ${Object.entries(item.opts).map(([k, txt]) => `
+            <label style="display:flex;gap:8px;align-items:flex-start;font-size:12.5px;color:#cbd5e1;cursor:pointer;padding:4px 6px;border-radius:6px;background:rgba(30,41,59,0.55);">
+              <input type="radio" name="qz_${esc(item.id)}" value="${k}" style="margin-top:3px;">
+              <span><b>${k}.</b> ${esc(txt)}</span>
+            </label>
+          `).join('')}
+        </div>
+        <div class="ct-qz-exp" hidden style="margin-top:8px;padding:8px 10px;border-radius:6px;font-size:12px;"></div>
+      </div>
+    `).join('');
+
+    modal.innerHTML = `
+      <div style="width:min(760px,100%);max-height:90vh;display:flex;flex-direction:column;background:#091426;border:1.5px solid #38bdf8;border-radius:16px;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,0.6);font-family:system-ui,-apple-system,'Sarabun',sans-serif;">
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 18px;background:linear-gradient(90deg,#0f172a,#1e293b);border-bottom:1px solid #334155;">
+          <div>
+            <div style="font-size:11px;color:#7dd3fc;font-weight:700;">${phase === 'pre' ? 'PRE-TEST (ก่อนทดลอง)' : 'POST-TEST (หลังทดลอง)'} · ${esc(bankMod.title)}</div>
+            <div style="font-size:15px;font-weight:800;color:#f8fafc;">แบบทดสอบประจำปฏิบัติการ (10 ข้อ)</div>
+          </div>
+          <button type="button" id="ct-qz-close" style="background:none;border:none;color:#f8fafc;font-size:18px;cursor:pointer;">✕</button>
+        </div>
+        <div id="ct-qz-body" style="padding:14px 18px;overflow-y:auto;flex:1;">
+          ${qHtml}
+          <div id="ct-qz-result" hidden style="margin-top:10px;padding:12px 14px;border-radius:10px;background:rgba(16,185,129,0.14);border:1px solid #34d399;color:#ecfdf5;font-size:13.5px;line-height:1.55;"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 18px;background:#0f172a;border-top:1px solid #334155;">
+          <span style="font-size:12px;color:#94a3b8;">ผู้เรียน: <b style="color:#e2e8f0;">${student ? `${esc(student.student_id)} ${esc(student.full_name)}` : 'ผู้เรียนทั่วไป (Guest)'}</b></span>
+          <div style="display:flex;gap:8px;">
+            <button type="button" id="ct-qz-cancel" style="padding:7px 14px;border-radius:8px;border:1px solid #475569;background:#1e293b;color:#e2e8f0;cursor:pointer;font-weight:600;">ปิด</button>
+            <button type="button" id="ct-qz-submit" style="padding:7px 16px;border-radius:8px;border:none;background:linear-gradient(135deg,#0284c7,#2563eb);color:#fff;cursor:pointer;font-weight:700;">📤 ส่งคำตอบ (10 ข้อ)</button>
+          </div>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(modal);
+    const close = () => modal.remove();
+    modal.querySelector('#ct-qz-close').addEventListener('click', close);
+    modal.querySelector('#ct-qz-cancel').addEventListener('click', close);
+
+    modal.querySelector('#ct-qz-submit').addEventListener('click', async () => {
+      const answers = {};
+      let missing = false;
+      questions.forEach((item) => {
+        const picked = modal.querySelector(`input[name="qz_${item.id}"]:checked`)?.value || '';
+        if (!picked) missing = true;
+        answers[item.id] = picked;
+      });
+      if (missing) {
+        alert('กรุณาตอบให้ครบทั้ง 10 ข้อก่อนส่งครับ');
+        return;
+      }
+
+      let correct = 0;
+      const misconceptions = [];
+      questions.forEach((item, idx) => {
+        const ok = answers[item.id] === item.ans;
+        if (ok) correct++;
+        else misconceptions.push(`${item.id}:${item.topic}`);
+        const expEl = modal.querySelectorAll('.ct-qz-exp')[idx];
+        if (expEl) {
+          expEl.hidden = false;
+          expEl.style.background = ok ? 'rgba(16,185,129,0.16)' : 'rgba(239,68,68,0.16)';
+          expEl.style.border = ok ? '1px solid rgba(52,211,153,0.45)' : '1px solid rgba(248,113,113,0.45)';
+          expEl.style.color = ok ? '#a7f3d0' : '#fecaca';
+          expEl.innerHTML = `${ok ? '✓ ถูกต้อง' : `✗ ตอบ ${answers[item.id]} (เฉลย: ${item.ans})`} — ${esc(item.exp)}`;
+        }
+      });
+
+      const pct = Math.round((correct / questions.length) * 100);
+      const durSec = Math.round((Date.now() - startMs) / 1000);
+      const store = loadModuleQuizStore();
+      if (!store[modKey]) store[modKey] = {};
+      store[modKey][phase] = { correct, total: 10, pct, durSec, at: new Date().toISOString() };
+      saveModuleQuizStore(store);
+      refreshQuizButtons();
+
+      let gainLine = '';
+      if (store[modKey].pre && store[modKey].post) {
+        const preP = store[modKey].pre.pct;
+        const postP = store[modKey].post.pct;
+        const gVal = preP < 100 ? ((postP - preP) / (100 - preP)).toFixed(3) : '1.000';
+        gainLine = `<br/>📈 <b>Normalized Learning Gain ⟨g⟩ ประจำบท:</b> ${gVal} (Pre ${preP}% → Post ${postP}%)`;
+      }
+
+      const resBox = modal.querySelector('#ct-qz-result');
+      resBox.hidden = false;
+      resBox.innerHTML = `<b>สรุปผล ${phase === 'pre' ? 'Pre-Test' : 'Post-Test'}:</b> ได้คะแนน <b>${correct}/10 ข้อ (${pct}%)</b> · ใช้เวลา ${durSec} วินาที${gainLine}`;
+      modal.querySelector('#ct-qz-submit').disabled = true;
+      modal.querySelector('#ct-qz-submit').textContent = '✓ บันทึกผลแล้ว';
+
+      trackTelemetry(`module_${phase}_submit`, { modKey, correct, pct, durSec });
+      try {
+        await fetch('../api/per.php?action=submit_module_quiz', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            student_id: student?.student_id || 'guest',
+            full_name: student?.full_name || 'Guest Learner',
+            section: student?.section || '661/วิทย์',
+            module_id: modKey,
+            phase,
+            score_pct: pct,
+            correct_count: correct,
+            total_questions: 10,
+            answers,
+            misconceptions,
+            duration_sec: durSec,
+          }),
+        });
+      } catch (_) {}
+    });
+  }
+
   window.MP27RegisterXR = function (renderer, scene, camera, threeRef) {
     window.__mp27PendingXR = { renderer, scene, camera, threeRef };
     if (window.MP27ArXr && typeof window.MP27ArXr.registerXR === 'function') {
@@ -597,6 +756,8 @@
         <button type="button" class="ct-suite-btn" id="ct-lbl-lg" title="ขยายป้ายชื่อ 3 มิติ">A+</button>
         <button type="button" class="ct-suite-btn" id="ct-theory-btn">📖 ทฤษฎี &amp; ภาพประกอบ</button>
         <button type="button" class="ct-suite-btn" id="ct-mode-btn">💡 โหมดแนวคิด</button>
+        <button type="button" class="ct-suite-btn" id="ct-mod-pre-btn">📝 Pre-Test (10)</button>
+        <button type="button" class="ct-suite-btn" id="ct-mod-post-btn">🎯 Post-Test (10)</button>
         <button type="button" class="ct-suite-btn" id="ct-xr-btn">🥽 AR:XR</button>
         <button type="button" class="ct-suite-btn" id="ct-pick-stu-btn">👤 เลือกชื่อ</button>
         <button type="button" class="ct-suite-btn" id="ct-png-btn">📸 PNG</button>
@@ -624,6 +785,9 @@
       trackTelemetry('theme_switch', { theme: next });
     });
     trackTelemetry('lab_open', { mode: savedMode });
+    refreshQuizButtons();
+    bar.querySelector('#ct-mod-pre-btn')?.addEventListener('click', () => openModuleQuiz('pre'));
+    bar.querySelector('#ct-mod-post-btn')?.addEventListener('click', () => openModuleQuiz('post'));
 
     if (!window.MP27QBot && !document.querySelector('script[src*="q_bot.js"]')) {
       const qb = document.createElement('script');
