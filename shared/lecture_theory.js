@@ -661,7 +661,190 @@
     return false;
   }
 
-  function renderLectureBody(data) {
+  const WORKED_EXAMPLES = {
+    relativity: [
+      {
+        title: 'ตัวอย่างที่ 1: การยืดออกของเวลา (Time Dilation)',
+        problem: 'ยานอวกาศเคลื่อนที่ผ่านโลกด้วยอัตราเร็ว $v = 0.60c$ นักบินบนยานจับเวลาเหตุการณ์หนึ่งได้ $\\Delta\\tau = 4.00\\text{ s}$ ผู้สังเกตบนโลกจะวัดเวลา $\\Delta t$ ได้เท่าใด?',
+        concept: 'ผู้สังเกตที่อยู่นิ่งเทียบกับเหตุการณ์ (นักบินบนยาน) วัดได้เวลาแท้ $\\Delta\\tau$ ส่วนผู้สังเกตบนโลกที่เห็นยานเคลื่อนที่จะวัดเวลาได้ยืดออกตาม $\\Delta t = \\gamma\\Delta\\tau$',
+        steps: '1) หาแฟกเตอร์ลอเรนตซ์: $\\gamma = \\frac{1}{\\sqrt{1 - 0.60^2}} = \\frac{1}{\\sqrt{0.64}} = 1.25$<br>2) คำนวณเวลาบนโลก: $\\Delta t = \\gamma\\Delta\\tau = 1.25 \\times 4.00 = \\mathbf{5.00\\text{ s}}$',
+      },
+      {
+        title: 'ตัวอย่างที่ 2: การหดสั้นของความยาว (Length Contraction)',
+        problem: 'ยานอวกาศมีความยาวแท้ $L_0 = 100\\text{ m}$ เคลื่อนที่ผ่านสถานีอวกาศด้วยความเร็ว $v = 0.80c$ คนบนสถานีจะวัดความยาวของยานได้กี่เมตร?',
+        concept: 'ความยาวตามแนวการเคลื่อนที่ที่วัดโดยผู้สังเกตซึ่งเห็นวัตถุเคลื่อนที่จะหดสั้นลงตาม $L = L_0 / \\gamma$',
+        steps: '1) หา $\\gamma = \\frac{1}{\\sqrt{1 - 0.80^2}} = \\frac{1}{0.60} = \\frac{5}{3} \\approx 1.667$<br>2) คำนวณความยาว: $L = \\frac{L_0}{\\gamma} = \\frac{100}{5/3} = \\mathbf{60.0\\text{ m}}$',
+      },
+      {
+        title: 'ตัวอย่างที่ 3: การรวมความเร็วสัมพัทธภาพและพลังงานรวม',
+        problem: 'ยาน A วิ่งขวา $0.80c$ เทียบกับโลก และยิงโพรบไปด้านหน้าด้วยความเร็ว $0.50c$ เทียบกับยาน คนบนโลกจะวัดความเร็วโพรบได้เท่าใด? และถ้าโพรบมีมวลนิ่ง $m = 2.0\\text{ kg}$ จะมีพลังงานนิ่งเท่าใด?',
+        concept: 'ห้ามบวกความเร็วแบบกาลิเลียน ต้องใช้สูตรรวมความเร็วสัมพัทธภาพ $u = \\frac{u\'+v}{1+u\'v/c^2}$ ส่วนพลังงานนิ่งคือ $E_0 = mc^2$',
+        steps: '1) ความเร็วเทียบโลก: $u = \\frac{0.50 + 0.80}{1 + (0.50)(0.80)}c = \\frac{1.30}{1.40}c \\approx \\mathbf{0.929c}$<br>2) พลังงานนิ่ง: $E_0 = mc^2 = 2.0 \\times (3\\times 10^8)^2 = \\mathbf{1.8\\times 10^{17}\\text{ J}}$',
+      },
+    ],
+    quantum_light: [
+      {
+        title: 'ตัวอย่างที่ 1: กฎการกระจัดของวีนและพลังงานโฟตอน',
+        problem: 'เตาเผาวัตถุดำมีอุณหภูมิ $T = 5{,}800\\text{ K}$ จงหาความยาวคลื่นยอด $\\lambda_{\\max}$ และพลังงานของโฟตอนที่ความยาวคลื่นนี้ ($b = 2.898\\times 10^{-3}\\text{ m}\\cdot\\text{K}$, $hc \\approx 1{,}240\\text{ eV}\\cdot\\text{nm}$)',
+        concept: 'ใช้กฎของวีน $\\lambda_{\\max} T = b$ เพื่อหาความยาวคลื่นยอด แล้วแปลงเป็นพลังงานด้วย $E = hc/\\lambda$',
+        steps: '1) $\\lambda_{\\max} = \\frac{2.898\\times 10^{-3}}{5{,}800} \\approx 4.997\\times 10^{-7}\\text{ m} \\approx \\mathbf{500\\text{ nm}}$ (สีเขียว)<br>2) $E = \\frac{1{,}240\\text{ eV}\\cdot\\text{nm}}{500\\text{ nm}} = \\mathbf{2.48\\text{ eV}}$',
+      },
+      {
+        title: 'ตัวอย่างที่ 2: ปรากฏการณ์โฟโตอิเล็กทริกและศักย์หยุดยั้ง',
+        problem: 'ฉายแสง $\\lambda = 310\\text{ nm}$ ลงบนโลหะโพแทสเซียมที่มีฟังก์ชันงาน $\\phi = 2.30\\text{ eV}$ จงหาพลังงานจลน์สูงสุด $K_{\\max}$ และศักย์หยุดยั้ง $V_{\\text{stop}}$',
+        concept: 'คำนวณพลังงานต่อโฟตอน $E = hc/\\lambda$ แล้วใช้สมการไอน์สไตน์ $K_{\\max} = E - \\phi = eV_{\\text{stop}}$',
+        steps: '1) พลังงานโฟตอน: $E = \\frac{1{,}240}{310} = 4.00\\text{ eV}$<br>2) พลังงานจลน์สูงสุด: $K_{\\max} = 4.00 - 2.30 = \\mathbf{1.70\\text{ eV}}$<br>3) ศักย์หยุดยั้ง: $V_{\\text{stop}} = \\mathbf{1.70\\text{ V}}$',
+      },
+      {
+        title: 'ตัวอย่างที่ 3: การกระเจิงคอมป์ตัน (Compton Scattering)',
+        problem: 'โฟตอนรังสีเอกซ์ความยาวคลื่นเริ่มต้น $\\lambda = 0.0500\\text{ nm}$ ($50.0\\text{ pm}$) ชนอิเล็กตรอนอิสระแล้วกระเจิงทำมุม $\\theta = 90^\\circ$ จงหาความยาวคลื่นหลังชน $\\lambda\'$',
+        concept: 'ใช้สมการคอมป์ตัน $\\Delta\\lambda = \\lambda_C(1 - \\cos\\theta)$ โดยความยาวคลื่นคอมป์ตันของอิเล็กตรอน $\\lambda_C = 2.426\\text{ pm}$',
+        steps: '1) $\\Delta\\lambda = 2.426\\,(1 - \\cos 90^\\circ) = 2.426\\text{ pm}$<br>2) $\\lambda\' = \\lambda + \\Delta\\lambda = 50.0 + 2.426 = \\mathbf{52.43\\text{ pm}}$',
+      },
+    ],
+    matter_waves: [
+      {
+        title: 'ตัวอย่างที่ 1: ความยาวคลื่นเดอบรอยล์ของอิเล็กตรอนที่ถูกเร่ง',
+        problem: 'อิเล็กตรอนถูกเร่งจากหยุดนิ่งผ่านความต่างศักย์ $V = 100\\text{ V}$ จงหาความยาวคลื่นเดอบรอยล์ $\\lambda$ ($\\lambda \\approx \\frac{1.226}{\\sqrt{V}}\\text{ nm}$)',
+        concept: 'พลังงานจลน์ $K = eV = \\frac{p^2}{2m_e}$ ทำให้ $p = \\sqrt{2m_e eV}$ และ $\\lambda = h/p$',
+        steps: '1) แทนค่าในสูตรลัดสำหรับอิเล็กตรอน: $\\lambda = \\frac{1.226}{\\sqrt{100}}\\text{ nm}$<br>2) ได้ $\\lambda = \\mathbf{0.1226\\text{ nm}}$ (เทียบเท่าขนาดอะตอม)',
+      },
+      {
+        title: 'ตัวอย่างที่ 2: หลักความไม่แน่นอนของไฮเซนเบิร์ก',
+        problem: 'ทราบตำแหน่งอิเล็กตรอนภายในขอบเขต $\\Delta x = 0.10\\text{ nm}$ จงหาความไม่แน่นอนขั้นต่ำของโมเมนตัม $\\Delta p_{\\min}$ ($\\hbar = 1.055\\times 10^{-34}\\text{ J}\\cdot\\text{s}$)',
+        concept: 'จาก $\\Delta x \\cdot \\Delta p \\ge \\frac{\\hbar}{2}$ จะได้ $\\Delta p_{\\min} = \\frac{\\hbar}{2\\Delta x}$',
+        steps: '1) $\\Delta x = 0.10\\times 10^{-9} = 1.0\\times 10^{-10}\\text{ m}$<br>2) $\\Delta p_{\\min} = \\frac{1.055\\times 10^{-34}}{2 \\times 1.0\\times 10^{-10}} = \\mathbf{5.275\\times 10^{-25}\\text{ kg}\\cdot\\text{m/s}}$',
+      },
+      {
+        title: 'ตัวอย่างที่ 3: ความกว้างเส้นสเปกตรัมจาก $\\Delta E \\cdot \\Delta t \\ge \\hbar/2$',
+        problem: 'อิเล็กตรอนในสถานะกระตุ้นมีอายุขัยเฉลี่ย $\\Delta t = 1.0\\times 10^{-8}\\text{ s}$ ก่อนคายโฟตอน จงประมาณความไม่แน่นอนขั้นต่ำของพลังงาน $\\Delta E$ ในหน่วย $\\text{eV}$',
+        concept: 'สถานะที่มีอายุขัยจำกัดจะมีความกว้างพลังงานตาม $\\Delta E \\ge \\frac{\\hbar}{2\\Delta t}$',
+        steps: '1) $\\Delta E_{\\min} = \\frac{1.055\\times 10^{-34}}{2\\times 10^{-8}} = 5.275\\times 10^{-27}\\text{ J}$<br>2) แปลงเป็น $\\text{eV}$: $\\frac{5.275\\times 10^{-27}}{1.602\\times 10^{-19}} \\approx \\mathbf{3.29\\times 10^{-8}\\text{ eV}}$',
+      },
+    ],
+    electron_diffraction: [
+      {
+        title: 'ตัวอย่างที่ 1: รัศมีวงแหวนเลี้ยวเบนในหลอด Teltron',
+        problem: 'หลอด Teltron มีระยะห่างฉาก $L = 135\\text{ mm}$ ยิงอิเล็กตรอนที่ $V_a = 4.0\\text{ kV}$ ผ่านแกรไฟต์ ($d_{10} = 213\\text{ pm}$) จงหา $\\lambda$ และรัศมีวงแหวนใน $R_1$',
+        concept: 'คำนวณ $\\lambda = 1226.4/\\sqrt{V_a(\\text{V})}\\text{ pm}$ แล้วใช้เงื่อนไขมุมเล็ก $R_1 \\approx L\\lambda / d_{10}$',
+        steps: '1) $\\lambda = \\frac{1226.4}{\\sqrt{4000}} \\approx 19.39\\text{ pm}$<br>2) $R_1 \\approx \\frac{135\\text{ mm} \\times 19.39\\text{ pm}}{213\\text{ pm}} \\approx \\mathbf{12.3\\text{ mm}}$',
+      },
+      {
+        title: 'ตัวอย่างที่ 2: อัตราส่วนวงแหวนแกรไฟต์ $R_2 / R_1$',
+        problem: 'ถ้าวัดรัศมีวงแหวนในของแกรไฟต์ได้ $R_1 = 14.2\\text{ mm}$ ที่ $V_a = 3.0\\text{ kV}$ รัศมีวงแหวนนอก $R_2$ (ระนาบ $d_{11} = 123\\text{ pm}$) ควรมีค่าเท่าใด?',
+        concept: 'เพราะ $R \\propto 1/d$ อัตราส่วน $R_2/R_1 = d_{10}/d_{11} = 213/123 \\approx \\sqrt{3} \\approx 1.732$ คงตัวทุกแรงดัน',
+        steps: '1) $R_2 = R_1 \\times 1.732 = 14.2 \\times 1.732 \\approx \\mathbf{24.6\\text{ mm}}$',
+      },
+      {
+        title: 'ตัวอย่างที่ 3: การออกแบบเงื่อนไข Trace Table และ Fail-Safe',
+        problem: 'ในอัลกอริทึมควบคุมหลอด Teltron ที่มีขอบเขตปลอดภัย $2.0 \\le V_a \\le 5.0\\text{ kV}$ หากป้อน $V_a = 5.4\\text{ kV}$ ระบบต้องทำงานอย่างไร?',
+        concept: 'ตรวจสอบเงื่อนไข Decision `2.0 <= Va <= 5.0` หากเป็น False ต้องเข้าสู่สาขา Fail-Safe Reset ทันที',
+        steps: '1) ตรวจเงื่อนไข: $5.4 \\le 5.0$ เป็น <b>False</b><br>2) Action: ยกเลิกการยิงลำอิเล็กตรอนและสั่ง <b>EHT ← OFF (Fail-Safe)</b>',
+      },
+    ],
+    atomic_models: [
+      {
+        title: 'ตัวอย่างที่ 1: สเปกตรัมไฮโดรเจนเส้น $H_\\alpha$ (Balmer Series)',
+        problem: 'อิเล็กตรอนในอะตอมไฮโดรเจนเปลี่ยนระดับจาก $n_i = 3$ ลงสู่ $n_f = 2$ จงหาพลังงานและความยาวคลื่นของโฟตอนที่ปล่อยออกมา',
+        concept: 'ใช้ $E_n = -13.6/n^2\\text{ eV}$ หา $\\Delta E = E_3 - E_2$ แล้วแปลงเป็น $\\lambda = hc / \\Delta E$',
+        steps: '1) $E_3 = -13.6/9 = -1.51\\text{ eV}$, $E_2 = -13.6/4 = -3.40\\text{ eV}$<br>2) $\\Delta E = (-1.51) - (-3.40) = \\mathbf{1.89\\text{ eV}}$<br>3) $\\lambda = \\frac{1{,}240}{1.89} \\approx \\mathbf{656.1\\text{ nm}}$ (แสงสีแดง)',
+      },
+      {
+        title: 'ตัวอย่างที่ 2: รัศมีวงโคจรโบร์และไอออนคล้ายไฮโดรเจน $\\text{He}^+$',
+        problem: 'จงหาพลังงานสถานะพื้น ($n=1$) และรัศมีวงโคจรแรกของไอออนฮีเลียม $\\text{He}^+$ ($Z = 2$, $a_0 = 0.0529\\text{ nm}$)',
+        concept: 'สำหรับไอออน 1 อิเล็กตรอน $E_n = -13.6\\frac{Z^2}{n^2}\\text{ eV}$ และ $r_n = \\frac{n^2 a_0}{Z}$',
+        steps: '1) $E_1 = -13.6 \\times \\frac{2^2}{1^2} = \\mathbf{-54.4\\text{ eV}}$<br>2) $r_1 = \\frac{1^2 \\times 0.0529}{2} = \\mathbf{0.0265\\text{ nm}}$',
+      },
+      {
+        title: 'ตัวอย่างที่ 3: การทดลองฟรังก์–เฮิรตซ์ (Franck–Hertz)',
+        problem: 'ในการทดลองฟรังก์–เฮิรตซ์ที่ใช้ไอปรอท (ระดับกระตุ้นแรก $4.9\\text{ eV}$) ถ้าเร่งอิเล็กตรอนด้วยแรงดัน $11.5\\text{ V}$ อิเล็กตรอนจะชนแบบไม่ยืดหยุ่นได้มากที่สุดกี่ครั้ง และเหลือพลังงานกี่ $\\text{eV}$?',
+        concept: 'อิเล็กตรอนจะถ่ายทอดพลังงานครั้งละ $4.9\\text{ eV}$ เมื่อพลังงานจลน์ถึงหรือเกิน $4.9\\text{ eV}$',
+        steps: '1) จำนวนครั้งที่ชนได้: $\\lfloor 11.5 / 4.9 \\rfloor = \\mathbf{2\\text{ ครั้ง}}$ ($2 \\times 4.9 = 9.8\\text{ eV}$)<br>2) พลังงานจลน์ที่เหลือ: $11.5 - 9.8 = \\mathbf{1.7\\text{ eV}}$ (เกิดร่องกระแสที่ 4.9 V และ 9.8 V)',
+      },
+    ],
+    quantum_mechanics: [
+      {
+        title: 'ตัวอย่างที่ 1: ระดับพลังงานในบ่อศักย์อนันต์ 1 มิติ',
+        problem: 'อิเล็กตรอนถูกกักในบ่อศักย์อนันต์กว้าง $L = 0.20\\text{ nm}$ จงหาพลังงานสถานะพื้น $E_1$ และระดับกระตุ้นที่ 1 ($E_2$) (ใช้ $\\frac{h^2}{8m_e} \\approx 3.76\\times 10^{-19}\\text{ eV}\\cdot\\text{m}^2$ หรือ $E_1 \\approx \\frac{0.376}{L(\\text{nm})^2}\\text{ eV}$)',
+        concept: 'ใช้ $E_n = n^2 E_1 = \\frac{n^2 h^2}{8m_e L^2}$',
+        steps: '1) $E_1 \\approx \\frac{0.376}{(0.20)^2} = \\frac{0.376}{0.04} = \\mathbf{9.40\\text{ eV}}$<br>2) $E_2 = 2^2 E_1 = 4 \\times 9.40 = \\mathbf{37.6\\text{ eV}}$',
+      },
+      {
+        title: 'ตัวอย่างที่ 2: การทะลุผ่านกำแพงศักย์ (Quantum Tunneling)',
+        problem: 'อิเล็กตรอนพลังงาน $E = 2.0\\text{ eV}$ ชนกำแพงศักย์สูง $V_0 = 5.0\\text{ eV}$ กว้าง $a = 0.20\\text{ nm}$ จงหาค่าสัมประสิทธิ์การลดทอน $\\kappa = \\frac{\\sqrt{2m_e(V_0 - E)}}{\\hbar}$ และประมาณค่า $T \\approx e^{-2\\kappa a}$',
+        concept: 'คำนวณ $\\kappa$ ในหน่วย $\\text{nm}^{-1}$ แล้วแทนในสูตรประมาณแบบ WKB $T \\approx e^{-2\\kappa a}$',
+        steps: '1) $\\kappa \\approx 5.12\\sqrt{V_0 - E}\\;(\\text{nm}^{-1}) = 5.12\\sqrt{3.0} \\approx 8.87\\text{ nm}^{-1}$<br>2) $2\\kappa a = 2 \\times 8.87 \\times 0.20 = 3.55$<br>3) $T \\approx e^{-3.55} \\approx \\mathbf{0.0287}$ (ทะลุผ่านได้ ~2.9%)',
+      },
+      {
+        title: 'ตัวอย่างที่ 3: ตัวแกว่งกวัดฮาร์มอนิกเชิงควอนตัม (QHO)',
+        problem: 'โมเลกุลสั่นด้วยความถี่เชิงมุมที่ให้ $\\hbar\\omega = 0.24\\text{ eV}$ จงหาพลังงานสถานะพื้น $E_0$ และพลังงานที่ต้องใช้เพื่อกระตุ้นจาก $n=0$ ไปยัง $n=2$',
+        concept: 'ระดับพลังงานของ QHO คือ $E_n = (n + \\frac{1}{2})\\hbar\\omega$ โดยมีพลังงานจุดศูนย์ $E_0 = \\frac{1}{2}\\hbar\\omega$',
+        steps: '1) พลังงานสถานะพื้น: $E_0 = \\frac{1}{2}(0.24) = \\mathbf{0.12\\text{ eV}}$<br>2) $\\Delta E = E_2 - E_0 = 2\\hbar\\omega = 2(0.24) = \\mathbf{0.48\\text{ eV}}$',
+      },
+    ],
+    solid_state: [
+      {
+        title: 'ตัวอย่างที่ 1: ค่าความยาวคลื่นขีดเริ่มของนาโน ZnO ($E_g \\approx 3.37\\text{ eV}$)',
+        problem: 'อนุภาคนาโน ZnO มี Direct Band Gap $E_g = 3.37\\text{ eV}$ จงหาความยาวคลื่นแสงสูงสุดที่สามารถกระตุ้นอิเล็กตรอนข้าม Band Gap ได้',
+        concept: 'โฟตอนต้องมีพลังงาน $E = hc/\\lambda \\ge E_g$ จึงได้ $\\lambda_{\\max} = hc / E_g$',
+        steps: '1) $\\lambda_{\\max} = \\frac{1{,}240\\text{ eV}\\cdot\\text{nm}}{3.37\\text{ eV}} \\approx \\mathbf{368\\text{ nm}}$ (ช่วงรังสี UV-A)',
+      },
+      {
+        title: 'ตัวอย่างที่ 2: สภาพนำไฟฟ้ากึ่งตัวนำกับอุณหภูมิ',
+        problem: 'ซิลิคอนมี $E_g = 1.12\\text{ eV}$ ที่ $T = 300\\text{ K}$ ($k_B T \\approx 0.0259\\text{ eV}$) จงคำนวณแฟกเตอร์โบล์ตซมันน์ $e^{-E_g / (2k_B T)}$',
+        concept: 'ความหนาแน่นพาหะนำไฟฟ้าในสารกึ่งตัวนำบริสุทธิ์แปรผันตาม $\\exp(-E_g / 2k_B T)$',
+        steps: '1) เลขชี้กำลัง: $-\\frac{1.12}{2 \\times 0.0259} = -21.62$<br>2) $e^{-21.62} \\approx \\mathbf{4.08\\times 10^{-10}}$ (เมื่อ $T$ เพิ่ม ค่านี้จะพุ่งสูงขึ้นเร็วมาก)',
+      },
+      {
+        title: 'ตัวอย่างที่ 3: เงื่อนไขวิกฤตของตัวนำยวดยิ่ง (Meissner Effect)',
+        problem: 'สารตัวนำยวดยิ่ง YBCO มี $T_c = 90\\text{ K}$ และ $B_c(0) = 0.70\\text{ T}$ ถ้าลดอุณหภูมิลงเหลือ $T = 40\\text{ K}$ แล้วใส่สนามแม่เหล็ก $B = 0.50\\text{ T}$ จะยังเป็นตัวนำยวดยิ่งหรือไม่?',
+        concept: 'คำนวณ $B_c(T) = B_c(0)\\left[1 - (T/T_c)^2\\right]$ แล้วตรวจว่าทั้ง $T < T_c$ และ $B < B_c(T)$ เป็นจริงหรือไม่',
+        steps: '1) $B_c(40) = 0.70\\left[1 - (40/90)^2\\right] = 0.70(1 - 0.1975) = \\mathbf{0.562\\text{ T}}$<br>2) ตรวจเงื่อนไข: $40 < 90$ (จริง) และ $0.50 < 0.562$ (จริง) → <b>ยังเป็นตัวนำยวดยิ่ง ($R=0$, เกิด Meissner)</b>',
+      },
+    ],
+    nuclear_physics: [
+      {
+        title: 'ตัวอย่างที่ 1: รัศมีนิวเคลียสเหล็ก-56 ($^{56}_{26}\\text{Fe}$)',
+        problem: 'จงประมาณรัศมีของนิวเคลียส $^{56}\\text{Fe}$ โดยใช้ $r_0 = 1.2\\text{ fm}$ และหาจำนวนนิวตรอน $N$',
+        concept: 'ใช้สูตรเชิงประจักษ์ $R \\approx r_0 A^{1/3}$ และ $N = A - Z$',
+        steps: '1) $A^{1/3} = 56^{1/3} \\approx 3.826$<br>2) $R \\approx 1.2 \\times 3.826 = \\mathbf{4.59\\text{ fm}}$<br>3) จำนวนนิวตรอน: $N = 56 - 26 = \\mathbf{30\\text{ ตัว}}$',
+      },
+      {
+        title: 'ตัวอย่างที่ 2: สมการสลายตัวแอลฟาและบีตาลบ',
+        problem: 'จงเขียนสมการสลายตัวเมื่อ $^{238}_{92}\\text{U}$ ปล่อยอนุภาคแอลฟา 1 ตัว และเมื่อ $^{14}_{6}\\text{C}$ สลายตัวแบบ $\\beta^-$',
+        concept: 'อนุรักษ์เลขมวล $A$ (บน) และเลขอะตอม/ประจุ $Z$ (ล่าง) ทั้งสองฝั่งของสมการ',
+        steps: '1) แอลฟา: $^{238}_{92}\\text{U} \\to \\mathbf{^{234}_{90}\\text{Th}} + \\,^4_2\\text{He}$<br>2) บีตาลบ: $^{14}_{6}\\text{C} \\to \\mathbf{^{14}_{7}\\text{N}} + e^- + \\bar{\\nu}_e$',
+      },
+      {
+        title: 'ตัวอย่างที่ 3: กฎการสลายตัวและกัมมันตภาพ (Half-Life)',
+        problem: 'สารกัมมันตรังสีเริ่มต้น $N_0 = 8{,}000$ อะตอม มีครึ่งชีวิต $T_{1/2} = 5$ วัน เมื่อเวลาผ่านไป $15$ วัน จะเหลือกี่อะตอม และคิดเป็นกี่เปอร์เซ็นต์?',
+        concept: 'หาจำนวนครึ่งชีวิต $n = t / T_{1/2}$ แล้วคำนวณ $N(t) = N_0 (1/2)^n$',
+        steps: '1) $n = 15 / 5 = 3$ ครึ่งชีวิต<br>2) $N(15) = 8{,}000 \\times (1/2)^3 = 8{,}000 / 8 = \\mathbf{1{,}000\\text{ อะตอม}}$ ($\\mathbf{12.5\\%}$)',
+      },
+    ],
+    particle_physics: [
+      {
+        title: 'ตัวอย่างที่ 1: การคำนวณประจุไฟฟ้าของโปรตอนและนิวตรอนจากควาร์ก',
+        problem: 'กำหนดควาร์ก $u$ มีประจุ $+2/3e$ และ $d$ มีประจุ $-1/3e$ จงคำนวณประจุสุทธิของโปรตอน ($uud$), นิวตรอน ($udd$) และ $\\Delta^{++}$ ($uuu$)',
+        concept: 'นำประจุของควาร์กองค์ประกอบทั้ง 3 ตัวมารวมกันทางพีชคณิต',
+        steps: '1) โปรตอน ($uud$): $+\\frac{2}{3} + \\frac{2}{3} - \\frac{1}{3} = \\mathbf{+1e}$<br>2) นิวตรอน ($udd$): $+\\frac{2}{3} - \\frac{1}{3} - \\frac{1}{3} = \\mathbf{0}$<br>3) $\\Delta^{++}$ ($uuu$): $+\\frac{2}{3} + \\frac{2}{3} + \\frac{2}{3} = \\mathbf{+2e}$',
+      },
+      {
+        title: 'ตัวอย่างที่ 2: กฎการอนุรักษ์ในการสลายตัวของอนุภาคมูลฐาน',
+        problem: 'ตรวจสอบว่าการสลายตัว $\\mu^- \\to e^- + \\bar{\\nu}_e + \\nu_\\mu$ อนุรักษ์ประจุ $Q$ และเลขตระกูลเลปตอน ($L_e, L_\\mu$) หรือไม่',
+        concept: 'ตรวจสอบผลรวม $Q, L_e, L_\\mu$ ก่อนและหลังการสลายตัวแยกทีละตระกูล',
+        steps: '1) ประจุ $Q$: ก่อน $= -1$ | หลัง $= -1 + 0 + 0 = -1$ (อนุรักษ์)<br>2) $L_e$: ก่อน $= 0$ | หลัง $= (+1) + (-1) + 0 = 0$ (อนุรักษ์)<br>3) $L_\\mu$: ก่อน $= +1$ | หลัง $= 0 + 0 + (+1) = +1$ (อนุรักษ์)',
+      },
+      {
+        title: 'ตัวอย่างที่ 3: ความยาวคลื่นขีดเริ่มและพิสัยของแรงสื่อด้วยโบซอนมีมวล',
+        problem: 'เหตุใดแรงอ่อนที่สื่อด้วย $W^\\pm$ ($m_W c^2 \\approx 80.4\\text{ GeV}$) จึงมีพิสัยสั้นมาก ประมาณเท่าใดจากความสัมพันธ์ $R \\approx \\frac{\\hbar c}{m_W c^2}$ ($\\hbar c \\approx 0.197\\text{ GeV}\\cdot\\text{fm}$)?',
+        concept: 'พิสัยแรงแปรผกผันกับมวลของเกจโบซอนสื่อแรง โบซอนยิ่งหนัก พิสัยยิ่งสั้น',
+        steps: '1) $R \\approx \\frac{0.197\\text{ GeV}\\cdot\\text{fm}}{80.4\\text{ GeV}} \\approx \\mathbf{2.45\\times 10^{-3}\\text{ fm}}$ ($\\sim 10^{-18}\\text{ m}$)<br>2) เทียบกับโฟตอน ($m=0$) ที่ให้พิสัยเป็นอนันต์ ($\\infty$)',
+      },
+    ],
+  };
+
+  function renderLectureBody(data, pageId) {
     const eqHtml = data.equations
       .map(
         (eq, idx) => `
@@ -672,6 +855,28 @@
           </div>
           <div class="lecture-eq-formula">$$${eq.latex}$$</div>
           <div class="lecture-eq-vars">${eq.vars}</div>
+        </div>`
+      )
+      .join('');
+
+    const examples = WORKED_EXAMPLES[pageId] || [{
+      title: 'ตัวอย่างคำนวณประกอบการสอน',
+      problem: data.example.problem,
+      concept: 'วิเคราะห์ตัวแปรที่โจทย์กำหนดและเลือกสมการหลักของบทเรียน',
+      steps: data.example.solution,
+    }];
+
+    const examplesHtml = examples
+      .map(
+        (ex, i) => `
+        <div class="lecture-example-box" style="margin-bottom:10px;">
+          <div class="lecture-kicker">📝 ${ex.title}</div>
+          <p><strong>โจทย์:</strong> ${ex.problem}</p>
+          <button type="button" class="btn btn-outline btn-small lecture-reveal-btn" data-show="👁️ แสดงแนวคิดและวิธีทำ" data-hide="🙈 ซ่อนแนวคิดและวิธีทำ">👁️ แสดงแนวคิดและวิธีทำ</button>
+          <div class="lecture-qa-ans lecture-sol" style="display:none;margin-top:8px;">
+            <p style="margin:0 0 6px;"><strong>💡 แนวคิด:</strong> ${ex.concept}</p>
+            <p style="margin:0;"><strong>✍️ วิธีทำ:</strong><br>${ex.steps}</p>
+          </div>
         </div>`
       )
       .join('');
@@ -691,15 +896,11 @@
         </div>
         <div class="lecture-col-visual">
           <div class="lecture-svg-wrap">${data.svg}</div>
-          <div class="lecture-example-box">
-            <div class="lecture-kicker">📝 ตัวอย่างคำนวณประกอบการสอน</div>
-            <p><strong>โจทย์:</strong> ${data.example.problem}</p>
-            <p class="lecture-sol"><strong>วิธีทำ:</strong> ${data.example.solution}</p>
-          </div>
+          ${examplesHtml}
           <div class="lecture-qa-box">
             <div class="lecture-kicker">💬 คำถามชวนคิดหน้าชั้น (Think-Pair-Share)</div>
             <p>${data.question.prompt}</p>
-            <button type="button" class="btn btn-outline btn-small lecture-reveal-btn">👁️ แสดงแนวคำตอบ</button>
+            <button type="button" class="btn btn-outline btn-small lecture-reveal-btn" data-show="👁️ แสดงแนวคำตอบ" data-hide="🙈 ซ่อนแนวคำตอบ">👁️ แสดงแนวคำตอบ</button>
             <div class="lecture-qa-ans" style="display:none;">${data.question.answer}</div>
           </div>
         </div>
@@ -743,7 +944,7 @@
     dlg.querySelector('#lp-badge').textContent = data.badge;
     dlg.querySelector('#lp-title').textContent = data.title;
     const body = dlg.querySelector('#lp-body');
-    body.innerHTML = renderLectureBody(data);
+    body.innerHTML = renderLectureBody(data, pageId);
     renderMathInContainer(body);
 
     body.querySelectorAll('.lecture-reveal-btn').forEach((btn) => {
@@ -751,7 +952,8 @@
         const ans = btn.nextElementSibling;
         const shown = ans.style.display !== 'none';
         ans.style.display = shown ? 'none' : 'block';
-        btn.textContent = shown ? '👁️ แสดงแนวคำตอบ' : '🙈 ซ่อนแนวคำตอบ';
+        btn.textContent = shown ? (btn.dataset.show || '👁️ แสดงแนวคำตอบ') : (btn.dataset.hide || '🙈 ซ่อนแนวคำตอบ');
+        if (!shown) renderMathInContainer(ans);
       });
     });
 
@@ -785,7 +987,7 @@
             <span class="lecture-chevron">▾ เปิด/พับเนื้อหา</span>
           </div>
         </summary>
-        <div class="lecture-deck-content">${renderLectureBody(data)}</div>
+        <div class="lecture-deck-content">${renderLectureBody(data, pageId)}</div>
       `;
 
       const presentBtn = deck.querySelector('.lecture-present-btn');
@@ -800,7 +1002,8 @@
           const ans = btn.nextElementSibling;
           const shown = ans.style.display !== 'none';
           ans.style.display = shown ? 'none' : 'block';
-          btn.textContent = shown ? '👁️ แสดงแนวคำตอบ' : '🙈 ซ่อนแนวคำตอบ';
+          btn.textContent = shown ? (btn.dataset.show || '👁️ แสดงแนวคำตอบ') : (btn.dataset.hide || '🙈 ซ่อนแนวคำตอบ');
+          if (!shown) renderMathInContainer(ans);
         });
       });
 
