@@ -1425,6 +1425,26 @@
     } catch (_) {
       loadedQuestions = OFFLINE_CHALLENGE;
     }
+    let activeChMod = 'all';
+    let overallQuestions = loadedQuestions;
+    const chSel = $('#ch-module-select');
+    const applyChSelection = () => {
+      activeChMod = chSel ? chSel.value : 'all';
+      if (activeChMod !== 'all' && window.MP27ModuleQuizBank && window.MP27ModuleQuizBank[activeChMod]) {
+        const b = window.MP27ModuleQuizBank[activeChMod];
+        loadedQuestions = b.post.map((item) => ({ id: item.id, topic: item.topic, question: item.q, options: item.opts, _k: item.ans, _exp: item.exp }));
+        if ($('#ch-heading')) $('#ch-heading').textContent = `Post-Test ประจำบท: ${b.title} (10 ข้อ)`;
+        if ($('#ch-count-tag')) $('#ch-count-tag').textContent = '10 Questions · 100 pts';
+      } else {
+        loadedQuestions = overallQuestions;
+        if ($('#ch-heading')) $('#ch-heading').textContent = 'แบบทดสอบ 20 ข้อ ครอบคลุมทั้ง 9 หน่วยการเรียนรู้';
+        if ($('#ch-count-tag')) $('#ch-count-tag').textContent = '20 Questions · 100 pts';
+      }
+      renderChallengeQuestions(loadedQuestions);
+      if ($('#ch-result')) { $('#ch-result').textContent = ''; $('#ch-result').className = 'feedback'; }
+      if ($('#ch-ai-box')) $('#ch-ai-box').innerHTML = '';
+    };
+    chSel?.addEventListener('change', applyChSelection);
     renderChallengeQuestions(loadedQuestions);
 
     $('#ch-submit-btn')?.addEventListener('click', async () => {
@@ -1446,6 +1466,49 @@
       const note = ($('#ch-note')?.value || '').trim();
       const outFb = $('#ch-result');
       const outBox = $('#ch-ai-box');
+
+      if (activeChMod !== 'all') {
+        let right = 0;
+        const mis = [];
+        const expLines = [];
+        loadedQuestions.forEach((q, idx) => {
+          const ok = answers[q.id] === q._k;
+          if (ok) right++;
+          else mis.push(`${q.id}:${q.topic}`);
+          expLines.push(`ข้อ ${idx + 1}: ${ok ? '✓ ถูก' : `✗ ตอบ ${answers[q.id]} (เฉลย ${q._k})`} — ${q._exp}`);
+        });
+        const pct = Math.round((right / loadedQuestions.length) * 100);
+        try {
+          const store = JSON.parse(localStorage.getItem('mp27_mod_quiz_v1') || '{}');
+          if (!store[activeChMod]) store[activeChMod] = {};
+          store[activeChMod].post = { correct: right, total: 10, pct, at: new Date().toISOString() };
+          localStorage.setItem('mp27_mod_quiz_v1', JSON.stringify(store));
+          const preP = store[activeChMod].pre?.pct;
+          const gainMsg = preP !== undefined ? ` · ⟨g⟩ = ${preP < 100 ? ((pct - preP) / (100 - preP)).toFixed(3) : '1.000'}` : '';
+          outFb.className = 'feedback good';
+          outFb.textContent = `บันทึก Post-Test (${activeChMod}) แล้ว: ${right}/10 ข้อ (${pct}%)${gainMsg}`;
+        } catch (_) {}
+        outBox.innerHTML = `<div class="ai-eval-card"><pre class="ai-feedback-pre">${esc(expLines.join('\n'))}</pre></div>`;
+        try {
+          await apiJson('./api/per.php?action=submit_module_quiz', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              student_id: currentStudent.student_id,
+              full_name: currentStudent.full_name,
+              section: currentStudent.section || '661/วิทย์',
+              module_id: activeChMod,
+              phase: 'post',
+              score_pct: pct,
+              correct_count: right,
+              total_questions: 10,
+              answers,
+              misconceptions: mis,
+            }),
+          });
+        } catch (_) {}
+        return;
+      }
 
       try {
         const res = await apiJson('./api/challenge.php', {
@@ -1904,29 +1967,52 @@
 
   let preStartMs = Date.now();
   async function initPreTest() {
-    let qs = OFFLINE_PRETEST;
+    let overallQs = OFFLINE_PRETEST;
     try {
       const res = await apiJson('./api/per.php?action=pretest');
-      if (Array.isArray(res.questions) && res.questions.length > 0) qs = res.questions;
+      if (Array.isArray(res.questions) && res.questions.length > 0) overallQs = res.questions;
     } catch (_) {}
 
-    const form = $('#pre-form');
-    if (form) {
-      form.innerHTML = qs.map((q, idx) => `
-        <div class="panel" style="margin:0;padding:15px;">
-          <div class="eyebrow" style="margin-bottom:4px;">ข้อ ${idx + 1} • ${esc(q.topic)}</div>
-          <div style="font-size:14px;font-weight:750;margin-bottom:10px;">${esc(q.question)}</div>
-          <div class="ch-options">
-            ${Object.entries(q.options).map(([k, txt]) => `
-              <label class="ch-option">
-                <input type="radio" name="pre_${esc(q.id)}" value="${esc(k)}" />
-                <span><strong>${esc(k)}.</strong> ${esc(txt)}</span>
-              </label>
-            `).join('')}
+    let activePreMod = 'all';
+    let qs = overallQs;
+    const preSel = $('#pre-module-select');
+    const renderPreForm = () => {
+      const form = $('#pre-form');
+      if (form) {
+        form.innerHTML = qs.map((q, idx) => `
+          <div class="panel" style="margin:0;padding:15px;">
+            <div class="eyebrow" style="margin-bottom:4px;">ข้อ ${idx + 1} • ${esc(q.topic)}</div>
+            <div style="font-size:14px;font-weight:750;margin-bottom:10px;">${esc(q.question)}</div>
+            <div class="ch-options">
+              ${Object.entries(q.options).map(([k, txt]) => `
+                <label class="ch-option">
+                  <input type="radio" name="pre_${esc(q.id)}" value="${esc(k)}" />
+                  <span><strong>${esc(k)}.</strong> ${esc(txt)}</span>
+                </label>
+              `).join('')}
+            </div>
           </div>
-        </div>
-      `).join('');
-    }
+        `).join('');
+      }
+    };
+
+    preSel?.addEventListener('change', () => {
+      activePreMod = preSel.value;
+      if (activePreMod !== 'all' && window.MP27ModuleQuizBank && window.MP27ModuleQuizBank[activePreMod]) {
+        const b = window.MP27ModuleQuizBank[activePreMod];
+        qs = b.pre.map((item) => ({ id: item.id, topic: item.topic, question: item.q, options: item.opts, _k: item.ans }));
+        if ($('#pre-heading')) $('#pre-heading').textContent = `Pre-Test ประจำบท: ${b.title} (10 ข้อ)`;
+        if ($('#pre-count-tag')) $('#pre-count-tag').textContent = '10 Questions';
+      } else {
+        qs = overallQs;
+        if ($('#pre-heading')) $('#pre-heading').textContent = 'แบบทดสอบก่อนเรียน 20 ข้อ (คู่ขนานกับบทเรียน 01–09)';
+        if ($('#pre-count-tag')) $('#pre-count-tag').textContent = '20 Questions';
+      }
+      preStartMs = Date.now();
+      if ($('#pre-result')) { $('#pre-result').textContent = ''; $('#pre-result').className = 'feedback'; }
+      renderPreForm();
+    });
+    renderPreForm();
 
     setInterval(() => {
       const sec = Math.floor((Date.now() - preStartMs) / 1000);
@@ -1948,6 +2034,44 @@
       }
       const durSec = Math.max(1, Math.floor((Date.now() - preStartMs) / 1000));
       const fb = $('#pre-result');
+
+      if (activePreMod !== 'all') {
+        let right = 0;
+        const mis = [];
+        qs.forEach((q) => {
+          if (answers[q.id] === q._k) right++;
+          else mis.push(`${q.id}:${q.topic}`);
+        });
+        const pct = Math.round((right / qs.length) * 100);
+        try {
+          const store = JSON.parse(localStorage.getItem('mp27_mod_quiz_v1') || '{}');
+          if (!store[activePreMod]) store[activePreMod] = {};
+          store[activePreMod].pre = { correct: right, total: 10, pct, durSec, at: new Date().toISOString() };
+          localStorage.setItem('mp27_mod_quiz_v1', JSON.stringify(store));
+        } catch (_) {}
+        fb.className = 'feedback good';
+        fb.textContent = `บันทึก Pre-Test (${activePreMod}) แล้ว: ${right}/10 ข้อ (${pct}%)`;
+        try {
+          await apiJson('./api/per.php?action=submit_module_quiz', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              student_id: currentStudent.student_id,
+              full_name: currentStudent.full_name,
+              section: currentStudent.section || '661/วิทย์',
+              module_id: activePreMod,
+              phase: 'pre',
+              score_pct: pct,
+              correct_count: right,
+              total_questions: 10,
+              answers,
+              misconceptions: mis,
+              duration_sec: durSec,
+            }),
+          });
+        } catch (_) {}
+        return;
+      }
       try {
         const res = await apiJson('./api/per.php?action=submit_pretest', {
           method: 'POST',

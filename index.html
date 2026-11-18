@@ -579,9 +579,24 @@
             <div class="panel-top">
               <div>
                 <div class="eyebrow">DIAGNOSTIC BASELINE</div>
-                <h3>แบบทดสอบก่อนเรียน 20 ข้อ (คู่ขนานกับบทเรียน 01–09)</h3>
+                <h3 id="pre-heading">แบบทดสอบก่อนเรียน 20 ข้อ (คู่ขนานกับบทเรียน 01–09)</h3>
               </div>
-              <span class="tag soft">20 Questions</span>
+              <span id="pre-count-tag" class="tag soft">20 Questions</span>
+            </div>
+            <div class="field" style="margin-bottom:14px;">
+              <label for="pre-module-select">เลือกชุดข้อสอบ Pre-Test (รวมรายวิชา 20 ข้อ หรือ แยกรายปฏิบัติการ 10 ข้อ)</label>
+              <select id="pre-module-select">
+                <option value="all" selected>🌐 แบบทดสอบรวมทั้งรายวิชา (20 ข้อ)</option>
+                <option value="relativity">01 ทฤษฎีสัมพัทธภาพพิเศษ (10 ข้อ)</option>
+                <option value="quantum_light">02 ทฤษฎีควอนตัมของแสง (10 ข้อ)</option>
+                <option value="matter_waves">03 สมบัติคลื่นของอนุภาค (10 ข้อ)</option>
+                <option value="electron_diffraction">04 เลี้ยวเบนอิเล็กตรอน &amp; Trace (10 ข้อ)</option>
+                <option value="atomic_models">05 แบบจำลองอะตอมและสเปกตรัม (10 ข้อ)</option>
+                <option value="quantum_mechanics">06 กลศาสตร์ควอนตัมเบื้องต้น (10 ข้อ)</option>
+                <option value="solid_state">07 โมเลกุลและฟิสิกส์ของแข็ง (10 ข้อ)</option>
+                <option value="nuclear_physics">08 โครงสร้างนิวเคลียสและกัมมันตภาพ (10 ข้อ)</option>
+                <option value="particle_physics">09 ฟิสิกส์อนุภาคมูลฐาน (10 ข้อ)</option>
+              </select>
             </div>
             <form id="pre-form" class="ch-options" style="gap:14px;"></form>
             <div class="btn-row" style="margin-top:14px;">
@@ -1263,9 +1278,24 @@
             <div class="panel-top">
               <div>
                 <div class="eyebrow">SERVER-SIDE PROTECTED QUIZ</div>
-                <h3>แบบทดสอบ 20 ข้อ ครอบคลุมทั้ง 9 หน่วยการเรียนรู้</h3>
+                <h3 id="ch-heading">แบบทดสอบ 20 ข้อ ครอบคลุมทั้ง 9 หน่วยการเรียนรู้</h3>
               </div>
-              <span class="tag">20 Questions · 100 pts</span>
+              <span id="ch-count-tag" class="tag">20 Questions · 100 pts</span>
+            </div>
+            <div class="field" style="margin-bottom:14px;">
+              <label for="ch-module-select">เลือกชุดข้อสอบ Post-Test (รวมรายวิชา 20 ข้อ หรือ แยกรายปฏิบัติการ 10 ข้อ)</label>
+              <select id="ch-module-select">
+                <option value="all" selected>🌐 แบบทดสอบวัดผลรวมทั้งรายวิชา (20 ข้อ)</option>
+                <option value="relativity">01 ทฤษฎีสัมพัทธภาพพิเศษ (10 ข้อ)</option>
+                <option value="quantum_light">02 ทฤษฎีควอนตัมของแสง (10 ข้อ)</option>
+                <option value="matter_waves">03 สมบัติคลื่นของอนุภาค (10 ข้อ)</option>
+                <option value="electron_diffraction">04 เลี้ยวเบนอิเล็กตรอน &amp; Trace (10 ข้อ)</option>
+                <option value="atomic_models">05 แบบจำลองอะตอมและสเปกตรัม (10 ข้อ)</option>
+                <option value="quantum_mechanics">06 กลศาสตร์ควอนตัมเบื้องต้น (10 ข้อ)</option>
+                <option value="solid_state">07 โมเลกุลและฟิสิกส์ของแข็ง (10 ข้อ)</option>
+                <option value="nuclear_physics">08 โครงสร้างนิวเคลียสและกัมมันตภาพ (10 ข้อ)</option>
+                <option value="particle_physics">09 ฟิสิกส์อนุภาคมูลฐาน (10 ข้อ)</option>
+              </select>
             </div>
 
             <form id="ch-form" class="ch-options" style="gap:16px;"></form>
@@ -1378,6 +1408,7 @@
   <div id="toast" class="toast"></div>
   <script src="./shared/physics_solvers.js"></script>
   <script src="./shared/lecture_theory.js"></script>
+  <script src="./shared/module_quiz_bank.js"></script>
   <script src="./shared/q_bot.js?v=20261118c"></script>
   <script src="./app.js"></script>
 </body>
