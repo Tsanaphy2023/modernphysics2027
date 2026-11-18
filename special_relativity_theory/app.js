@@ -155,6 +155,10 @@ function init3D(){
 
  // Shared Spacecraft & Onboard Light Clock (S')
  ship=new THREE.Group();scene.add(ship);
+if(window.MP27Labels){
+ ship.add(window.MP27Labels.makeSprite(THREE,'ยานอวกาศ & นาฬิกาแสง (กรอบ S′)',0,2.8,.95,'#a59bff'));
+}
+window.addEventListener('mp27:labels',()=>{if(scene&&window.MP27Labels)window.MP27Labels.applyToRoot(scene);});
  const fuselage=new THREE.Mesh(new THREE.CapsuleGeometry(.69,3.7,8,24),titanium);fuselage.rotation.z=Math.PI/2;fuselage.scale.set(1,.78,1.25);fuselage.position.y=.22;fuselage.castShadow=true;ship.add(fuselage);
  const hull=new THREE.Mesh(new THREE.CylinderGeometry(.82,.82,3.8,24),glassMat);hull.rotation.z=Math.PI/2;hull.position.y=.2;ship.add(hull);
  const nose=new THREE.Mesh(new THREE.ConeGeometry(.85,1.3,24),titanium);nose.rotation.z=-Math.PI/2;nose.position.set(2.55,.2,0);nose.castShadow=true;ship.add(nose);
@@ -197,6 +201,9 @@ function init3D(){
 
  // 03 Dilation Group: Stationary Lab Clock + Ghost L0 Reference Hull + Calipers
  dilationGroup=new THREE.Group();scene.add(dilationGroup);
+if(window.MP27Labels){
+ dilationGroup.add(window.MP27Labels.makeSprite(THREE,'นาฬิกาห้องทดลอง (กรอบ S)',-3.4,2.65,2.4,'#45ddf3'));
+}
  const labBase=new THREE.Mesh(new THREE.CylinderGeometry(.55,.68,.24,24),darkMetal);labBase.position.set(-3.4,-1.32,2.4);labBase.receiveShadow=true;dilationGroup.add(labBase);
  const labPed=new THREE.Mesh(new THREE.CylinderGeometry(.1,.12,1.1,16),titanium);labPed.position.set(-3.4,-.72,2.4);dilationGroup.add(labPed);
  const labClockBottom=new THREE.Mesh(new THREE.CylinderGeometry(.38,.38,.1,24),new THREE.MeshPhysicalMaterial({color:colorCyan,emissive:colorCyan,emissiveIntensity:.25,metalness:.2,roughness:.08,clearcoat:1}));labClockBottom.position.set(-3.4,-.14,2.4);dilationGroup.add(labClockBottom);

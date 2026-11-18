@@ -343,6 +343,13 @@ function init3D(){
 
  // 1. Teltron Electron Diffraction Tube + Universal Stand + EHT Power Supply + Silicone Leads + 3D Vernier Caliper
  teltronGroup=new THREE.Group();scene.add(teltronGroup);
+if(window.MP27Labels){
+ teltronGroup.add(window.MP27Labels.makeSprite(THREE,'ปืนอิเล็กตรอน (Vₐ)',-4.2,BEAM_Y+1.4,0,'#fb923c'));
+ teltronGroup.add(window.MP27Labels.makeSprite(THREE,'เป้าผลึกแกรไฟต์ (d₁, d₂)',-1.4,BEAM_Y+1.55,0,'#38bdf8'));
+ teltronGroup.add(window.MP27Labels.makeSprite(THREE,'จอเรืองแสง (Phosphor Rings)',2.9,BEAM_Y+2.05,0,'#34d399'));
+ teltronGroup.add(window.MP27Labels.makeSprite(THREE,'แหล่งจ่ายไฟ EHT (kV)',-2.7,BENCH_Y+1.95,-2.15,'#fbbf24'));
+}
+window.addEventListener('mp27:labels',()=>{if(scene&&window.MP27Labels)window.MP27Labels.applyToRoot(scene);});
  const standBase=new THREE.Mesh(new THREE.BoxGeometry(7.8,.08,1.9),mats.darkAnodized);standBase.position.set(-1.1,BENCH_Y+.04,0);standBase.receiveShadow=true;standBase.castShadow=true;
  const rearPillar=new THREE.Mesh(new THREE.CylinderGeometry(.11,.13,BEAM_Y-BENCH_Y-.45,16),mats.steel);rearPillar.position.set(-3.8,(BENCH_Y+BEAM_Y-.45)*.5,0);rearPillar.castShadow=true;
  const neckClamp=new THREE.Mesh(new THREE.TorusGeometry(.57,.075,14,32),mats.darkAnodized);neckClamp.rotation.y=Math.PI/2;neckClamp.position.set(-3.8,BEAM_Y,0);

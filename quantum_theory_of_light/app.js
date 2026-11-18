@@ -82,6 +82,7 @@ function applyLabelPrefs(){
     }
   });
 }
+window.addEventListener('mp27:labels',ev=>{if(ev.detail){labelsVisible=ev.detail.visible;labelScale=ev.detail.scale;if($('toggleLabels'))$('toggleLabels').textContent=labelsVisible?'🏷️ ป้ายชื่อ: เปิด':'🏷️ ป้ายชื่อ: ซ่อน';applyLabelPrefs();}});
 function equipment(){
  const table=box(13.4,.28,6.6,mat(0x111f2e,.72,.35),0,-2.66,0);
  box(13.56,.08,6.76,mat(0x64748b,.88,.22),0,-2.78,0);

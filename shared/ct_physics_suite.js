@@ -203,6 +203,51 @@
     { student_id: '6614611004', full_name: 'นางสาวชุลีขวัญคนขยัน', section: '661/วิทย์' },
   ];
 
+  window.MP27Labels = {
+    visible: localStorage.getItem('mp27_labels_visible') !== '0',
+    scale: Math.max(0.55, Math.min(1.9, parseFloat(localStorage.getItem('mp27_labels_scale') || '1') || 1)),
+    makeSprite(THREE_REF, text, x = 0, y = 0, z = 0, accent = '#7cecff') {
+      const c2 = document.createElement('canvas');
+      const ctx = c2.getContext('2d');
+      ctx.font = '700 24px Inter,"Noto Sans Thai",system-ui,sans-serif';
+      const tw = Math.ceil(ctx.measureText(text).width);
+      c2.width = Math.max(150, tw + 40);
+      c2.height = 52;
+      ctx.fillStyle = 'rgba(7,18,34,0.88)';
+      ctx.strokeStyle = accent;
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      if (ctx.roundRect) ctx.roundRect(3, 3, c2.width - 6, c2.height - 6, 12);
+      else ctx.rect(3, 3, c2.width - 6, c2.height - 6);
+      ctx.fill();
+      ctx.stroke();
+      ctx.font = '700 24px Inter,"Noto Sans Thai",system-ui,sans-serif';
+      ctx.fillStyle = '#f1f5f9';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(text, c2.width / 2, c2.height / 2 + 1);
+      const tex = new THREE_REF.CanvasTexture(c2);
+      if (THREE_REF.SRGBColorSpace) tex.colorSpace = THREE_REF.SRGBColorSpace;
+      const sp = new THREE_REF.Sprite(new THREE_REF.SpriteMaterial({ map: tex, transparent: true, depthTest: false }));
+      const baseW = c2.width / 135;
+      const baseH = c2.height / 135;
+      sp.userData = { isMp27Label: true, baseW, baseH };
+      sp.position.set(x, y, z);
+      sp.scale.set(baseW * this.scale, baseH * this.scale, 1);
+      sp.visible = this.visible;
+      return sp;
+    },
+    applyToRoot(rootObj) {
+      if (!rootObj || !rootObj.traverse) return;
+      rootObj.traverse((o) => {
+        if (o.isSprite && o.userData && o.userData.isMp27Label) {
+          o.visible = this.visible;
+          o.scale.set(o.userData.baseW * this.scale, o.userData.baseH * this.scale, 1);
+        }
+      });
+    },
+  };
+
   const scriptEl = document.currentScript || document.querySelector('script[data-ct-module]');
   const modKey = (scriptEl && scriptEl.dataset.ctModule) || 'electron_diffraction';
   const cfg = MODULE_CONFIG[modKey] || MODULE_CONFIG.electron_diffraction;
@@ -409,6 +454,9 @@
         <span id="ct-bar-student" style="color:#93c5fd;font-weight:700;">${student ? `${esc(student.student_id)} ${esc(student.full_name)}` : 'ผู้เรียนทั่วไป (Guest)'}</span>
       </div>
       <div class="ct-suite-actions">
+        <button type="button" class="ct-suite-btn" id="ct-lbl-toggle">🏷️ ป้าย: ${window.MP27Labels.visible ? 'เปิด' : 'ซ่อน'}</button>
+        <button type="button" class="ct-suite-btn" id="ct-lbl-sm" title="ย่อป้ายชื่อ 3 มิติ">A−</button>
+        <button type="button" class="ct-suite-btn" id="ct-lbl-lg" title="ขยายป้ายชื่อ 3 มิติ">A+</button>
         <button type="button" class="ct-suite-btn" id="ct-theory-btn">📖 ทฤษฎี &amp; ภาพประกอบ</button>
         <button type="button" class="ct-suite-btn" id="ct-mode-btn">💡 โหมดแนวคิด</button>
         <button type="button" class="ct-suite-btn" id="ct-xr-btn">🥽 AR:XR</button>
@@ -672,6 +720,26 @@
         trackTelemetry('theory_open');
       }
     }
+
+    function emitLabelPrefs() {
+      localStorage.setItem('mp27_labels_visible', window.MP27Labels.visible ? '1' : '0');
+      localStorage.setItem('mp27_labels_scale', String(window.MP27Labels.scale));
+      const lblBtn = bar.querySelector('#ct-lbl-toggle');
+      if (lblBtn) lblBtn.textContent = `🏷️ ป้าย: ${window.MP27Labels.visible ? 'เปิด' : 'ซ่อน'}`;
+      window.dispatchEvent(new CustomEvent('mp27:labels', { detail: { visible: window.MP27Labels.visible, scale: window.MP27Labels.scale } }));
+    }
+    bar.querySelector('#ct-lbl-toggle').addEventListener('click', () => {
+      window.MP27Labels.visible = !window.MP27Labels.visible;
+      emitLabelPrefs();
+    });
+    bar.querySelector('#ct-lbl-sm').addEventListener('click', () => {
+      window.MP27Labels.scale = Math.max(0.55, Number((window.MP27Labels.scale - 0.15).toFixed(2)));
+      emitLabelPrefs();
+    });
+    bar.querySelector('#ct-lbl-lg').addEventListener('click', () => {
+      window.MP27Labels.scale = Math.min(1.9, Number((window.MP27Labels.scale + 0.15).toFixed(2)));
+      emitLabelPrefs();
+    });
 
     bar.querySelector('#ct-theory-btn').addEventListener('click', openTheoryModal);
     bar.querySelector('#ct-mode-btn').addEventListener('click', () => {

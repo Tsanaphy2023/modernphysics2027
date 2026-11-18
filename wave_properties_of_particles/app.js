@@ -68,7 +68,23 @@ function addOpticalBench(w=21,d=9){
  for(let x=-Math.floor(w/2)+2;x<=Math.floor(w/2)-2;x+=3){boxMesh(x,-4.15,-d/2+.6,.7,.35,.7,0x0c1522,.4,.7,0);boxMesh(x,-4.15,d/2-.6,.7,.35,.7,0x0c1522,.4,.7,0);}
 }
 function clear(){if(!group)return;while(group.children.length){const obj=group.children[0];group.remove(obj);obj.traverse(o=>{o.geometry?.dispose();if(o.material){const mats=Array.isArray(o.material)?o.material:[o.material];mats.forEach(m=>m.dispose());}});}particleMeshes=[];dynamic=[];detector=null;}
-function buildScene(){if(!group)return;clear();addOpticalBench(22,8.5);if(state.module==='debroglie'){
+function addLab3dLabels(){
+ if(!window.MP27Labels||!group)return;
+ const addL=(t,x,y,z,c)=>group.add(window.MP27Labels.makeSprite(THREE,t,x,y,z,c));
+ if(state.module==='debroglie'){
+  addL('ปืนอิเล็กตรอน (Cathode)',-7.6,2.4,0,'#fbbf24');
+  addL('หลอดสุญญากาศ (Vacuum Tube)',0,2.5,0,'#38bdf8');
+  addL('จอเรืองแสง (Phosphor Screen)',8.05,2.4,0,'#34d399');
+ }else if(state.module==='davisson'){
+  addL('ปืนยิง e⁻ (Electron Gun)',-6.4,4.8,0,'#fbbf24');
+  addL('ผลึกนิกเกิล (Ni Crystal)',0,1.6,0,'#38bdf8');
+  addL('หัววัดฟาราเดย์ (Detector θ)',5.0,5.2,0,'#34d399');
+ }else{
+  addL('คลื่นแพ็กเก็ต (Wave Packet)',0,2.2,0,'#38bdf8');
+ }
+}
+window.addEventListener('mp27:labels',()=>{if(group&&window.MP27Labels)window.MP27Labels.applyToRoot(group);});
+function buildScene(){if(!group)return;clear();addOpticalBench(22,8.5);addLab3dLabels();if(state.module==='debroglie'){
  const glass=new THREE.Mesh(new THREE.CylinderGeometry(1.75,1.75,16.4,36,1,true),new THREE.MeshPhysicalMaterial({color:0x93d9ff,roughness:.08,metalness:.05,transmission:.55,transparent:true,opacity:.24,side:THREE.DoubleSide}));glass.rotation.z=Math.PI/2;group.add(glass);
  cylMesh(-8.3,0,0,1.82,1.82,.65,0x47617a,0,Math.PI/2,.85,.25);cylMesh(8.3,0,0,1.82,1.82,.65,0x47617a,0,Math.PI/2,.85,.25);
  boxMesh(-8.1,-1.85,0,1.4,3.4,1.6,0x2c4257,.78,.32);boxMesh(8.1,-1.85,0,1.4,3.4,1.6,0x2c4257,.78,.32);
