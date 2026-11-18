@@ -134,12 +134,16 @@ function buildScene(){for(const item of [...root.children]){root.remove(item);it
   cyl(.65,1.45,mat(0x1e293b,.85,.28),-2.75,-1.8,0);cyl(.65,1.45,mat(0x1e293b,.85,.28),2.25,-1.8,0);
   const source=cyl(.62,.58,mat(0x94a3b8,.88,.2),-2.65,0,0);source.rotation.z=Math.PI/2;
   ring(.32,0xf97316,-2.3,0,0).rotation.y=Math.PI/2;
-  const target=box(.48,1.85,1.85,mat(0xea580c,.9,.18),2,0,0);target.rotation.z=.28;target.name='xrayTarget';dynamicMeshes.push(target);
-  cyl(.22,1.4,mat(0xd97706,.9,.2),2.8,0,0).rotation.z=Math.PI/2;
+  const targetCol={Cu:0xea580c,Mo:0x94a3b8,W:0x475569}[state.target]||0xea580c;
+  const target=box(.42,1.85,1.85,mat(targetCol,.9,.18),1.6,0,0);target.rotation.z=Math.PI/4;target.name='xrayTarget';dynamicMeshes.push(target);
+  cyl(.24,1.55,mat(0xd97706,.9,.2),2.45,0,0).rotation.z=Math.PI/2;
+  // Beryllium exit window at bottom (-y) perpendicular to electron beam
+  cyl(.55,.16,mat(0x334155,.8,.3),1.6,-1.25,0);
   for(let i=0;i<15;i++){particles.push(sphere(.055,glow(0x38bdf8),-2.5+i*.25,(i%3-1)*.12,(i%4-2)*.08))}
-  for(let i=0;i<14;i++){let x=2.3+i*.18,p=sphere(.065,glow(0xfbbf24),x,(i%5-2)*.27,(i%4-2)*.31);particles.push(p)}
+  for(let i=0;i<14;i++){particles.push(sphere(.07,glow(0xfbbf24),1.6+(i%5-2)*.14,-.3-i*.15,(i%4-2)*.14))}
   label('ไส้หลอดทังสเตน (Filament Cathode)',-2.6,1.85,0,'#fb923c',.65);
-  label('เป้าโลหะ (Cu / Mo / W Anode)',2.1,2.0,0,'#fbbf24',.95);
+  label('เป้าโลหะ 45° (Cu / Mo / W)',1.7,2.0,0,'#fbbf24',.95);
+  label('หน้าต่างรังสีเอกซ์ (Be Window)',1.6,-2.15,0,'#34d399',-1.35);
  }
  if(current===3){
   cyl(.35,2.4,mat(0x334155,.85,.25),0,-1.35,0);cyl(1.15,.25,mat(0x475569,.85,.22),0,-2.4,0);
@@ -149,30 +153,57 @@ function buildScene(){for(const item of [...root.children]){root.remove(item);it
   for(let i=0;i<9;i++){const p=sphere(.09,glow(0x6be0ff),-3.6+i*.35,0,0);particles.push(p)}
   const scatter=line([.5,0,0],[3.5,2.4,0],0xffcf76,.065);scatter.name='scatterLine';dynamicMeshes.push(scatter);
   const naiDet=cyl(.46,1.15,mat(0xd99b26,.88,.22),3.6,2.45,0);naiDet.name='naiDet';dynamicMeshes.push(naiDet);
-  const outgoing=line([.45,-.07,.1],[2.4,-1.9,.6],0x60a5fa,.05);outgoing.name='electronTrack';dynamicMeshes.push(outgoing);
-  const electron=sphere(.19,glow(0x93c5fd),2.4,-1.9,.6);electron.name='electron';dynamicMeshes.push(electron);
+  const scatPhoton=sphere(.11,glow(0xffcf76),.5,0,0);scatPhoton.name='scatPhoton';particles.push(scatPhoton);
+  const outgoing=line([.45,-.07,0],[2.4,-1.9,0],0x60a5fa,.05);outgoing.name='electronTrack';dynamicMeshes.push(outgoing);
+  const electron=sphere(.19,glow(0x93c5fd),2.4,-1.9,0);electron.name='electron';dynamicMeshes.push(electron);
   label('โฟตอน γ ตกกระทบ (Pb Shield)',-3.6,1.35,0,'#38bdf8',.5);
-  label('เป้าแกรไฟต์ (Graphite Target)',0,1.25,0,'#e2e8f0',.55);
+  label('เป้าแกรไฟต์ (e⁻ อิสระ)',0,1.25,0,'#e2e8f0',.55);
   label('หัววัด NaI(Tl) มุม θ',3.2,3.2,0,'#fbbf24',2.55);
+  label('อิเล็กตรอนกระเจิง (มุม φ)',2.4,-2.4,0,'#60a5fa',-1.7);
  }
  if(current===4){
-  ring(2.2,0x38bdf8,0,0,0);box(1.3,1.2,1.2,mat(0x1e293b,.88,.28),-3.4,0,0);
-  sphere(1.05,new THREE.MeshStandardMaterial({color:0x55648f,metalness:.25,roughness:.4,wireframe:true}),0,0,0);
-  sphere(.4,glow(0xefbb72),0,0,0);line([-4.4,0,0],[-.95,0,0],0xffd97e,.06);
-  for(let i=0;i<8;i++)particles.push(sphere(.075,glow(0xffe5a0),-4.2+i*.4,0,0));
-  let electron=sphere(.23,glow(0x38bdf8),2,1.5,0);electron.name='electron';let positron=sphere(.23,glow(0xf43f5e),2,-1.5,0);positron.name='positron';dynamicMeshes.push(electron,positron);
-  line([.55,.15,0],[3.7,2.4,0],0x38bdf8,.04);line([.55,-.15,0],[3.7,-2.4,0],0xf43f5e,.04);
-  label('นิวเคลียสคูลอมบ์ (Heavy Nucleus Z)',0,2.55,0,'#fbbf24',1.05);
-  label('อิเล็กตรอน e⁻ (โค้งขึ้น)',3.2,2.05,0,'#38bdf8',1.55);
-  label('โพซิตรอน e⁺ (โค้งลง)',3.2,-1.95,0,'#fb7185',-1.55);
+  if(state.mode==='creation'){
+   ring(2.2,0x38bdf8,0,0,0);box(1.3,1.2,1.2,mat(0x1e293b,.88,.28),-3.4,0,0);
+   sphere(1.05,new THREE.MeshStandardMaterial({color:0x55648f,metalness:.25,roughness:.4,wireframe:true}),0,0,0);
+   sphere(.4,glow(0xefbb72),0,0,0);line([-4.4,0,0],[-.95,0,0],0xffd97e,.06);
+   for(let i=0;i<8;i++)particles.push(sphere(.075,glow(0xffe5a0),-4.2+i*.4,0,0));
+   let electron=sphere(.23,glow(0x38bdf8),2,1.5,0);electron.name='electron';let positron=sphere(.23,glow(0xf43f5e),2,-1.5,0);positron.name='positron';dynamicMeshes.push(electron,positron);
+   line([.55,.15,0],[3.7,2.4,0],0x38bdf8,.04);line([.55,-.15,0],[3.7,-2.4,0],0xf43f5e,.04);
+   label('นิวเคลียสคูลอมบ์ (อนุรักษ์โมเมนตัม)',0,2.55,0,'#fbbf24',1.05);
+   label('อิเล็กตรอน e⁻ (โค้งขึ้น)',3.2,2.05,0,'#38bdf8',1.55);
+   label('โพซิตรอน e⁺ (โค้งลง)',3.2,-1.95,0,'#fb7185',-1.55);
+  }else{
+   ring(2.4,0x38bdf8,0,0,0);
+   const colCore=sphere(.34,glow(0xffffff),0,0,0);colCore.name='annihCore';dynamicMeshes.push(colCore);
+   const eMinus=sphere(.22,glow(0x38bdf8),-2.6,0,0);eMinus.name='eMinus';
+   const ePlus=sphere(.22,glow(0xf43f5e),2.6,0,0);ePlus.name='ePlus';
+   const g1=sphere(.16,glow(0xfbbf24),0,0,0);g1.name='gamma1';
+   const g2=sphere(.16,glow(0xfbbf24),0,0,0);g2.name='gamma2';
+   dynamicMeshes.push(eMinus,ePlus,g1,g2);
+   line([-3.4,0,0],[3.4,0,0],0x38bdf8,.03);
+   line([0,-3.2,0],[0,3.2,0],0xfbbf24,.045);
+   label('จุดประลัยคู่ (CM at rest)',1.6,.55,0,'#e2e8f0',.15);
+   label('e⁻ วิ่งเข้าชน',-2.8,1.15,0,'#38bdf8',.25);
+   label('e⁺ วิ่งเข้าชน',2.8,1.15,0,'#fb7185',.25);
+   label('โฟตอน γ₁ (511 keV)',0,3.35,0,'#fbbf24',2.6);
+   label('โฟตอน γ₂ (511 keV · 180°)',0,-3.35,0,'#fbbf24',-2.6);
+  }
  }
  updateSceneParameters();}
 function updateSceneParameters(){if(!root)return;if(current===0){const T=state.T;const color=new THREE.Color();const u=Math.min(1,Math.max(0,(T-1000)/10000));color.setHSL(.055+u*.1,.9,.50+u*.25);const o=dynamicMeshes.find(x=>x.name==='bbCore');if(o)o.material.color.copy(color);}
 if(current===1){const hex=wavelengthToHex(state.wl);const emitted=photonEnergy(state.wl)>workFunctions[state.metal];const available=state.voltage>-(photonEnergy(state.wl)-workFunctions[state.metal]);const lg=dynamicMeshes.find(x=>x.name==='lampGlow');if(lg)lg.material.color.setHex(hex);const bm=dynamicMeshes.find(x=>x.name==='uvBeam');if(bm)bm.material.color.setHex(hex);particles.slice(0,7).forEach((x,i)=>{x.visible=i<(state.intensity/100*7);x.material.color.setHex(hex);});particles.slice(7).forEach(x=>x.visible=emitted&&available);}
-if(current===3){const theta=state.theta*Math.PI/180;const sc=dynamicMeshes.find(x=>x.name==='scatterLine');const det=dynamicMeshes.find(x=>x.name==='naiDet');if(sc){const a=new THREE.Vector3(.5,0,0),b=new THREE.Vector3(.5+3.5*Math.cos(theta),3.5*Math.sin(theta),0);const d=b.clone().sub(a);sc.position.copy(a.clone().add(b).multiplyScalar(.5));sc.scale.y=1;sc.geometry.dispose();sc.geometry=new THREE.CylinderGeometry(.065,.065,d.length(),12);sc.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),d.normalize());if(det){det.position.copy(b);det.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),d.clone().normalize());}}}
-if(current===4){const isCreation=state.mode==='creation',valid=state.E>=2*meC2/1000;dynamicMeshes.forEach(o=>o.visible=!isCreation||valid);}}
+if(current===2){const targetCol={Cu:0xea580c,Mo:0x94a3b8,W:0x475569}[state.target]||0xea580c;const tgMesh=dynamicMeshes.find(x=>x.name==='xrayTarget');if(tgMesh)tgMesh.material.color.setHex(targetCol);}
+if(current===3){
+  const theta=state.theta*Math.PI/180;
+  const phi=theta<1e-3?Math.PI/2:Math.atan(1/((1+state.E/meC2)*Math.tan(theta/2)));
+  const sc=dynamicMeshes.find(x=>x.name==='scatterLine');const det=dynamicMeshes.find(x=>x.name==='naiDet');
+  const elTrk=dynamicMeshes.find(x=>x.name==='electronTrack');const elObj=dynamicMeshes.find(x=>x.name==='electron');
+  if(sc){const a=new THREE.Vector3(.5,0,0),b=new THREE.Vector3(.5+3.5*Math.cos(theta),3.5*Math.sin(theta),0);const d=b.clone().sub(a);sc.position.copy(a.clone().add(b).multiplyScalar(.5));sc.geometry.dispose();sc.geometry=new THREE.CylinderGeometry(.065,.065,d.length(),12);sc.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),d.normalize());if(det){det.position.copy(b);det.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),d.clone().normalize());}}
+  if(elTrk&&theta>1e-3){const a=new THREE.Vector3(.45,0,0),b=new THREE.Vector3(.45+3.0*Math.cos(phi),-3.0*Math.sin(phi),0);const d=b.clone().sub(a);elTrk.position.copy(a.clone().add(b).multiplyScalar(.5));elTrk.geometry.dispose();elTrk.geometry=new THREE.CylinderGeometry(.05,.05,d.length(),10);elTrk.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),d.normalize());if(elObj)elObj.position.copy(b);}
+}
+if(current===4){const isCreation=state.mode==='creation',valid=state.E>=2*meC2/1000;if(!isCreation&&!dynamicMeshes.some(o=>o.name==='annihCore')){buildScene();return;}if(isCreation&&dynamicMeshes.some(o=>o.name==='annihCore')){buildScene();return;}dynamicMeshes.forEach(o=>{if(isCreation)o.visible=valid;});}}
 function setup3D(){scene=new THREE.Scene();scene.fog=new THREE.FogExp2(0x081421,.017);camera=new THREE.PerspectiveCamera(43,1,.1,100);renderer=new THREE.WebGLRenderer({antialias:true,alpha:true,preserveDrawingBuffer:true});renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.3;renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;$('scene').appendChild(renderer.domElement);const pmrem=new THREE.PMREMGenerator(renderer),env=new THREE.Scene();env.background=new THREE.Color(0x091625);const card=new THREE.Mesh(new THREE.BoxGeometry(10,5,.4),new THREE.MeshBasicMaterial({color:0xdbf3ff}));card.position.set(-6,8,6);env.add(card);scene.environment=pmrem.fromScene(env,.04).texture;pmrem.dispose();root=new THREE.Group();scene.add(root);scene.add(new THREE.HemisphereLight(0xbbe0ff,0x14263b,1.8));const dir=new THREE.DirectionalLight(0xf5f9ff,2.4);dir.position.set(4,10,8);dir.castShadow=true;scene.add(dir);const key=new THREE.PointLight(0x77d9ff,60,40);key.position.set(-3,6,8);scene.add(key);const warm=new THREE.PointLight(0xffbc81,38,30);warm.position.set(5,2,-4);scene.add(warm);const stars=new THREE.BufferGeometry();const coords=[];for(let i=0;i<160;i++){coords.push((Math.random()-.5)*32,(Math.random()-.5)*20,(Math.random()-.5)*20-5)}stars.setAttribute('position',new THREE.Float32BufferAttribute(coords,3));scene.add(new THREE.Points(stars,new THREE.PointsMaterial({color:0x5c89af,size:.025})));let dragging=false,lastX=0,lastY=0;const el=renderer.domElement;el.addEventListener('pointerdown',ev=>{dragging=true;lastX=ev.clientX;lastY=ev.clientY;el.setPointerCapture(ev.pointerId)});el.addEventListener('pointermove',ev=>{if(!dragging)return;orbit.y+=(ev.clientX-lastX)*.008;orbit.x=Math.max(-1.2,Math.min(1.2,orbit.x+(ev.clientY-lastY)*.008));lastX=ev.clientX;lastY=ev.clientY});el.addEventListener('pointerup',()=>dragging=false);el.addEventListener('wheel',ev=>{ev.preventDefault();orbit.dist=Math.max(7,Math.min(25,orbit.dist+ev.deltaY*.015))},{passive:false});resize();new ResizeObserver(resize).observe($('scene'));function resize(){const r=$('scene').getBoundingClientRect();if(!r.width||!r.height)return;renderer.setSize(r.width,r.height,false);camera.aspect=r.width/r.height;camera.updateProjectionMatrix();drawPlot();}
-let prev=performance.now();function animate(now){requestAnimationFrame(animate);const dt=Math.min(.05,(now-prev)/1000);prev=now;if(playing)clockT+=dt*Number($('timeScale').value);root.rotation.y=orbit.y;root.rotation.x=orbit.x;camera.position.set(0,1,orbit.dist);camera.lookAt(0,-.25,0);if(playing){if(current===0){particles.forEach((p,i)=>{const a=i*2.399+clockT*.35,r=2.4+i*.07;p.position.set(-1.2+Math.cos(a)*r,Math.sin(a)*r*.5,Math.sin(a)*1.3);});}if(current===1){particles.slice(0,7).forEach((p,i)=>{const u=(clockT*.75+i/7)%1;p.position.set(1.45+(0.16-1.45)*u,2.45+(0-2.45)*u+(i%3-1)*.08,1.45+(0-1.45)*u);});particles.slice(7).forEach((p,i)=>{p.position.x=.24+((clockT*(1+Math.max(0,photonEnergy(state.wl)-workFunctions[state.metal]))+i*.32)%2.55);});}if(current===2){particles.forEach((p,i)=>{p.position.x=i<15?-2.4+((clockT*3+i*.26)%4.3):2.3+((clockT*2+i*.22)%2);});}if(current===3){particles.forEach((p,i)=>{p.position.x=-4+((clockT*2+i*.4)%3.5);});}if(current===4){particles.forEach((p,i)=>{p.position.x=-4+((clockT*1.6+i*.42)%3.6);});dynamicMeshes.forEach((obj,i)=>{if(obj.name==='electron')obj.position.set(1+Math.sin(clockT*.7)*.6,1.1+Math.sin(clockT*.5)*.3,0);if(obj.name==='positron')obj.position.set(1+Math.sin(clockT*.7)*.6,-1.1-Math.sin(clockT*.5)*.3,0)});}}
+let prev=performance.now();function animate(now){requestAnimationFrame(animate);const dt=Math.min(.05,(now-prev)/1000);prev=now;if(playing)clockT+=dt*Number($('timeScale').value);root.rotation.y=orbit.y;root.rotation.x=orbit.x;camera.position.set(0,1,orbit.dist);camera.lookAt(0,-.25,0);if(playing){if(current===0){particles.forEach((p,i)=>{const a=i*2.399+clockT*.35,r=2.4+i*.07;p.position.set(-1.2+Math.cos(a)*r,Math.sin(a)*r*.5,Math.sin(a)*1.3);});}if(current===1){particles.slice(0,7).forEach((p,i)=>{const u=(clockT*.75+i/7)%1;p.position.set(1.45+(0.16-1.45)*u,2.45+(0-2.45)*u+(i%3-1)*.08,1.45+(0-1.45)*u);});particles.slice(7).forEach((p,i)=>{p.position.x=.24+((clockT*(1+Math.max(0,photonEnergy(state.wl)-workFunctions[state.metal]))+i*.32)%2.55);});}if(current===2){const vFac=0.6+state.V/60;particles.slice(0,15).forEach((p,i)=>{p.position.x=-2.5+((clockT*2.5*vFac+i*.25)%4.0);});particles.slice(15).forEach((p,i)=>{const u=(clockT*1.8+(i%7)/7)%1;p.position.set(1.6+((i%5-2)*.18)*u,-0.25-2.1*u,((i%3-1)*.18)*u);});}if(current===3){const th=state.theta*Math.PI/180;particles.slice(0,9).forEach((p,i)=>{p.position.x=-3.6+((clockT*2+i*.38)%3.2);});const sp=particles[9];if(sp){const u=(clockT*1.4)%1;sp.position.set(.5+3.3*Math.cos(th)*u,3.3*Math.sin(th)*u,0);}}if(current===4){if(state.mode==='creation'){particles.forEach((p,i)=>{p.position.x=-4+((clockT*1.6+i*.42)%3.6);});dynamicMeshes.forEach((obj)=>{if(obj.name==='electron')obj.position.set(1+Math.sin(clockT*.7)*.6,1.1+Math.sin(clockT*.5)*.3,0);if(obj.name==='positron')obj.position.set(1+Math.sin(clockT*.7)*.6,-1.1-Math.sin(clockT*.5)*.3,0)});}else{const cy=(clockT*.7)%1;const em=dynamicMeshes.find(o=>o.name==='eMinus'),ep=dynamicMeshes.find(o=>o.name==='ePlus'),g1=dynamicMeshes.find(o=>o.name==='gamma1'),g2=dynamicMeshes.find(o=>o.name==='gamma2');if(cy<.5){const u=cy*2;if(em){em.visible=true;em.position.set(-2.6*(1-u),0,0);}if(ep){ep.visible=true;ep.position.set(2.6*(1-u),0,0);}if(g1)g1.visible=false;if(g2)g2.visible=false;}else{const u=(cy-.5)*2;if(em)em.visible=false;if(ep)ep.visible=false;if(g1){g1.visible=true;g1.position.set(0,3.1*u,0);}if(g2){g2.visible=true;g2.position.set(0,-3.1*u,0);}}}}}
 renderer.render(scene,camera)}requestAnimationFrame(animate);}
 $('toggle').addEventListener('click',()=>{playing=!playing;$('toggle').textContent=playing?'⏸ หยุดชั่วคราว':'▶ เล่นต่อ';$('clock').textContent=playing?'LAB RUNNING':'PAUSED';});$('resetView').addEventListener('click',()=>{orbit={x:-.24,y:.43,dist:13};});$('toggleLabels')?.addEventListener('click',()=>{labelsVisible=!labelsVisible;$('toggleLabels').textContent=labelsVisible?'🏷️ ป้ายชื่อ: เปิด':'🏷️ ป้ายชื่อ: ซ่อน';applyLabelPrefs();});$('labelSmaller')?.addEventListener('click',()=>{labelScale=Math.max(0.55,Number((labelScale-0.15).toFixed(2)));applyLabelPrefs();});$('labelLarger')?.addEventListener('click',()=>{labelScale=Math.min(1.9,Number((labelScale+0.15).toFixed(2)));applyLabelPrefs();});$('zoomIn')?.addEventListener('click',()=>{orbit.dist=Math.max(6,orbit.dist-1.4);});$('zoomOut')?.addEventListener('click',()=>{orbit.dist=Math.min(25,orbit.dist+1.4);});$('timeScale').addEventListener('input',ev=>{$('timeScaleValue').textContent=`${Number(ev.target.value).toFixed(1)}×`;});$('reset').addEventListener('click',()=>{state=paramsFor(MODULES[current]);buildControls();update();});$('randomize').addEventListener('click',()=>{for(const a of MODULES[current].controls){if(a[2]==='range'){const v=a[3]+Math.floor(Math.random()*((a[4]-a[3])/a[5]+1))*a[5];state[a[0]]=Number(v.toFixed(6));}else{state[a[0]]=a[3][Math.floor(Math.random()*a[3].length)][0];}}buildControls();update();});$('record').addEventListener('click',()=>{if(log.length>=1000){alert('บันทึกได้สูงสุด 1,000 รายการต่อการทดลอง');return;}log.push([...window.currentLogRow]);renderLog();});$('clearLog').addEventListener('click',()=>{log=[];renderLog();});$('export').addEventListener('click',()=>downloadCSV(`photonlab_${MODULES[current].key}_curve.csv`,[[plotAxes.x,plotAxes.y],...plotData.map(o=>[o.x,o.y])]));$('helpBtn').addEventListener('click',()=>$('help').classList.remove('hidden'));$('closeHelp').addEventListener('click',()=>$('help').classList.add('hidden'));$('help').addEventListener('click',ev=>{if(ev.target===$('help'))$('help').classList.add('hidden');});document.addEventListener('keydown',e=>{if(e.key==='Escape')$('help').classList.add('hidden');});window.addEventListener('resize',()=>drawPlot());
 setup3D();setModule(0);
