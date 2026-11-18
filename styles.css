@@ -1955,6 +1955,7 @@ body.mode-conceptual .lecture-deep-block {
   gap: 12px;
   margin-top: 14px;
 }
+
 .ipo-clock-card {
   display: flex;
   align-items: center;
@@ -1964,16 +1965,37 @@ body.mode-conceptual .lecture-deep-block {
   border-radius: 12px;
   padding: 10px 14px;
 }
+
 .ipo-analog-svg {
   width: 68px;
   height: 68px;
   flex: 0 0 68px;
   filter: drop-shadow(0 2px 6px rgba(15, 23, 42, 0.12));
 }
-.ipo-analog-svg line { transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1); }
-.ipo-clock-label { font-size: 12.5px; font-weight: 700; color: #334155; }
-.ipo-clock-val { font-size: 18px; font-weight: 800; color: #0f172a; font-family: ui-monospace, monospace; margin-top: 2px; }
-@media (max-width: 640px) { .ipo-clocks-row { grid-template-columns: 1fr; } }
+
+.ipo-analog-svg line {
+  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.ipo-clock-label {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #334155;
+}
+
+.ipo-clock-val {
+  font-size: 18px;
+  font-weight: 800;
+  color: #0f172a;
+  font-family: ui-monospace, monospace;
+  margin-top: 2px;
+}
+
+@media (max-width: 640px) {
+  .ipo-clocks-row {
+    grid-template-columns: 1fr;
+  }
+}
 
 /* ===== HERO LECTURER 3D PIXAR CARD & FEATURE PILLS ===== */
 .hero-left-col {
@@ -1981,6 +2003,7 @@ body.mode-conceptual .lecture-deep-block {
   flex-direction: column;
   justify-content: center;
 }
+
 .hero-prof-card {
   display: flex;
   align-items: center;
@@ -1994,6 +2017,7 @@ body.mode-conceptual .lecture-deep-block {
   width: fit-content;
   max-width: 100%;
 }
+
 .hero-prof-avatar-wrap {
   position: relative;
   width: 60px;
@@ -2002,6 +2026,7 @@ body.mode-conceptual .lecture-deep-block {
   display: grid;
   place-items: center;
 }
+
 .hero-prof-avatar {
   width: 54px;
   height: 54px;
@@ -2011,6 +2036,7 @@ body.mode-conceptual .lecture-deep-block {
   box-shadow: 0 0 16px rgba(56, 189, 248, 0.55);
   animation: heroProfFloat 3.6s ease-in-out infinite;
 }
+
 .hero-prof-ring {
   position: absolute;
   inset: 0;
@@ -2018,37 +2044,56 @@ body.mode-conceptual .lecture-deep-block {
   border: 1.5px dashed rgba(56, 189, 248, 0.75);
   animation: heroProfSpin 14s linear infinite;
 }
+
 @keyframes heroProfFloat {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-2px); }
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-2px);
+  }
 }
+
 @keyframes heroProfSpin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
 }
+
 .hero-prof-kicker {
   font-size: 10px;
   font-weight: 800;
   letter-spacing: 0.7px;
   color: #7dd3fc;
 }
+
 .hero-prof-name {
   font-size: 15.5px;
   font-weight: 800;
   color: #ffffff;
   margin-top: 2px;
 }
+
 .hero-prof-sub {
   font-size: 12px;
   color: #cbd5e1;
   margin-top: 1px;
 }
+
 .hero-stats-row {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
   margin: 0 0 14px;
 }
+
 .hero-stat-pill {
   font-size: 11.5px;
   font-weight: 700;
@@ -2057,4 +2102,102 @@ body.mode-conceptual .lecture-deep-block {
   border: 1px solid rgba(148, 163, 184, 0.3);
   border-radius: 999px;
   padding: 4px 11px;
+}
+
+/* ===== MODERN ANIMATED MODULE CARDS & KATEX PILLS ===== */
+.module-card {
+  position: relative;
+  overflow: hidden;
+  border-top: 4px solid #3b82f6;
+  transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+}
+.module-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 14px 30px rgba(37, 99, 235, 0.14);
+}
+.mc-blue { border-top-color: #2563eb; }
+.mc-amber { border-top-color: #f59e0b; }
+.mc-cyan { border-top-color: #06b6d4; }
+.mc-emerald { border-top-color: #10b981; }
+.mc-violet { border-top-color: #8b5cf6; }
+.mc-indigo { border-top-color: #4f46e5; }
+.mc-teal { border-top-color: #14b8a6; }
+.mc-rose { border-top-color: #f43f5e; }
+.mc-purple { border-top-color: #9333ea; }
+.mc-slate { border-top-color: #475569; }
+.mc-anim-icon {
+  display: inline-block;
+  animation: mcFloat 2.8s ease-in-out infinite;
+}
+.module-card:hover .mc-anim-icon {
+  transform: scale(1.22) rotate(8deg);
+}
+@keyframes mcFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-2px); }
+}
+.mc-eq {
+  margin-top: 10px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #f8fafc 0%, #eff6ff 100%);
+  border: 1px solid #bfdbfe;
+  color: #0f172a;
+  font-size: 13px;
+  text-align: center;
+  overflow-x: auto;
+}
+.mc-eq .katex-display { margin: 2px 0; }
+
+/* ===== RESEARCH-INFORMED TEACHING OVERVIEW SECTION ===== */
+.research-panel {
+  border: 1.5px solid #c7d2fe;
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+}
+.rs-overview-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 12px;
+}
+.rs-overview-card {
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-left: 4px solid #2563eb;
+  border-radius: 12px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.22s ease, box-shadow 0.22s ease;
+}
+.rs-overview-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 26px rgba(15, 23, 42, 0.09);
+}
+.rs-ov-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+.rs-ov-badge {
+  font-size: 11px;
+  font-weight: 800;
+  color: #1d4ed8;
+  background: #dbeafe;
+  padding: 2px 9px;
+  border-radius: 999px;
+}
+.rs-ov-spin {
+  font-size: 18px;
+  display: inline-block;
+  animation: mcFloat 3s ease-in-out infinite;
+}
+.rs-overview-card h4 { margin: 4px 0; font-size: 14.5px; color: #0f172a; }
+.rs-ov-cite { font-size: 11.5px; color: #64748b; margin: 0 0 6px; }
+.rs-ov-desc { font-size: 13px; color: #334155; line-height: 1.55; margin: 0; }
+@media (max-width: 980px) {
+  .rs-overview-grid { grid-template-columns: 1fr; }
 }

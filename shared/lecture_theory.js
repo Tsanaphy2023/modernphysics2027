@@ -819,9 +819,11 @@
   document.addEventListener('DOMContentLoaded', () => {
     injectLectureDecks();
     initHeroCarousel();
+    const overviewEl = document.querySelector('section.page[data-page="overview"]');
+    renderMathInContainer(overviewEl);
     // Retry once after deferred KaTeX auto-render loads
     setTimeout(() => {
-      document.querySelectorAll('.lecture-deck, #hero-lab-carousel').forEach(renderMathInContainer);
-    }, 300);
+      document.querySelectorAll('.lecture-deck, #hero-lab-carousel, section.page[data-page="overview"]').forEach(renderMathInContainer);
+    }, 350);
   });
 })();
