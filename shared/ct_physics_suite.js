@@ -426,6 +426,87 @@
     }
   }
 
+  function initLiveTelemetryHud() {
+    const stage = document.querySelector('#sceneHost, #scene, #viewport');
+    if (!stage || document.getElementById('ct-live-hud')) return;
+    if (getComputedStyle(stage).position === 'static') stage.style.position = 'relative';
+
+    const hud = document.createElement('div');
+    hud.id = 'ct-live-hud';
+    const hasTopOverlay = Boolean(stage.parentElement && stage.parentElement.querySelector('.viewport-overlay.top'));
+    if (hasTopOverlay) hud.classList.add('has-top-overlay');
+    hud.innerHTML = `
+      <div class="ct-hud-head">
+        <span>📊 LIVE DATA</span>
+        <button type="button" id="ct-hud-min" title="พับ/ขยายข้อมูลสด">▾</button>
+      </div>
+      <div id="ct-hud-rows" class="ct-hud-rows"></div>
+    `;
+    stage.appendChild(hud);
+
+    let collapsed = localStorage.getItem('mp27_hud_collapsed') === '1';
+    const rowsEl = hud.querySelector('#ct-hud-rows');
+    const minBtn = hud.querySelector('#ct-hud-min');
+    const applyCollapse = () => {
+      rowsEl.style.display = collapsed ? 'none' : 'grid';
+      minBtn.textContent = collapsed ? '▸' : '▾';
+    };
+    applyCollapse();
+    minBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      collapsed = !collapsed;
+      localStorage.setItem('mp27_hud_collapsed', collapsed ? '1' : '0');
+      applyCollapse();
+    });
+
+    function collectMetrics() {
+      const pairs = [];
+      const pushPair = (k, v) => {
+        const kk = String(k || '').replace(/\s+/g, ' ').trim();
+        const vv = String(v || '').replace(/\s+/g, ' ').trim();
+        if (kk && vv && pairs.length < 4 && !pairs.some((p) => p[0] === kk)) pairs.push([kk, vv]);
+      };
+
+      document.querySelectorAll('#metrics .measurement, #metrics .metric, #readouts .readout, #readouts .item, #readings .reading').forEach((el) => {
+        const k = el.querySelector('.reading-label, .name, span, small, label')?.textContent || el.children[0]?.textContent;
+        const v = el.querySelector('.reading-value, .value, strong, b')?.textContent || el.children[1]?.textContent;
+        pushPair(k, v);
+      });
+      if (!pairs.length) {
+        document.querySelectorAll('.metric-strip .metric').forEach((el) => {
+          const k = el.querySelector('.metric-name')?.textContent;
+          const v = el.querySelector('strong')?.textContent;
+          pushPair(k, v);
+        });
+      }
+      if (!pairs.length) {
+        document.querySelectorAll('#readouts > div, #metrics > div').forEach((el) => {
+          const parts = el.textContent.split(/[:\n]+/).map((s) => s.trim()).filter(Boolean);
+          if (parts.length >= 2) pushPair(parts[0], parts[1]);
+        });
+      }
+      return pairs;
+    }
+
+    function refreshHud() {
+      if (collapsed) return;
+      const items = collectMetrics();
+      if (!items.length) {
+        rowsEl.innerHTML = '<div class="ct-hud-row"><span>สถานะ</span><strong>READY</strong></div>';
+        return;
+      }
+      rowsEl.innerHTML = items
+        .map(([k, v]) => `<div class="ct-hud-row"><span title="${esc(k)}">${esc(k)}</span><strong>${esc(v)}</strong></div>`)
+        .join('');
+    }
+
+    refreshHud();
+    setInterval(refreshHud, 300);
+    document.addEventListener('input', refreshHud);
+    document.addEventListener('change', refreshHud);
+    document.addEventListener('click', () => setTimeout(refreshHud, 40));
+  }
+
   async function launchArXrView() {
     trackTelemetry('ar_xr_toggle', { modKey });
     if (!window.MP27ArXr) {
@@ -742,6 +823,7 @@
     });
 
     bar.querySelector('#ct-theory-btn').addEventListener('click', openTheoryModal);
+    initLiveTelemetryHud();
     bar.querySelector('#ct-mode-btn').addEventListener('click', () => {
       const next = document.body.classList.contains('mode-conceptual') ? 'equations' : 'conceptual';
       applyUiMode(next);
