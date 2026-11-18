@@ -1718,13 +1718,22 @@
       const theta = 2 * Math.atan((8.98755e9 * 2 * 79 * 1.60218e-19) / (2 * E * 1e6 * b * 1e-15)) * (180 / Math.PI);
       const dE = (-13.6 / (nf * nf)) - (-13.6 / (ni * ni));
       const lam = Math.abs(dE) > 1e-9 ? 1239.842 / Math.abs(dE) : 0;
+      const renderMath = (el) => {
+        if (el && typeof window.renderMathInElement === 'function') {
+          window.renderMathInElement(el, {
+            delimiters: [{ left: '$$', right: '$$', display: true }, { left: '$', right: '$', display: false }],
+            throwOnError: false,
+          });
+        }
+      };
       const out = $('#am-out');
       if (out) {
         out.innerHTML = `
-          <div class="watch-row"><span>Rutherford Scattering θ (Au Z=79)</span><span class="watch-val">${theta.toFixed(2)}°</span></div>
-          <div class="watch-row"><span>Bohr Transition (${ni} → ${nf})</span><span class="watch-val">${dE < 0 ? 'EMIT' : dE > 0 ? 'ABSORB' : 'NONE'} |ΔE| = ${Math.abs(dE).toFixed(3)} eV</span></div>
-          <div class="watch-row"><span>Hydrogen Spectral λ = hc/|ΔE|</span><span class="watch-val">${lam > 0 ? lam.toFixed(1) + ' nm' : '--'}</span></div>
+          <div class="watch-row"><span>Rutherford Scattering $\\theta$ (Au $Z=79$)</span><span class="watch-val">${theta.toFixed(2)}°</span></div>
+          <div class="watch-row"><span>Bohr Transition ($n_i=${ni} \\to n_f=${nf}$)</span><span class="watch-val">${dE < 0 ? 'EMIT' : dE > 0 ? 'ABSORB' : 'NONE'} $|\\Delta E| = ${Math.abs(dE).toFixed(3)}$ eV</span></div>
+          <div class="watch-row"><span>Hydrogen Spectral $\\lambda = \\frac{hc}{|\\Delta E|}$</span><span class="watch-val">${lam > 0 ? lam.toFixed(1) + ' nm' : '--'}</span></div>
         `;
+        renderMath(out);
       }
       if (saveProgress) {
         state.attempts.atomic_models = (state.attempts.atomic_models || 0) + 1;
@@ -1759,10 +1768,11 @@
       const out = $('#qm-out');
       if (out) {
         out.innerHTML = `
-          <div class="watch-row"><span>1D Infinite Well Eₙ (ℏ=m=1)</span><span class="watch-val">E_${n} = ${En.toFixed(3)} (Nodes: ${n - 1})</span></div>
-          <div class="watch-row"><span>Regime (E vs V₀)</span><span class="watch-val">${E < V ? 'Quantum Tunneling (E < V₀)' : 'Over-Barrier (E ≥ V₀)'}</span></div>
-          <div class="watch-row"><span>Transmission T / Reflection R</span><span class="watch-val">T = ${T.toFixed(5)} / R = ${(1 - T).toFixed(5)}</span></div>
+          <div class="watch-row"><span>1D Infinite Well $E_n = \\frac{n^2\\pi^2\\hbar^2}{2mL^2}$ ($\\hbar=m=1$)</span><span class="watch-val">$E_{${n}} = ${En.toFixed(3)}$ (Nodes: ${n - 1})</span></div>
+          <div class="watch-row"><span>Regime ($E$ vs $V_0$)</span><span class="watch-val">${E < V ? 'Quantum Tunneling ($E < V_0$)' : 'Over-Barrier ($E \\ge V_0$)'}</span></div>
+          <div class="watch-row"><span>Transmission $T$ / Reflection $R$</span><span class="watch-val">$T = ${T.toFixed(5)}$ / $R = ${(1 - T).toFixed(5)}$</span></div>
         `;
+        renderMath(out);
       }
       if (saveProgress) {
         state.attempts.quantum_mechanics = (state.attempts.quantum_mechanics || 0) + 1;
@@ -1786,9 +1796,10 @@
       const out = $('#ss-out');
       if (out) {
         out.innerHTML = `
-          <div class="watch-row"><span>Critical Field Bc(T) = Bc(0)[1−(T/Tc)²]</span><span class="watch-val">${BcT.toFixed(3)} T</span></div>
-          <div class="watch-row"><span>Decision: (T &lt; Tc) AND (B &lt; Bc(T))</span><span class="watch-val">${isSC ? 'TRUE → Superconducting (R = 0, Meissner)' : 'FALSE → Normal State'}</span></div>
+          <div class="watch-row"><span>Critical Field $B_c(T) = B_c(0)\\left[1 - \\left(\\frac{T}{T_c}\\right)^2\\right]$</span><span class="watch-val">${BcT.toFixed(3)} T</span></div>
+          <div class="watch-row"><span>Decision: $(T &lt; T_c) \\land (B &lt; B_c(T))$</span><span class="watch-val">${isSC ? 'TRUE → Superconducting (R = 0, Meissner)' : 'FALSE → Normal State'}</span></div>
         `;
+        renderMath(out);
       }
       if (saveProgress) {
         state.attempts.solid_state = (state.attempts.solid_state || 0) + 1;
@@ -1814,10 +1825,11 @@
       const out = $('#np-out');
       if (out) {
         out.innerHTML = `
-          <div class="watch-row"><span>Nuclear Radius R ≈ 1.2 A^(1/3)</span><span class="watch-val">${R.toFixed(3)} fm (N = ${A - Z})</span></div>
-          <div class="watch-row"><span>Binding Energy per Nucleon (SEMF B/A)</span><span class="watch-val">${(bind / A).toFixed(3)} MeV/A</span></div>
-          <div class="watch-row"><span>Remaining Nuclei N(t) = N₀·2^(−t/T½)</span><span class="watch-val">${Nt.toFixed(1)} (${((Nt / N0) * 100).toFixed(2)}%)</span></div>
+          <div class="watch-row"><span>Nuclear Radius $R \\approx 1.2\\,A^{1/3}$</span><span class="watch-val">${R.toFixed(3)} fm ($N = ${A - Z}$)</span></div>
+          <div class="watch-row"><span>Binding Energy per Nucleon ($\\text{SEMF } B/A$)</span><span class="watch-val">${(bind / A).toFixed(3)} MeV/A</span></div>
+          <div class="watch-row"><span>Remaining Nuclei $N(t) = N_0 \\cdot 2^{-t/T_{1/2}}$</span><span class="watch-val">${Nt.toFixed(1)} (${((Nt / N0) * 100).toFixed(2)}%)</span></div>
         `;
+        renderMath(out);
       }
       if (saveProgress) {
         state.attempts.nuclear_physics = (state.attempts.nuclear_physics || 0) + 1;
@@ -1850,9 +1862,10 @@
       if (out) {
         out.innerHTML = `
           <div class="watch-row"><span>Hadron Composition</span><span class="watch-val">${esc(h.label)}</span></div>
-          <div class="watch-row"><span>Net Charge Q / Baryon B</span><span class="watch-val">Q = ${esc(h.q)} , B = ${esc(h.b)}</span></div>
+          <div class="watch-row"><span>Net Charge $Q$ / Baryon $B$</span><span class="watch-val">$Q = ${esc(h.q)}$ , $B = ${esc(h.b)}$</span></div>
           <div class="watch-row"><span>Force Mediator</span><span class="watch-val">${esc(f)}</span></div>
         `;
+        renderMath(out);
       }
       if (saveProgress) {
         state.attempts.particle_physics = (state.attempts.particle_physics || 0) + 1;
