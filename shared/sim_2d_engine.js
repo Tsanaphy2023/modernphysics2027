@@ -64,39 +64,111 @@
     if (activeMod === 'relativity') {
       const beta = Math.max(-0.95, Math.min(0.95, numVal('#beta', 0.6)));
       const gamma = 1 / Math.sqrt(1 - beta * beta);
-      const midX = W * 0.42;
-      g.fillStyle = fg;
-      g.font = '700 13px system-ui, sans-serif';
-      g.fillText(`2D Light Clock & Lorentz Contraction  |  β = ${beta.toFixed(2)}c, γ = ${gamma.toFixed(3)}`, 14, 22);
+      const subMod = document.querySelector('#moduleNav .nav-item.active')?.dataset?.module || 'dilation';
 
-      // Frame S (Rest)
-      const lx = W * 0.16, topY = 58, botY = H - 36;
-      g.strokeStyle = accent; g.lineWidth = 4;
-      g.beginPath(); g.moveTo(lx - 34, topY); g.lineTo(lx + 34, topY); g.stroke();
-      g.beginPath(); g.moveTo(lx - 34, botY); g.lineTo(lx + 34, botY); g.stroke();
-      const pS = 0.5 - 0.5 * Math.cos(t * 3.0);
-      const pyS = botY - pS * (botY - topY);
-      g.setLineDash([4, 4]); g.strokeStyle = sub; g.lineWidth = 1.5;
-      g.beginPath(); g.moveTo(lx, topY); g.lineTo(lx, botY); g.stroke(); g.setLineDash([]);
-      g.fillStyle = '#f59e0b';
-      g.beginPath(); g.arc(lx, pyS, 7, 0, Math.PI * 2); g.fill();
-      g.fillStyle = fg; g.font = '600 11px system-ui, sans-serif';
-      g.fillText('กรอบนิ่ง S (Δτ)', lx - 38, H - 14);
+      if (subMod === 'transforms') {
+        const ox = W * 0.48, oy = H * 0.78, scale = Math.min(W, H) * 0.095;
+        const evX = numVal('#field-x', 2), evT = numVal('#field-tEvent', 1);
+        g.fillStyle = fg; g.font = '700 13px system-ui, sans-serif';
+        g.fillText(`2D Minkowski Spacetime (S vs S')  |  β = ${beta.toFixed(2)}c, γ = ${gamma.toFixed(3)}`, 14, 22);
+        // S axes
+        g.strokeStyle = accent; g.lineWidth = 2;
+        g.beginPath(); g.moveTo(40, oy); g.lineTo(W - 30, oy); g.stroke();
+        g.beginPath(); g.moveTo(ox, oy + 20); g.lineTo(ox, 36); g.stroke();
+        // Light cone x = ±ct
+        g.setLineDash([5, 4]); g.strokeStyle = '#f59e0b'; g.lineWidth = 1.5;
+        g.beginPath(); g.moveTo(ox - 160, oy - 160); g.lineTo(ox, oy); g.lineTo(ox + 160, oy - 160); g.stroke();
+        g.setLineDash([]);
+        // Tilted S' axes (slope beta)
+        const tilt = beta * 145;
+        g.strokeStyle = '#a855f7'; g.lineWidth = 2.2;
+        g.beginPath(); g.moveTo(ox, oy); g.lineTo(ox + tilt, oy - 145); g.stroke();
+        g.beginPath(); g.moveTo(ox - 145, oy + tilt); g.lineTo(ox + 145, oy - tilt); g.stroke();
+        // Event E(x, ct)
+        const px = ox + evX * scale, py = oy - evT * scale;
+        g.fillStyle = '#fbbf24'; g.beginPath(); g.arc(px, py, 6.5, 0, Math.PI * 2); g.fill();
+        g.fillStyle = fg; g.font = '600 11px system-ui, sans-serif';
+        g.fillText('x (S)', W - 56, oy - 8); g.fillText('ct (S)', ox + 8, 46);
+        g.fillStyle = '#c084fc'; g.fillText("ct'", ox + tilt + 6, oy - 140); g.fillText("x'", ox + 130, oy - tilt - 8);
+        g.fillStyle = '#fbbf24'; g.fillText(`E(${evX.toFixed(1)}, ${evT.toFixed(1)})`, px + 9, py - 4);
+      } else if (subMod === 'doppler') {
+        const f0 = numVal('#field-f0', 500);
+        const fObs = f0 * Math.sqrt((1 + beta) / (1 - beta));
+        g.fillStyle = fg; g.font = '700 13px system-ui, sans-serif';
+        g.fillText(`2D Relativistic Doppler  |  β = ${beta.toFixed(2)}c, f₀ = ${f0} THz → f_obs = ${fObs.toFixed(1)} THz`, 14, 22);
+        const sx = W * 0.35 + Math.sin(t * 0.7) * 20, sy = H * 0.54;
+        for (let i = 0; i < 6; i++) {
+          const age = ((t * 1.1 + i / 6) % 1);
+          const wx = sx - beta * 90 * age;
+          const r = age * Math.min(W, H) * 0.42;
+          g.strokeStyle = beta >= 0 ? '#38bdf8' : '#fb7185';
+          g.globalAlpha = Math.max(0.15, 1 - age);
+          g.lineWidth = 2;
+          g.beginPath(); g.arc(wx, sy, r, 0, Math.PI * 2); g.stroke();
+        }
+        g.globalAlpha = 1;
+        g.fillStyle = '#fbbf24'; g.beginPath(); g.arc(sx, sy, 8, 0, Math.PI * 2); g.fill();
+        g.fillStyle = '#34d399'; g.fillRect(W * 0.84, sy - 18, 16, 36);
+        g.fillStyle = fg; g.font = '600 11px system-ui, sans-serif';
+        g.fillText('แหล่งกำเนิด S′', sx - 30, sy + 24); g.fillText('ตัวตรวจวัด S', W * 0.80, sy + 34);
+      } else if (subMod === 'momentum') {
+        const m = numVal('#field-m', 1);
+        const pCls = m * Math.abs(beta);
+        const pRel = gamma * pCls;
+        g.fillStyle = fg; g.font = '700 13px system-ui, sans-serif';
+        g.fillText(`2D Relativistic vs Classical Momentum  |  p_rel = ${pRel.toFixed(2)} mc vs p_cls = ${pCls.toFixed(2)} mc`, 14, 22);
+        const px = 60 + ((t * (60 + Math.abs(beta) * 140)) % (W - 140));
+        const yRel = H * 0.38, yCls = H * 0.68;
+        g.fillStyle = '#a855f7'; g.beginPath(); g.arc(px, yRel, 11, 0, Math.PI * 2); g.fill();
+        g.fillRect(px + 14, yRel - 5, Math.min(180, pRel * 42), 10);
+        g.fillStyle = '#38bdf8'; g.beginPath(); g.arc(px, yCls, 11, 0, Math.PI * 2); g.fill();
+        g.fillRect(px + 14, yCls - 5, Math.min(180, pCls * 42), 10);
+        g.fillStyle = fg; g.font = '600 11px system-ui, sans-serif';
+        g.fillText('Relativistic (γmv)', 24, yRel - 18); g.fillText('Classical (mv)', 24, yCls - 18);
+      } else if (subMod === 'equivalence') {
+        const dm = numVal('#field-deltaM', 0.001);
+        g.fillStyle = fg; g.font = '700 13px system-ui, sans-serif';
+        g.fillText(`2D Mass–Energy Equivalence  |  Δm = ${dm} kg → E = Δmc² = ${(dm * 8.98755e16).toExponential(2)} J`, 14, 22);
+        const cx = W * 0.5, cy = H * 0.54;
+        for (let i = 0; i < 4; i++) {
+          const u = (t * 0.8 + i / 4) % 1;
+          g.strokeStyle = '#34d399'; g.globalAlpha = 1 - u; g.lineWidth = 2.5;
+          g.beginPath(); g.arc(cx, cy, 18 + u * 120, 0, Math.PI * 2); g.stroke();
+        }
+        g.globalAlpha = 1;
+        g.fillStyle = '#fbbf24'; g.beginPath(); g.arc(cx, cy, 20 + Math.sin(t * 6) * 2.5, 0, Math.PI * 2); g.fill();
+        g.fillStyle = fg; g.font = '600 11px system-ui, sans-serif';
+        g.fillText('มวล Δm → พลังงานรังสี E = Δmc²', cx - 85, H - 14);
+      } else {
+        // postulates & dilation: Light Clock & Length Contraction
+        const midX = W * 0.42;
+        g.fillStyle = fg; g.font = '700 13px system-ui, sans-serif';
+        g.fillText(`2D Light Clock & Contraction (${subMod.toUpperCase()})  |  β = ${beta.toFixed(2)}c, γ = ${gamma.toFixed(3)}`, 14, 22);
+        const lx = W * 0.16, topY = 58, botY = H - 36;
+        g.strokeStyle = accent; g.lineWidth = 4;
+        g.beginPath(); g.moveTo(lx - 34, topY); g.lineTo(lx + 34, topY); g.stroke();
+        g.beginPath(); g.moveTo(lx - 34, botY); g.lineTo(lx + 34, botY); g.stroke();
+        const pS = 0.5 - 0.5 * Math.cos(t * 3.0);
+        const pyS = botY - pS * (botY - topY);
+        g.setLineDash([4, 4]); g.strokeStyle = sub; g.lineWidth = 1.5;
+        g.beginPath(); g.moveTo(lx, topY); g.lineTo(lx, botY); g.stroke(); g.setLineDash([]);
+        g.fillStyle = '#f59e0b'; g.beginPath(); g.arc(lx, pyS, 7, 0, Math.PI * 2); g.fill();
+        g.fillStyle = fg; g.font = '600 11px system-ui, sans-serif';
+        g.fillText('กรอบนิ่ง S (Δτ)', lx - 38, H - 14);
 
-      // Frame S' (Moving)
-      const rx0 = midX + 20, rx1 = W - 28, rSpan = rx1 - rx0;
-      const shipW = Math.max(24, 96 / gamma);
-      const cx = rx0 + ((t * Math.abs(beta) * 90 + rSpan * 0.5) % rSpan);
-      g.fillStyle = isLight ? '#dbeafe' : '#1e3a5f';
-      g.strokeStyle = '#7c3aed'; g.lineWidth = 2;
-      g.fillRect(cx - shipW / 2, (topY + botY) / 2 - 18, shipW, 36);
-      g.strokeRect(cx - shipW / 2, (topY + botY) / 2 - 18, shipW, 36);
-      const pSp = 0.5 - 0.5 * Math.cos((t * 3.0) / gamma);
-      const pySp = botY - pSp * (botY - topY);
-      g.fillStyle = '#a855f7';
-      g.beginPath(); g.arc(cx, pySp, 7, 0, Math.PI * 2); g.fill();
-      g.fillStyle = fg;
-      g.fillText(`กรอบยาน S' (หดเหลือ ${(100 / gamma).toFixed(0)}%, เดินช้า ${gamma.toFixed(2)}×)`, midX + 20, H - 14);
+        const rx0 = midX + 20, rx1 = W - 28, rSpan = rx1 - rx0;
+        const shipW = Math.max(24, 96 / gamma);
+        const cx = rx0 + ((t * Math.abs(beta) * 90 + rSpan * 0.5) % rSpan);
+        g.fillStyle = isLight ? '#dbeafe' : '#1e3a5f';
+        g.strokeStyle = '#7c3aed'; g.lineWidth = 2;
+        g.fillRect(cx - shipW / 2, (topY + botY) / 2 - 18, shipW, 36);
+        g.strokeRect(cx - shipW / 2, (topY + botY) / 2 - 18, shipW, 36);
+        const pSp = 0.5 - 0.5 * Math.cos((t * 3.0) / gamma);
+        const pySp = botY - pSp * (botY - topY);
+        g.fillStyle = '#a855f7'; g.beginPath(); g.arc(cx, pySp, 7, 0, Math.PI * 2); g.fill();
+        g.fillStyle = fg;
+        g.fillText(`กรอบยาน S' (หดเหลือ ${(100 / gamma).toFixed(0)}%, เดินช้า ${gamma.toFixed(2)}×)`, midX + 20, H - 14);
+      }
     } else if (activeMod === 'quantum_light') {
       const wl = numVal('#ctrl-wl', 350);
       const E = 1239.84 / wl;
