@@ -519,6 +519,7 @@
       const overlay2d = document.createElement('div');
       overlay2d.id = 'ct-2d-overlay';
       overlay2d.style.display = 'none';
+      overlay2d.innerHTML = '<canvas id="ct-2d-canvas" style="width:100%;height:100%;display:block;border-radius:10px;"></canvas>';
       stage.appendChild(overlay2d);
 
       let is2d = false;
@@ -530,25 +531,21 @@
         dimBtn.classList.toggle('active', is2d);
         if (!is2d) {
           overlay2d.style.display = 'none';
+          if (window.MP27Sim2D) window.MP27Sim2D.stop();
           return;
         }
-        if (!window.MP27Lecture) {
+        if (!window.MP27Sim2D) {
           await new Promise((res) => {
             const s = document.createElement('script');
-            s.src = '../shared/lecture_theory.js';
+            s.src = '../shared/sim_2d_engine.js?v=20261118';
             s.onload = res;
             s.onerror = res;
             document.head.appendChild(s);
           });
         }
-        const lect = window.MP27Lecture?.LECTURE_DATA?.[modKey];
-        overlay2d.innerHTML = `
-          <div class="ct-2d-card">
-            <div class="ct-2d-head">📐 2D SIMULATION VIEW · ${esc(cfg.title)}</div>
-            <div class="ct-2d-svg">${lect ? lect.svg : '<p>กำลังโหลดภาพจำลอง 2D...</p>'}</div>
-          </div>
-        `;
-        overlay2d.style.display = 'grid';
+        overlay2d.style.display = 'block';
+        const c2d = overlay2d.querySelector('#ct-2d-canvas');
+        if (window.MP27Sim2D && c2d) window.MP27Sim2D.start(c2d, modKey);
         trackTelemetry('toggle_2d_3d', { mode: '2d' });
       });
 
@@ -587,6 +584,7 @@
         <span id="ct-bar-student" style="color:#93c5fd;font-weight:700;">${student ? `${esc(student.student_id)} ${esc(student.full_name)}` : 'ผู้เรียนทั่วไป (Guest)'}</span>
       </div>
       <div class="ct-suite-actions">
+        <button type="button" class="ct-suite-btn" id="ct-theme-btn" title="สลับโหมดสว่างสำหรับโปรเจคเตอร์">☀️ Light</button>
         <button type="button" class="ct-suite-btn" id="ct-lbl-toggle">🏷️ ป้าย: ${window.MP27Labels.visible ? 'เปิด' : 'ซ่อน'}</button>
         <button type="button" class="ct-suite-btn" id="ct-lbl-sm" title="ย่อป้ายชื่อ 3 มิติ">A−</button>
         <button type="button" class="ct-suite-btn" id="ct-lbl-lg" title="ขยายป้ายชื่อ 3 มิติ">A+</button>
@@ -605,6 +603,19 @@
 
     const savedMode = localStorage.getItem('mp2027_ui_mode') || 'equations';
     applyUiMode(savedMode);
+    const applyTheme = (theme) => {
+      const isLight = theme === 'light';
+      document.documentElement.classList.toggle('mp27-light', isLight);
+      localStorage.setItem('mp27_theme_mode', theme);
+      const tBtn = bar.querySelector('#ct-theme-btn');
+      if (tBtn) tBtn.textContent = isLight ? '🌙 Dark' : '☀️ Light';
+    };
+    applyTheme(localStorage.getItem('mp27_theme_mode') || 'dark');
+    bar.querySelector('#ct-theme-btn').addEventListener('click', () => {
+      const next = document.documentElement.classList.contains('mp27-light') ? 'dark' : 'light';
+      applyTheme(next);
+      trackTelemetry('theme_switch', { theme: next });
+    });
     trackTelemetry('lab_open', { mode: savedMode });
 
     if (!window.MP27QBot && !document.querySelector('script[src*="q_bot.js"]')) {

@@ -561,3 +561,56 @@ body.mode-conceptual .lecture-deep-block { display: none; }
   margin-bottom: 6px;
 }
 .ct-2d-svg svg { width: 100%; height: auto; max-height: 290px; display: block; }
+
+/* ===== PROJECTOR-FRIENDLY LIGHT MODE ===== */
+html.mp27-light body {
+  background: #f1f5f9 !important;
+  color: #0f172a !important;
+}
+html.mp27-light .sidebar,
+html.mp27-light .panel,
+html.mp27-light .scene-card,
+html.mp27-light .plot-card,
+html.mp27-light .metric,
+html.mp27-light .transport,
+html.mp27-light .activity,
+html.mp27-light .data-log,
+html.mp27-light .card,
+html.mp27-light .chartPanel,
+html.mp27-light .taskPanel {
+  background: #ffffff !important;
+  color: #0f172a !important;
+  border-color: #cbd5e1 !important;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08) !important;
+}
+html.mp27-light h1, html.mp27-light h2, html.mp27-light h3,
+html.mp27-light strong, html.mp27-light label,
+html.mp27-light .reading-value, html.mp27-light .measurement strong {
+  color: #0f172a !important;
+}
+html.mp27-light p, html.mp27-light small, html.mp27-light .muted,
+html.mp27-light .note, html.mp27-light .reading-label,
+html.mp27-light .metric-name, html.mp27-light .metric-note {
+  color: #334155 !important;
+}
+html.mp27-light .nav-item, html.mp27-light .tab {
+  color: #1e293b !important;
+}
+html.mp27-light .nav-item.active, html.mp27-light .tab.active {
+  background: #e0f2fe !important;
+  border-color: #0284c7 !important;
+  color: #0c4a6e !important;
+}
+html.mp27-light #ct-live-hud {
+  background: rgba(255, 255, 255, 0.94) !important;
+  border-color: #0284c7 !important;
+  color: #0f172a !important;
+}
+html.mp27-light .ct-hud-head { color: #0369a1 !important; }
+html.mp27-light .ct-hud-row span { color: #334155 !important; }
+html.mp27-light .ct-hud-row strong { color: #0f172a !important; }
+html.mp27-light .ct-stage-btn {
+  background: rgba(255, 255, 255, 0.92) !important;
+  color: #0f172a !important;
+  border-color: #0284c7 !important;
+}
