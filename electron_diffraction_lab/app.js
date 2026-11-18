@@ -304,11 +304,11 @@ async function loadThreeModules(){
 function init3D(){
  const host=$('sceneHost');scene=new THREE.Scene();scene.background=new THREE.Color(0x07121e);scene.fog=new THREE.FogExp2(0x07121e,.014);
  camera=new THREE.PerspectiveCamera(44,1,.1,500);camera.position.set(2.0,3.5,10.6);
- renderer=new THREE.WebGLRenderer({antialias:true,alpha:false,preserveDrawingBuffer:true,powerPreference:'high-performance'});
+ renderer=new THREE.WebGLRenderer({antialias:true,alpha:true,preserveDrawingBuffer:true,powerPreference:'high-performance'});
  renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.outputColorSpace=THREE.SRGBColorSpace;
  renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.28;
  renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
- host.appendChild(renderer.domElement);clearLoadingEl();
+ host.appendChild(renderer.domElement);window.MP27RegisterXR?.(renderer,scene,camera,THREE);clearLoadingEl();
  buildStudioEnv(renderer,scene);
 
  orbit=new OrbitControls(camera,renderer.domElement);orbit.enableDamping=true;orbit.dampingFactor=.06;

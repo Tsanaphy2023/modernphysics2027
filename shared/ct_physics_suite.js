@@ -556,6 +556,13 @@
     }
   }
 
+  window.MP27RegisterXR = function (renderer, scene, camera, threeRef) {
+    window.__mp27PendingXR = { renderer, scene, camera, threeRef };
+    if (window.MP27ArXr && typeof window.MP27ArXr.registerXR === 'function') {
+      window.MP27ArXr.registerXR(renderer, scene, camera, threeRef);
+    }
+  };
+
   async function launchArXrView() {
     trackTelemetry('ar_xr_toggle', { modKey });
     if (!window.MP27ArXr) {

@@ -80,6 +80,7 @@
     renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 2));
     renderer.setSize(sceneEl.clientWidth, sceneEl.clientHeight);
     sceneEl.appendChild(renderer.domElement);
+    window.MP27RegisterXR?.(renderer, scene, camera, THREE);
 
     scene.add(new THREE.HemisphereLight(0xd1fae5, 0x0f1f1c, 1.85));
     const dir = new THREE.DirectionalLight(0xffffff, 2.2);

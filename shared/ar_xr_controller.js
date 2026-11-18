@@ -1,4 +1,4 @@
-/* Modern Physics 2027 — Real-Time AR:XR Vision Controller (MediaPipe HandLandmarker + FaceLandmarker) */
+/* Modern Physics 2027 — Unified AR:XR Controller (AI Vision Gesture + AR Camera Overlay + Stereo VR + WebXR navigator.xr) */
 (() => {
   const MP_VERSION = '0.10.14';
   const MP_BUNDLE = `https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@${MP_VERSION}/vision_bundle.mjs`;
@@ -23,6 +23,295 @@
   let lastActionMs = 0;
   let smoothPinch = null;
   let smoothYaw = 0;
+
+  // XR & 3D Bridge State
+  let xrTarget = null; // { renderer, scene, camera, THREE, origRender, savedBg, savedFog, savedClearAlpha }
+  let xrMode = 'gesture'; // 'gesture' | 'ar-overlay' | 'stereo' | 'webxr'
+  let facingMode = 'user'; // 'user' | 'environment'
+  let arBgVideo = null;
+  let stereoDivider = null;
+  let stereoCam = null;
+  let activeXrSession = null;
+  let gyroActive = false;
+  let gyroBase = null;
+
+  function registerXR(renderer, scene, camera, threeRef) {
+    if (!renderer || !scene || !camera) return;
+    const T = threeRef || window.THREE;
+    if (xrTarget && xrTarget.renderer === renderer) {
+      xrTarget.scene = scene;
+      xrTarget.camera = camera;
+      if (T) xrTarget.THREE = T;
+      return;
+    }
+    const origRender = renderer.render.bind(renderer);
+    xrTarget = {
+      renderer,
+      scene,
+      camera,
+      THREE: T,
+      origRender,
+      savedBg: scene.background || null,
+      savedFog: scene.fog || null,
+      savedClearAlpha: typeof renderer.getClearAlpha === 'function' ? renderer.getClearAlpha() : 1,
+    };
+
+    renderer.render = function wrappedRender(s, c) {
+      if (xrMode === 'stereo' && xrTarget && !renderer.xr?.isPresenting) {
+        renderStereo(renderer, s, c, xrTarget.THREE);
+        return;
+      }
+      origRender(s, c);
+    };
+  }
+
+  window.MP27RegisterXR = registerXR;
+
+  function renderStereo(renderer, scene, camera, T) {
+    const size = { x: 0, y: 0 };
+    if (T && T.Vector2) {
+      const v = new T.Vector2();
+      renderer.getSize(v);
+      size.x = v.x;
+      size.y = v.y;
+    } else {
+      size.x = renderer.domElement.clientWidth || 800;
+      size.y = renderer.domElement.clientHeight || 450;
+    }
+    const w = size.x;
+    const h = size.y;
+    if (!w || !h) return;
+
+    if (!stereoCam && T && T.StereoCamera) {
+      stereoCam = new T.StereoCamera();
+      stereoCam.eyeSep = 0.064;
+    }
+
+    const prevScissorTest = renderer.getScissorTest ? renderer.getScissorTest() : false;
+    renderer.setScissorTest(true);
+
+    if (stereoCam) {
+      if (scene.matrixWorldAutoUpdate !== false) scene.updateMatrixWorld();
+      if (camera.parent === null && camera.matrixWorldAutoUpdate !== false) camera.updateMatrixWorld();
+      stereoCam.aspect = 0.5;
+      stereoCam.update(camera);
+
+      // Left Eye
+      renderer.setScissor(0, 0, w / 2, h);
+      renderer.setViewport(0, 0, w / 2, h);
+      xrTarget.origRender(scene, stereoCam.cameraL);
+
+      // Right Eye
+      renderer.setScissor(w / 2, 0, w / 2, h);
+      renderer.setViewport(w / 2, 0, w / 2, h);
+      xrTarget.origRender(scene, stereoCam.cameraR);
+    } else {
+      // Fallback dual-viewport render if StereoCamera class isn't exposed
+      const prevAspect = camera.aspect;
+      camera.aspect = (w / 2) / h;
+      camera.updateProjectionMatrix();
+
+      renderer.setScissor(0, 0, w / 2, h);
+      renderer.setViewport(0, 0, w / 2, h);
+      xrTarget.origRender(scene, camera);
+
+      renderer.setScissor(w / 2, 0, w / 2, h);
+      renderer.setViewport(w / 2, 0, w / 2, h);
+      xrTarget.origRender(scene, camera);
+
+      camera.aspect = prevAspect;
+      camera.updateProjectionMatrix();
+    }
+
+    renderer.setViewport(0, 0, w, h);
+    renderer.setScissorTest(prevScissorTest);
+  }
+
+  function onDeviceOrientation(ev) {
+    if (!gyroActive || !xrTarget || !xrTarget.scene) return;
+    if (ev.alpha === null || ev.beta === null) return;
+    if (!gyroBase) gyroBase = { alpha: ev.alpha, beta: ev.beta };
+    const dYaw = ((ev.alpha - gyroBase.alpha) * Math.PI) / 180;
+    const dPitch = ((ev.beta - gyroBase.beta) * Math.PI) / 180;
+    xrTarget.scene.rotation.y = Math.max(-1.2, Math.min(1.2, dYaw * 0.45));
+    xrTarget.scene.rotation.x = Math.max(-0.6, Math.min(0.6, dPitch * 0.3));
+  }
+
+  function enableGyro(on) {
+    if (on === gyroActive) return;
+    gyroActive = on;
+    gyroBase = null;
+    if (on) {
+      if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+        DeviceOrientationEvent.requestPermission().then((res) => {
+          if (res === 'granted') window.addEventListener('deviceorientation', onDeviceOrientation);
+        }).catch(() => {});
+      } else {
+        window.addEventListener('deviceorientation', onDeviceOrientation);
+      }
+    } else {
+      window.removeEventListener('deviceorientation', onDeviceOrientation);
+      if (xrTarget && xrTarget.scene) {
+        xrTarget.scene.rotation.set(0, 0, 0);
+      }
+    }
+  }
+
+  function applyArOverlay(enable) {
+    if (!xrTarget) return;
+    const { renderer, scene } = xrTarget;
+    const canvas = renderer.domElement;
+    const host = canvas.parentElement;
+    if (!host) return;
+
+    if (enable) {
+      if (!xrTarget.savedBg && scene.background) xrTarget.savedBg = scene.background;
+      if (!xrTarget.savedFog && scene.fog) xrTarget.savedFog = scene.fog;
+      scene.background = null;
+      scene.fog = null;
+      renderer.setClearColor(0x000000, 0);
+
+      if (getComputedStyle(host).position === 'static') {
+        host.style.position = 'relative';
+      }
+      canvas.style.position = 'relative';
+      canvas.style.zIndex = '2';
+      canvas.style.background = 'transparent';
+
+      if (!arBgVideo) {
+        arBgVideo = document.createElement('video');
+        arBgVideo.id = 'ct-xr-ar-bg';
+        arBgVideo.autoplay = true;
+        arBgVideo.playsInline = true;
+        arBgVideo.muted = true;
+        arBgVideo.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1;pointer-events:none;border-radius:inherit;';
+        host.insertBefore(arBgVideo, canvas);
+      }
+      arBgVideo.style.transform = facingMode === 'user' ? 'scaleX(-1)' : 'none';
+      if (stream) {
+        arBgVideo.srcObject = stream;
+        arBgVideo.play().catch(() => {});
+      }
+    } else {
+      if (arBgVideo) {
+        arBgVideo.remove();
+        arBgVideo = null;
+      }
+      canvas.style.zIndex = '';
+      if (xrTarget.savedBg !== undefined) scene.background = xrTarget.savedBg;
+      if (xrTarget.savedFog !== undefined) scene.fog = xrTarget.savedFog;
+      if (xrTarget.savedClearAlpha !== undefined) {
+        renderer.setClearColor(0x071322, xrTarget.savedClearAlpha);
+      }
+    }
+  }
+
+  function applyStereoDivider(enable) {
+    if (!xrTarget) return;
+    const host = xrTarget.renderer.domElement.parentElement;
+    if (!host) return;
+    if (enable) {
+      if (getComputedStyle(host).position === 'static') host.style.position = 'relative';
+      if (!stereoDivider) {
+        stereoDivider = document.createElement('div');
+        stereoDivider.id = 'ct-xr-stereo-divider';
+        stereoDivider.innerHTML = '<div class="ct-xr-eye-l">L</div><div class="ct-xr-eye-r">R</div>';
+        host.appendChild(stereoDivider);
+      }
+      enableGyro(true);
+    } else {
+      if (stereoDivider) {
+        stereoDivider.remove();
+        stereoDivider = null;
+      }
+      enableGyro(false);
+    }
+  }
+
+  async function startWebXRSession(sessionMode, statusEl) {
+    if (!navigator.xr) {
+      statusEl.textContent = 'เบราว์เซอร์นี้ไม่รองรับ WebXR (navigator.xr)';
+      statusEl.style.color = '#fca5a5';
+      return;
+    }
+    if (!xrTarget) {
+      statusEl.textContent = 'ไม่พบฉาก 3D Three.js ในหน้านี้';
+      statusEl.style.color = '#fca5a5';
+      return;
+    }
+    try {
+      const supported = await navigator.xr.isSessionSupported(sessionMode);
+      if (!supported) {
+        statusEl.textContent = `อุปกรณ์นี้ไม่รองรับ ${sessionMode}`;
+        statusEl.style.color = '#fcd34d';
+        return;
+      }
+      const session = await navigator.xr.requestSession(sessionMode, {
+        optionalFeatures: ['local-floor', 'bounded-floor', 'hand-tracking'],
+      });
+      activeXrSession = session;
+      const { renderer, scene, camera, origRender } = xrTarget;
+
+      if (sessionMode === 'immersive-ar') {
+        if (!xrTarget.savedBg && scene.background) xrTarget.savedBg = scene.background;
+        if (!xrTarget.savedFog && scene.fog) xrTarget.savedFog = scene.fog;
+        scene.background = null;
+        scene.fog = null;
+        renderer.setClearColor(0x000000, 0);
+      }
+
+      renderer.xr.enabled = true;
+      await renderer.xr.setSession(session);
+      renderer.setAnimationLoop(() => {
+        origRender(scene, camera);
+      });
+
+      statusEl.textContent = `✓ กำลังทำงานในโหมด ${sessionMode}`;
+      statusEl.style.color = '#6ee7b7';
+
+      session.addEventListener('end', () => {
+        activeXrSession = null;
+        renderer.setAnimationLoop(null);
+        renderer.xr.enabled = false;
+        if (xrTarget.savedBg !== undefined) scene.background = xrTarget.savedBg;
+        if (xrTarget.savedFog !== undefined) scene.fog = xrTarget.savedFog;
+        statusEl.textContent = 'ออกจากโหมด WebXR แล้ว';
+        statusEl.style.color = '#7dd3fc';
+      });
+    } catch (err) {
+      statusEl.textContent = `เปิด WebXR ไม่สำเร็จ: ${err.message || err}`;
+      statusEl.style.color = '#fca5a5';
+    }
+  }
+
+  function setMode(nextMode, statusEl) {
+    xrMode = nextMode;
+    applyArOverlay(nextMode === 'ar-overlay');
+    applyStereoDivider(nextMode === 'stereo');
+
+    if (hud) {
+      hud.querySelectorAll('.ct-xr-mode-btn').forEach((b) => {
+        b.classList.toggle('active', b.dataset.mode === nextMode);
+      });
+      const webxrBox = hud.querySelector('#ct-xr-webxr-box');
+      if (webxrBox) webxrBox.hidden = nextMode !== 'webxr';
+      const camFlipBtn = hud.querySelector('#ct-xr-cam-flip');
+      if (camFlipBtn) camFlipBtn.hidden = nextMode !== 'ar-overlay';
+    }
+
+    if (statusEl) {
+      if (nextMode === 'ar-overlay') {
+        statusEl.textContent = xrTarget ? '📷 AR Camera Overlay: วางโมเดล 3D ทับภาพกล้องจริง' : 'เปิดกล้อง AR Overlay (หน้านี้เป็น 2D)';
+      } else if (nextMode === 'stereo') {
+        statusEl.textContent = xrTarget ? '🥽 Stereo VR: แบ่งภาพ 2 ตา + Gyroscope' : 'Stereo VR ต้องใช้กับหน้าที่มี 3D Three.js';
+      } else if (nextMode === 'webxr') {
+        statusEl.textContent = '🌐 เลือกเปิด WebXR VR หรือ WebXR AR ด้านล่าง';
+      } else {
+        statusEl.textContent = '✓ พร้อมควบคุมด้วย ใบหน้า ตา คิ้ว มือ นิ้ว';
+      }
+      statusEl.style.color = '#6ee7b7';
+    }
+  }
 
   function getSliders() {
     return Array.from(document.querySelectorAll('input[type="range"]')).filter(
@@ -62,7 +351,7 @@
   function triggerPlayPause() {
     const now = performance.now();
     if (now - lastActionMs < 1300) return false;
-    const btn = document.querySelector('#playPause, #play-btn, #togglePlay, button[id*="play" i]');
+    const btn = document.querySelector('#playPause, #play-btn, #playBtn, #togglePlay, button[id*="play" i]');
     if (btn) {
       btn.click();
       lastActionMs = now;
@@ -74,7 +363,7 @@
   function triggerReset() {
     const now = performance.now();
     if (now - lastActionMs < 1500) return false;
-    const btn = document.querySelector('#resetSimulation, #reset-btn, button[id*="reset" i]');
+    const btn = document.querySelector('#resetSimulation, #reset-btn, #resetBtn, button[id*="reset" i]');
     if (btn) {
       btn.click();
       lastActionMs = now;
@@ -103,10 +392,10 @@
         position: fixed;
         left: 16px;
         bottom: 16px;
-        width: 310px;
+        width: 326px;
         z-index: 99999;
-        background: rgba(9, 18, 36, 0.92);
-        border: 1.5px solid rgba(56, 189, 248, 0.6);
+        background: rgba(9, 18, 36, 0.94);
+        border: 1.5px solid rgba(56, 189, 248, 0.65);
         border-radius: 14px;
         box-shadow: 0 18px 48px rgba(0, 0, 0, 0.55);
         color: #e2e8f0;
@@ -125,10 +414,35 @@
         font-weight: 700;
         color: #38bdf8;
       }
+      .ct-xr-modes {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 4px;
+        padding: 6px 8px;
+        background: rgba(15, 23, 42, 0.95);
+        border-bottom: 1px solid rgba(56, 189, 248, 0.2);
+      }
+      .ct-xr-mode-btn {
+        background: #1e293b;
+        color: #cbd5e1;
+        border: 1px solid #334155;
+        border-radius: 7px;
+        padding: 5px 4px;
+        font-size: 10.5px;
+        font-weight: 700;
+        cursor: pointer;
+        text-align: center;
+        transition: all 0.15s ease;
+      }
+      .ct-xr-mode-btn.active {
+        background: linear-gradient(135deg, #0284c7, #2563eb);
+        color: #ffffff;
+        border-color: #7dd3fc;
+      }
       .ct-xr-stage {
         position: relative;
         width: 100%;
-        aspect-ratio: 4 / 3;
+        aspect-ratio: 16 / 10;
         background: #020617;
       }
       .ct-xr-stage video,
@@ -158,7 +472,7 @@
         padding: 5px 7px;
       }
       .ct-xr-chip b { display: block; font-size: 10px; color: #94a3b8; }
-      .ct-xr-chip span { font-size: 12px; font-weight: 700; color: #f8fafc; }
+      .ct-xr-chip span { font-size: 11.5px; font-weight: 700; color: #f8fafc; }
       #ct-xr-slider-pick {
         width: 100%;
         background: #0f172a;
@@ -168,11 +482,59 @@
         padding: 4px 6px;
         font-size: 11px;
       }
+      .ct-xr-btn-row {
+        display: flex;
+        gap: 6px;
+      }
+      .ct-xr-action-btn {
+        flex: 1;
+        background: linear-gradient(135deg, #0f766e, #0369a1);
+        color: #f8fafc;
+        border: 1px solid rgba(125, 211, 252, 0.45);
+        border-radius: 7px;
+        padding: 6px 8px;
+        font-size: 11px;
+        font-weight: 700;
+        cursor: pointer;
+      }
+      .ct-xr-action-btn:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+      }
       .ct-xr-guide {
         font-size: 10.5px;
         color: #94a3b8;
         line-height: 1.45;
       }
+      #ct-xr-stereo-divider {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        z-index: 6;
+        border-left: 0;
+      }
+      #ct-xr-stereo-divider::before {
+        content: '';
+        position: absolute;
+        left: 50%;
+        top: 0;
+        bottom: 0;
+        width: 2px;
+        background: rgba(56, 189, 248, 0.85);
+        box-shadow: 0 0 8px rgba(56, 189, 248, 0.8);
+      }
+      .ct-xr-eye-l, .ct-xr-eye-r {
+        position: absolute;
+        top: 8px;
+        padding: 2px 7px;
+        font-size: 10px;
+        font-weight: 700;
+        background: rgba(2, 6, 23, 0.72);
+        color: #38bdf8;
+        border-radius: 6px;
+      }
+      .ct-xr-eye-l { left: 10px; }
+      .ct-xr-eye-r { right: 10px; }
     `;
     document.head.appendChild(st);
   }
@@ -200,8 +562,33 @@
     return true;
   }
 
+  async function openCameraStream(videoEl) {
+    if (stream) {
+      stream.getTracks().forEach((t) => t.stop());
+      stream = null;
+    }
+    stream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: { ideal: facingMode }, width: { ideal: 640 }, height: { ideal: 480 } },
+      audio: false,
+    });
+    if (videoEl) {
+      videoEl.srcObject = stream;
+      await videoEl.play();
+    }
+    if (arBgVideo) {
+      arBgVideo.srcObject = stream;
+      arBgVideo.style.transform = facingMode === 'user' ? 'scaleX(-1)' : 'none';
+      arBgVideo.play().catch(() => {});
+    }
+  }
+
   function stop() {
     active = false;
+    setMode('gesture', null);
+    if (activeXrSession) {
+      activeXrSession.end().catch(() => {});
+      activeXrSession = null;
+    }
     if (rafId) cancelAnimationFrame(rafId);
     rafId = 0;
     if (stream) {
@@ -214,7 +601,7 @@
     }
   }
 
-  async function start(cfg = {}) {
+  async function start() {
     if (active) {
       stop();
       return;
@@ -232,8 +619,14 @@
     hud.id = 'ct-xr-dock';
     hud.innerHTML = `
       <div class="ct-xr-head">
-        <span>🥽 AR:XR AI VISION CONTROL</span>
+        <span>🥽 AR:XR &amp; WEBXR CONTROLLER</span>
         <button type="button" id="ct-xr-close-btn" style="background:none;border:none;color:#f8fafc;cursor:pointer;font-size:14px;">✕</button>
+      </div>
+      <div class="ct-xr-modes">
+        <button type="button" class="ct-xr-mode-btn active" data-mode="gesture">✋ Gesture</button>
+        <button type="button" class="ct-xr-mode-btn" data-mode="ar-overlay">📷 AR ฉากจริง</button>
+        <button type="button" class="ct-xr-mode-btn" data-mode="stereo">🥽 Stereo VR</button>
+        <button type="button" class="ct-xr-mode-btn" data-mode="webxr">🌐 WebXR</button>
       </div>
       <div class="ct-xr-stage">
         <video id="ct-xr-video" autoplay playsinline muted></video>
@@ -241,14 +634,24 @@
       </div>
       <div class="ct-xr-body">
         <div id="ct-xr-status" style="color:#7dd3fc;font-weight:700;">กำลังเปิดกล้องเว็บแคม...</div>
-        <select id="ct-xr-slider-pick" title="เลือกตัวแปรที่ต้องการควบคุม">${sliderOpts || '<option value="-1">ไม่พบแถบปรับค่า</option>'}</select>
+        <div id="ct-xr-webxr-box" hidden>
+          <div class="ct-xr-btn-row">
+            <button type="button" class="ct-xr-action-btn" id="ct-xr-enter-vr">🕶️ Enter WebXR VR</button>
+            <button type="button" class="ct-xr-action-btn" id="ct-xr-enter-ar">📱 Enter WebXR AR</button>
+          </div>
+          <div id="ct-xr-cap" style="font-size:10.5px;color:#94a3b8;margin-top:4px;">กำลังตรวจสอบความพร้อม navigator.xr...</div>
+        </div>
+        <div class="ct-xr-btn-row">
+          <select id="ct-xr-slider-pick" title="เลือกตัวแปรที่ต้องการควบคุม">${sliderOpts || '<option value="-1">ไม่พบแถบปรับค่า</option>'}</select>
+          <button type="button" class="ct-xr-action-btn" id="ct-xr-cam-flip" style="flex:0 0 auto;" hidden>🔄 สลับกล้อง</button>
+        </div>
         <div class="ct-xr-telemetry">
           <div class="ct-xr-chip"><b>🤏 มือ / นิ้ว (Pinch)</b><span id="ct-xr-hand-val">รอตรวจจับ...</span></div>
           <div class="ct-xr-chip"><b>😊 ใบหน้า / คิ้ว / ตา</b><span id="ct-xr-face-val">รอตรวจจับ...</span></div>
         </div>
         <div class="ct-xr-guide">
-          • <b>จีบนิ้วชี้-โป้ง:</b> ปรับค่าตัวแปร | <b>แบมือ/กำมือ:</b> Play/Pause<br/>
-          • <b>ชู 2 นิ้ว:</b> รีเซ็ต | <b>เลิกคิ้ว/กะพริบตา:</b> เพิ่มค่า / สลับสถานะ
+          • <b>AR ฉากจริง:</b> วาง 3D ทับกล้องจริง | <b>Stereo VR:</b> แว่นมือถือ 2 ตา<br/>
+          • <b>จีบนิ้ว:</b> ปรับค่า | <b>กำมือ:</b> Play/Pause | <b>ชู 2 นิ้ว:</b> รีเซ็ต
         </div>
       </div>
     `;
@@ -262,34 +665,57 @@
     const handValEl = hud.querySelector('#ct-xr-hand-val');
     const faceValEl = hud.querySelector('#ct-xr-face-val');
     const sliderPick = hud.querySelector('#ct-xr-slider-pick');
+    const camFlipBtn = hud.querySelector('#ct-xr-cam-flip');
+    const capEl = hud.querySelector('#ct-xr-cap');
+    const enterVrBtn = hud.querySelector('#ct-xr-enter-vr');
+    const enterArBtn = hud.querySelector('#ct-xr-enter-ar');
+
+    hud.querySelectorAll('.ct-xr-mode-btn').forEach((btn) => {
+      btn.addEventListener('click', () => setMode(btn.dataset.mode, statusEl));
+    });
+
+    camFlipBtn.addEventListener('click', async () => {
+      facingMode = facingMode === 'user' ? 'environment' : 'user';
+      await openCameraStream(video);
+    });
+
+    enterVrBtn.addEventListener('click', () => startWebXRSession('immersive-vr', statusEl));
+    enterArBtn.addEventListener('click', () => startWebXRSession('immersive-ar', statusEl));
+
+    if (navigator.xr) {
+      Promise.all([
+        navigator.xr.isSessionSupported('immersive-vr').catch(() => false),
+        navigator.xr.isSessionSupported('immersive-ar').catch(() => false),
+      ]).then(([vrOk, arOk]) => {
+        enterVrBtn.disabled = !vrOk;
+        enterArBtn.disabled = !arOk;
+        capEl.textContent = `WebXR: VR ${vrOk ? '✓ พร้อม' : '✗ ไม่รองรับ'} · AR ${arOk ? '✓ พร้อม' : '✗ ไม่รองรับ'}`;
+      });
+    } else {
+      enterVrBtn.disabled = true;
+      enterArBtn.disabled = true;
+      capEl.textContent = 'WebXR (navigator.xr) ไม่รองรับในเบราว์เซอร์นี้ (ใช้ AR ฉากจริง / Stereo VR แทนได้)';
+    }
 
     try {
-      stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: 'user', width: { ideal: 640 }, height: { ideal: 480 } },
-        audio: false,
-      });
-      video.srcObject = stream;
-      await video.play();
+      await openCameraStream(video);
     } catch (err) {
-      statusEl.textContent = 'ไม่สามารถเข้าถึงกล้องได้ (กรุณาอนุญาตสิทธิ์กล้อง)';
-      statusEl.style.color = '#fca5a5';
-      return;
+      statusEl.textContent = 'เปิดกล้องไม่ได้ (ยังใช้ Stereo VR / WebXR ได้)';
+      statusEl.style.color = '#fcd34d';
     }
 
     try {
       await loadModels(statusEl);
-      statusEl.textContent = '✓ พร้อมควบคุมด้วย ใบหน้า ตา คิ้ว มือ นิ้ว';
-      statusEl.style.color = '#6ee7b7';
+      setMode(xrMode, statusEl);
     } catch (err) {
-      statusEl.textContent = 'โหลดโมเดล MediaPipe ไม่สำเร็จ (ตรวจสอบอินเทอร์เน็ต)';
+      statusEl.textContent = 'โหลด AI Vision ไม่สำเร็จ (ยังใช้ AR ฉากจริง / Stereo VR / WebXR ได้)';
       statusEl.style.color = '#fcd34d';
-      return;
     }
 
     let lastVideoTime = -1;
     const loop = () => {
       if (!active) return;
-      if (video.readyState >= 2 && video.currentTime !== lastVideoTime) {
+      if (handLandmarker && faceLandmarker && video.readyState >= 2 && video.currentTime !== lastVideoTime) {
         lastVideoTime = video.currentTime;
         if (canvas.width !== video.videoWidth || canvas.height !== video.videoHeight) {
           canvas.width = video.videoWidth || 640;
@@ -301,11 +727,9 @@
         const targetIdx = parseInt(sliderPick.value, 10);
         const targetSlider = targetIdx >= 0 ? sliders[targetIdx] : null;
 
-        // 1. Hand & Finger Detection
         const hRes = handLandmarker.detectForVideo(video, nowMs);
         if (hRes.landmarks && hRes.landmarks.length > 0) {
           const lm = hRes.landmarks[0];
-          // Draw hand skeleton
           ctx.strokeStyle = '#38bdf8';
           ctx.lineWidth = 2;
           for (const [a, b] of HAND_CONNECTIONS) {
@@ -340,11 +764,9 @@
           handValEl.textContent = 'ไม่พบมือ';
         }
 
-        // 2. Face, Eyes & Eyebrows Detection
         const fRes = faceLandmarker.detectForVideo(video, nowMs);
         if (fRes.faceLandmarks && fRes.faceLandmarks.length > 0) {
           const flm = fRes.faceLandmarks[0];
-          // Draw key eye, eyebrow, and nose landmarks
           const keyPts = [1, 33, 133, 362, 263, 70, 63, 105, 300, 293, 334];
           ctx.fillStyle = '#34d399';
           for (const id of keyPts) {
@@ -388,5 +810,13 @@
     rafId = requestAnimationFrame(loop);
   }
 
-  window.MP27ArXr = { start, stop, toggle: start };
+  window.MP27ArXr = { start, stop, toggle: start, registerXR, setMode };
+  if (window.__mp27PendingXR) {
+    registerXR(
+      window.__mp27PendingXR.renderer,
+      window.__mp27PendingXR.scene,
+      window.__mp27PendingXR.camera,
+      window.__mp27PendingXR.threeRef
+    );
+  }
 })();
