@@ -189,11 +189,26 @@ window.addEventListener('mp27:labels',()=>{if(scene&&window.MP27Labels)window.MP
  transformsGroup=new THREE.Group();scene.add(transformsGroup);
  transformsGroup.add(buildAxesSet(colorCyan,0x67d8ff,0x3596b8,5.2));
  sPrimeAxes=buildAxesSet(colorPurple,0xc5bfff,0x796fd3,3.8);transformsGroup.add(sPrimeAxes);
+ if(window.MP27Labels){
+  transformsGroup.add(
+   window.MP27Labels.makeSprite(THREE,'แกน x (กรอบ S)',5.45,.35,0,'#45ddf3'),
+   window.MP27Labels.makeSprite(THREE,'แกน ct (กรอบ S)',0,5.55,0,'#45ddf3'),
+   window.MP27Labels.makeSprite(THREE,'แกน z (กรอบ S)',0,.35,5.35,'#45ddf3'),
+   window.MP27Labels.makeSprite(THREE,'กรวยแสง (x = ±ct)',4.25,4.45,0,'#67d8ff')
+  );
+  sPrimeAxes.add(
+   window.MP27Labels.makeSprite(THREE,'แกน x′ (กรอบ S′)',4.15,.35,0,'#a59bff'),
+   window.MP27Labels.makeSprite(THREE,'แกน ct′ (กรอบ S′)',0,4.25,0,'#a59bff')
+  );
+ }
  eventBeacon=new THREE.Group();
  const bCore=new THREE.Mesh(new THREE.SphereGeometry(.2,20,16),new THREE.MeshStandardMaterial({color:0xffffff,emissive:colorAmber,emissiveIntensity:1.4}));
  const bRing=new THREE.Mesh(new THREE.TorusGeometry(.38,.025,10,32),new THREE.MeshBasicMaterial({color:colorAmber,transparent:true,opacity:.75}));bRing.rotation.x=Math.PI/2;
  const bStem=new THREE.Mesh(new THREE.CylinderGeometry(.02,.02,4,8),new THREE.MeshBasicMaterial({color:colorAmber,transparent:true,opacity:.45}));bStem.position.y=-2;
  eventBeacon.add(bCore,bRing,bStem);transformsGroup.add(eventBeacon);
+ if(window.MP27Labels){
+  eventBeacon.add(window.MP27Labels.makeSprite(THREE,'เหตุการณ์ E(x, ct)',0,.65,0,'#ffcb72'));
+ }
  galBar=buildBarSegment(colorAmber);lorBar=buildBarSegment(colorGreen);transformsGroup.add(galBar,lorBar);
  coneLines=new THREE.Group();
  for(const dir of [-1,1]){const ray=cylinderBetween(new THREE.Vector3(0,0,0),new THREE.Vector3(dir*4.2,4.2,0),.022,colorCyan);ray.material.transparent=true;ray.material.opacity=.4;coneLines.add(ray);}
