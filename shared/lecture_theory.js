@@ -476,6 +476,44 @@
           <text x="35" y="153" font-size="10" fill="#334155">N₀/4</text>
           <text x="305" y="196" text-anchor="middle" font-size="10" font-weight="700" fill="#0f172a">2 T₁/₂</text>
           <text x="425" y="196" text-anchor="middle" font-size="10" font-weight="700" fill="#0f172a">3 T₁/₂</text>
+        </svg>
+        <svg viewBox="0 0 520 185" width="100%" style="margin-top:10px;" role="img" aria-label="สัญลักษณ์และอำนาจทะลุผ่านของรังสีอัลฟา บีตา แกมมา">
+          <rect x="6" y="6" width="508" height="173" rx="12" fill="#0b1526" stroke="#334155"/>
+          <text x="18" y="25" font-size="11.5" font-weight="800" fill="#fbbf24">รังสีอัลฟา (α) · บีตา (β±) · แกมมา (γ) : สัญลักษณ์และอำนาจทะลุผ่าน</text>
+          <!-- Barriers: Paper, Aluminium, Lead -->
+          <rect x="210" y="38" width="10" height="122" rx="2" fill="#f8fafc" opacity="0.9"/>
+          <text x="215" y="172" text-anchor="middle" font-size="8.5" fill="#e2e8f0">กระดาษ</text>
+          <rect x="315" y="38" width="16" height="122" rx="2" fill="#94a3b8" opacity="0.85"/>
+          <text x="323" y="172" text-anchor="middle" font-size="8.5" fill="#cbd5e1">อะลูมิเนียม (Al)</text>
+          <rect x="430" y="38" width="26" height="122" rx="3" fill="#475569" stroke="#64748b"/>
+          <text x="443" y="172" text-anchor="middle" font-size="8.5" fill="#94a3b8">ตะกั่ว (Pb)</text>
+
+          <!-- Alpha Row -->
+          <text x="18" y="60" font-size="11" font-weight="800" fill="#fb923c">α (⁴₂He, +2e)</text>
+          <line x1="115" y1="56" x2="208" y2="56" stroke="#fb923c" stroke-width="2" stroke-dasharray="4 3"/>
+          <g>
+            <circle cx="0" cy="0" r="4" fill="#fb923c"/><circle cx="6" cy="0" r="4" fill="#38bdf8"/>
+            <circle cx="3" cy="-5" r="4" fill="#38bdf8"/><circle cx="3" cy="5" r="4" fill="#fb923c"/>
+            <animateTransform attributeName="transform" type="translate" values="115,56; 204,56; 115,56" dur="2.6s" repeatCount="indefinite"/>
+          </g>
+
+          <!-- Beta Row -->
+          <text x="18" y="102" font-size="11" font-weight="800" fill="#34d399">β± (e⁻/e⁺, ±1e)</text>
+          <line x1="115" y1="98" x2="313" y2="98" stroke="#34d399" stroke-width="2" stroke-dasharray="4 3"/>
+          <circle r="4.5" fill="#34d399">
+            <animate attributeName="cx" values="115;312;115" dur="2.1s" repeatCount="indefinite"/>
+            <animate attributeName="cy" values="98;98;98" dur="2.1s" repeatCount="indefinite"/>
+          </circle>
+
+          <!-- Gamma Row -->
+          <text x="18" y="144" font-size="11" font-weight="800" fill="#c084fc">γ (โฟตอน, 0)</text>
+          <path d="M115,140 Q125,130 135,140 T155,140 T175,140 T195,140 T215,140 T235,140 T255,140 T275,140 T295,140 T315,140 T335,140 T355,140 T375,140 T395,140 T415,140 T435,140" fill="none" stroke="#c084fc" stroke-width="2.2">
+            <animate attributeName="stroke-dashoffset" values="40;0" dur="0.9s" repeatCount="indefinite"/>
+          </path>
+          <circle r="4" fill="#e879f9">
+            <animate attributeName="cx" values="115;435" dur="1.5s" repeatCount="indefinite"/>
+            <animate attributeName="cy" values="140;140" dur="1.5s" repeatCount="indefinite"/>
+          </circle>
         </svg>`,
     },
 

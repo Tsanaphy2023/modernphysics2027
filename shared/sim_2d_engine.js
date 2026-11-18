@@ -415,10 +415,40 @@
         g.beginPath(); g.arc(cx + Math.cos(a) * r, cy + Math.sin(a) * r, 8, 0, Math.PI * 2); g.fill();
       }
       if (subMod === 'decay' || subMod === 'half') {
-        const u = (t * 0.9) % 1;
-        g.fillStyle = '#fbbf24'; g.beginPath(); g.arc(cx + u * (W * 0.42), cy + Math.sin(u * 10) * 8, 6, 0, Math.PI * 2); g.fill();
-        g.fillStyle = '#d97706'; g.fillRect(W * 0.82, cy - 22, 34, 44);
-        g.fillStyle = fg; g.fillText('GM Detector', W * 0.78, cy + 40);
+        const modeIdx = parseInt(document.querySelector('[data-key="mode"]')?.value || '0', 10);
+        const mode = ['alpha', 'beta-', 'beta+', 'gamma'][modeIdx] || 'alpha';
+        const u = (t * 0.85) % 1;
+        // Draw Paper, Al, Pb shielding barriers
+        const bPaper = W * 0.56, bAl = W * 0.69, bPb = W * 0.82;
+        g.fillStyle = 'rgba(248,250,252,0.85)'; g.fillRect(bPaper, cy - 52, 6, 104);
+        g.fillStyle = 'rgba(148,163,184,0.85)'; g.fillRect(bAl, cy - 52, 10, 104);
+        g.fillStyle = 'rgba(71,85,105,0.9)'; g.fillRect(bPb, cy - 52, 16, 104);
+        g.fillStyle = muted; g.font = '600 9.5px sans-serif';
+        g.fillText('Paper', bPaper - 10, cy + 66);
+        g.fillText('Al', bAl + 1, cy + 66);
+        g.fillText('Pb', bPb + 2, cy + 66);
+
+        const maxDist = mode === 'alpha' ? bPaper - cx - 8 : (mode === 'gamma' ? bPb - cx : bAl - cx - 6);
+        const px = cx + 28 + u * Math.max(40, maxDist - 28);
+        if (mode === 'alpha') {
+          [[-4, -4, '#fb923c'], [4, -4, '#38bdf8'], [-4, 4, '#38bdf8'], [4, 4, '#fb923c']].forEach(([dx, dy, c]) => {
+            g.fillStyle = c; g.beginPath(); g.arc(px + dx, cy + dy, 4.5, 0, Math.PI * 2); g.fill();
+          });
+          g.fillStyle = '#fb923c'; g.font = '700 11px sans-serif'; g.fillText('α (⁴₂He) · หยุดที่กระดาษ', cx + 30, cy - 64);
+        } else if (mode === 'gamma') {
+          g.strokeStyle = '#c084fc'; g.lineWidth = 2.2; g.beginPath();
+          for (let x = cx + 28; x <= px; x += 4) {
+            const y = cy + Math.sin((x - t * 90) * 0.22) * 10;
+            if (x === cx + 28) g.moveTo(x, y); else g.lineTo(x, y);
+          }
+          g.stroke();
+          g.fillStyle = '#c084fc'; g.font = '700 11px sans-serif'; g.fillText('γ (Photon) · ทะลุถึงตะกั่ว Pb', cx + 30, cy - 64);
+        } else {
+          g.fillStyle = mode === 'beta-' ? '#34d399' : '#f43f5e';
+          g.beginPath(); g.arc(px, cy - Math.sin(u * 6) * 10, 5.5, 0, Math.PI * 2); g.fill();
+          g.fillStyle = g.fillStyle; g.font = '700 11px sans-serif';
+          g.fillText(`${mode === 'beta-' ? 'β⁻ (e⁻)' : 'β⁺ (e⁺)'} · ทะลุกระดาษ หยุดที่ Al`, cx + 30, cy - 64);
+        }
       }
 
     // ===== 7. ELEMENTARY PARTICLES (3 STATIONS) =====
