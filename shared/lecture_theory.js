@@ -512,33 +512,65 @@
         answer: 'เนื่องจากสมบัติ Color Confinement ของแรงนิวเคลียร์อย่างเข้ม ยิ่งดึงควาร์กออกจากกัน พลังงานในสนามกลูออนยิ่งเพิ่มจนสร้างคู่ควาร์ก-แอนติควาร์กใหม่ขึ้นมาจับคู่กันแทน',
       },
       svg: `
-        <svg viewBox="0 0 520 220" width="100%" role="img" aria-label="แผนภาพตารางแบบจำลองมาตรฐาน Standard Model">
-          <rect x="8" y="8" width="504" height="204" rx="12" fill="#f8fafc" stroke="#cbd5e1"/>
-          <text x="24" y="30" font-size="13" font-weight="700" fill="#0f172a">แบบจำลองมาตรฐาน (Standard Model of Particle Physics)</text>
-          <rect x="28" y="48" width="186" height="66" rx="8" fill="#ede9fe" stroke="#7c3aed"/>
-          <text x="121" y="65" text-anchor="middle" font-size="11" font-weight="700" fill="#5b21b6">Quarks (u, d, c, s, t, b)</text>
-          <text x="121" y="85" text-anchor="middle" font-size="10" fill="#4c1d95">p = uud (+1e) | n = udd (0)</text>
-          <text x="121" y="102" text-anchor="middle" font-size="10" fill="#6d28d9">รับรู้แรงนิวเคลียร์เข้ม (Strong)</text>
-          <rect x="28" y="124" width="186" height="66" rx="8" fill="#dcfce7" stroke="#16a34a"/>
-          <text x="121" y="142" text-anchor="middle" font-size="11" font-weight="700" fill="#166534">Leptons (e⁻, μ, τ, ν_e, ν_μ, ν_τ)</text>
-          <text x="121" y="162" text-anchor="middle" font-size="10" fill="#14532d">อิเล็กตรอน &amp; นิวทริโน</text>
-          <text x="121" y="178" text-anchor="middle" font-size="10" fill="#15803d">ไม่รับรู้แรง Strong</text>
-          <rect x="232" y="48" width="150" height="142" rx="8" fill="#fee2e2" stroke="#dc2626"/>
-          <text x="307" y="66" text-anchor="middle" font-size="11" font-weight="700" fill="#991b1b">Gauge Bosons (สื่อแรง)</text>
-          <text x="307" y="92" text-anchor="middle" font-size="10" fill="#7f1d1d">• Gluon (g) → Strong</text>
-          <text x="307" y="116" text-anchor="middle" font-size="10" fill="#7f1d1d">• Photon (γ) → EM</text>
-          <text x="307" y="140" text-anchor="middle" font-size="10" fill="#7f1d1d">• W±, Z⁰ → Weak</text>
-          <text x="307" y="164" text-anchor="middle" font-size="10" fill="#7f1d1d">(Spin = 1)</text>
-          <rect x="396" y="48" width="96" height="142" rx="8" fill="#fef3c7" stroke="#d97706">
+        <svg viewBox="0 0 520 230" width="100%" role="img" aria-label="ตารางแบบจำลองมาตรฐาน Standard Model 17 อนุภาค">
+          <rect x="6" y="6" width="508" height="218" rx="12" fill="#f8fafc" stroke="#cbd5e1"/>
+          <text x="18" y="25" font-size="12" font-weight="800" fill="#0f172a">แบบจำลองมาตรฐาน (Standard Model of Elementary Particles)</text>
+          <text x="72" y="40" text-anchor="middle" font-size="9" font-weight="700" fill="#64748b">Gen I</text>
+          <text x="158" y="40" text-anchor="middle" font-size="9" font-weight="700" fill="#64748b">Gen II</text>
+          <text x="244" y="40" text-anchor="middle" font-size="9" font-weight="700" fill="#64748b">Gen III</text>
+          <text x="342" y="40" text-anchor="middle" font-size="9" font-weight="700" fill="#b91c1c">Gauge Bosons</text>
+          <text x="444" y="40" text-anchor="middle" font-size="9" font-weight="700" fill="#b45309">Scalar Boson</text>
+          <!-- Row 1: Up-type Quarks + Gluon + Higgs -->
+          <rect x="34" y="45" width="76" height="38" rx="6" fill="#ede9fe" stroke="#7c3aed" stroke-width="1.4"/>
+          <text x="40" y="56" font-size="8" fill="#6d28d9">+2/3</text><text x="72" y="68" text-anchor="middle" font-size="14" font-weight="800" fill="#4c1d95">u</text><text x="72" y="79" text-anchor="middle" font-size="8" fill="#5b21b6">up</text>
+          <rect x="120" y="45" width="76" height="38" rx="6" fill="#ede9fe" stroke="#7c3aed" stroke-width="1.4"/>
+          <text x="126" y="56" font-size="8" fill="#6d28d9">+2/3</text><text x="158" y="68" text-anchor="middle" font-size="14" font-weight="800" fill="#4c1d95">c</text><text x="158" y="79" text-anchor="middle" font-size="8" fill="#5b21b6">charm</text>
+          <rect x="206" y="45" width="76" height="38" rx="6" fill="#ede9fe" stroke="#7c3aed" stroke-width="1.4"/>
+          <text x="212" y="56" font-size="8" fill="#6d28d9">+2/3</text><text x="244" y="68" text-anchor="middle" font-size="14" font-weight="800" fill="#4c1d95">t</text><text x="244" y="79" text-anchor="middle" font-size="8" fill="#5b21b6">top</text>
+          <rect x="304" y="45" width="76" height="38" rx="6" fill="#fee2e2" stroke="#dc2626" stroke-width="1.4"/>
+          <text x="310" y="56" font-size="8" fill="#b91c1c">0</text><text x="342" y="68" text-anchor="middle" font-size="14" font-weight="800" fill="#991b1b">g</text><text x="342" y="79" text-anchor="middle" font-size="8" fill="#b91c1c">gluon</text>
+          <rect x="404" y="45" width="80" height="82" rx="8" fill="#fef3c7" stroke="#d97706" stroke-width="2">
             <animate attributeName="stroke-width" values="1.5;3.5;1.5" dur="2.2s" repeatCount="indefinite"/>
           </rect>
-          <circle cx="223" cy="119" r="5" fill="#7c3aed">
-            <animate attributeName="cx" values="214;232;214" dur="1.8s" repeatCount="indefinite"/>
+          <text x="412" y="59" font-size="8.5" fill="#b45309">0 · Spin 0</text>
+          <text x="444" y="88" text-anchor="middle" font-size="20" font-weight="800" fill="#92400e">H</text>
+          <text x="444" y="106" text-anchor="middle" font-size="9.5" font-weight="700" fill="#78350f">Higgs Boson</text>
+          <text x="444" y="119" text-anchor="middle" font-size="8" fill="#92400e">125 GeV</text>
+          <!-- Row 2: Down-type Quarks + Photon -->
+          <rect x="34" y="89" width="76" height="38" rx="6" fill="#ede9fe" stroke="#7c3aed" stroke-width="1.4"/>
+          <text x="40" y="100" font-size="8" fill="#6d28d9">−1/3</text><text x="72" y="112" text-anchor="middle" font-size="14" font-weight="800" fill="#4c1d95">d</text><text x="72" y="123" text-anchor="middle" font-size="8" fill="#5b21b6">down</text>
+          <rect x="120" y="89" width="76" height="38" rx="6" fill="#ede9fe" stroke="#7c3aed" stroke-width="1.4"/>
+          <text x="126" y="100" font-size="8" fill="#6d28d9">−1/3</text><text x="158" y="112" text-anchor="middle" font-size="14" font-weight="800" fill="#4c1d95">s</text><text x="158" y="123" text-anchor="middle" font-size="8" fill="#5b21b6">strange</text>
+          <rect x="206" y="89" width="76" height="38" rx="6" fill="#ede9fe" stroke="#7c3aed" stroke-width="1.4"/>
+          <text x="212" y="100" font-size="8" fill="#6d28d9">−1/3</text><text x="244" y="112" text-anchor="middle" font-size="14" font-weight="800" fill="#4c1d95">b</text><text x="244" y="123" text-anchor="middle" font-size="8" fill="#5b21b6">bottom</text>
+          <rect x="304" y="89" width="76" height="38" rx="6" fill="#fee2e2" stroke="#dc2626" stroke-width="1.4"/>
+          <text x="310" y="100" font-size="8" fill="#b91c1c">0</text><text x="342" y="112" text-anchor="middle" font-size="14" font-weight="800" fill="#991b1b">γ</text><text x="342" y="123" text-anchor="middle" font-size="8" fill="#b91c1c">photon</text>
+          <!-- Row 3: Charged Leptons + Z Boson -->
+          <rect x="34" y="133" width="76" height="38" rx="6" fill="#dcfce7" stroke="#16a34a" stroke-width="1.4"/>
+          <text x="40" y="144" font-size="8" fill="#15803d">−1</text><text x="72" y="156" text-anchor="middle" font-size="14" font-weight="800" fill="#14532d">e</text><text x="72" y="167" text-anchor="middle" font-size="8" fill="#166534">electron</text>
+          <rect x="120" y="133" width="76" height="38" rx="6" fill="#dcfce7" stroke="#16a34a" stroke-width="1.4"/>
+          <text x="126" y="144" font-size="8" fill="#15803d">−1</text><text x="158" y="156" text-anchor="middle" font-size="14" font-weight="800" fill="#14532d">μ</text><text x="158" y="167" text-anchor="middle" font-size="8" fill="#166534">muon</text>
+          <rect x="206" y="133" width="76" height="38" rx="6" fill="#dcfce7" stroke="#16a34a" stroke-width="1.4"/>
+          <text x="212" y="144" font-size="8" fill="#15803d">−1</text><text x="244" y="156" text-anchor="middle" font-size="14" font-weight="800" fill="#14532d">τ</text><text x="244" y="167" text-anchor="middle" font-size="8" fill="#166534">tau</text>
+          <rect x="304" y="133" width="76" height="38" rx="6" fill="#fee2e2" stroke="#dc2626" stroke-width="1.4"/>
+          <text x="310" y="144" font-size="8" fill="#b91c1c">0</text><text x="342" y="156" text-anchor="middle" font-size="14" font-weight="800" fill="#991b1b">Z⁰</text><text x="342" y="167" text-anchor="middle" font-size="8" fill="#b91c1c">Z boson</text>
+          <!-- Row 4: Neutrinos + W Boson -->
+          <rect x="34" y="177" width="76" height="38" rx="6" fill="#dcfce7" stroke="#16a34a" stroke-width="1.4"/>
+          <text x="40" y="188" font-size="8" fill="#15803d">0</text><text x="72" y="200" text-anchor="middle" font-size="14" font-weight="800" fill="#14532d">νₑ</text><text x="72" y="211" text-anchor="middle" font-size="8" fill="#166534">e neutrino</text>
+          <rect x="120" y="177" width="76" height="38" rx="6" fill="#dcfce7" stroke="#16a34a" stroke-width="1.4"/>
+          <text x="126" y="188" font-size="8" fill="#15803d">0</text><text x="158" y="200" text-anchor="middle" font-size="14" font-weight="800" fill="#14532d">ν_μ</text><text x="158" y="211" text-anchor="middle" font-size="8" fill="#166534">μ neutrino</text>
+          <rect x="206" y="177" width="76" height="38" rx="6" fill="#dcfce7" stroke="#16a34a" stroke-width="1.4"/>
+          <text x="212" y="188" font-size="8" fill="#15803d">0</text><text x="244" y="200" text-anchor="middle" font-size="14" font-weight="800" fill="#14532d">ν_τ</text><text x="244" y="211" text-anchor="middle" font-size="8" fill="#166534">τ neutrino</text>
+          <rect x="304" y="177" width="76" height="38" rx="6" fill="#fee2e2" stroke="#dc2626" stroke-width="1.4"/>
+          <text x="310" y="188" font-size="8" fill="#b91c1c">±1</text><text x="342" y="200" text-anchor="middle" font-size="14" font-weight="800" fill="#991b1b">W±</text><text x="342" y="211" text-anchor="middle" font-size="8" fill="#b91c1c">W boson</text>
+          <!-- Animated force exchange pulse -->
+          <circle cx="293" cy="130" r="4.5" fill="#dc2626">
+            <animate attributeName="cy" values="64;196;64" dur="2.8s" repeatCount="indefinite"/>
           </circle>
-          <text x="444" y="88" text-anchor="middle" font-size="13" font-weight="700" fill="#92400e">Higgs (H⁰)</text>
-          <text x="444" y="114" text-anchor="middle" font-size="10" fill="#78350f">Spin = 0</text>
-          <text x="444" y="136" text-anchor="middle" font-size="10" fill="#78350f">กลไกให้มวล</text>
-          <text x="444" y="152" text-anchor="middle" font-size="10" fill="#78350f">แก่อนุภาค</text>
+          <text x="444" y="152" text-anchor="middle" font-size="9" font-weight="700" fill="#5b21b6">■ Quarks (Spin 1/2)</text>
+          <text x="444" y="168" text-anchor="middle" font-size="9" font-weight="700" fill="#166534">■ Leptons (Spin 1/2)</text>
+          <text x="444" y="184" text-anchor="middle" font-size="9" font-weight="700" fill="#b91c1c">■ Gauge Bosons (Spin 1)</text>
+          <text x="444" y="200" text-anchor="middle" font-size="9" font-weight="700" fill="#b45309">■ Higgs (Spin 0)</text>
         </svg>`,
     },
   };
