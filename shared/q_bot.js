@@ -274,13 +274,13 @@
     st.textContent = `
       #qbot-fab {
         position: fixed;
-        left: 18px;
+        right: 18px;
         bottom: 18px;
         z-index: 99990;
         display: flex;
         align-items: center;
         gap: 10px;
-        padding: 10px 16px 10px 12px;
+        padding: 8px 16px 8px 10px;
         border-radius: 999px;
         border: 1.5px solid rgba(56, 189, 248, 0.7);
         background: linear-gradient(135deg, #09152b 0%, #172554 100%);
@@ -305,8 +305,8 @@
 
       #qbot-panel {
         position: fixed;
-        left: 18px;
-        bottom: 76px;
+        right: 18px;
+        bottom: 82px;
         width: min(380px, 92vw);
         max-height: 74vh;
         z-index: 99995;
@@ -411,8 +411,8 @@
       }
       #qbot-input:focus { border-color: #38bdf8; }
       .qbot-fab-avatar {
-        width: 34px;
-        height: 34px;
+        width: 42px;
+        height: 42px;
         border-radius: 50%;
         object-fit: cover;
         border: 2px solid #38bdf8;

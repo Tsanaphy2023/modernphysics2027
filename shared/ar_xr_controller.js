@@ -101,7 +101,7 @@
     st.textContent = `
       #ct-xr-dock {
         position: fixed;
-        right: 16px;
+        left: 16px;
         bottom: 16px;
         width: 310px;
         z-index: 99999;
