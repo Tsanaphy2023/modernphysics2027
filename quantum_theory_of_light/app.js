@@ -13,7 +13,7 @@ const MODULES=[
 ];
 const workFunctions={Na:2.28,K:2.30,Zn:4.30,Cu:4.70};
 const targets={Cu:{ka:8.048,kb:8.905,edge:8.979},Mo:{ka:17.48,kb:19.61,edge:20.00},W:{ka:59.32,kb:67.24,edge:69.53}}; // Approximate K-line energies/edges in keV.
-let current=0,state={},playing=true,clockT=0,log=[],scene,renderer,camera,root,particles=[],dynamicMeshes=[],plotData=[],sceneText=[],orbit={x:-0.24,y:0.43,dist:13};
+let current=0,state={},playing=true,clockT=0,log=[],scene,renderer,camera,root,particles=[],dynamicMeshes=[],plotData=[],sceneText=[],labelsVisible=true,labelScale=1.0,orbit={x:-0.24,y:0.43,dist:13};
 const $=id=>document.getElementById(id);const fmt=(x,d=3)=>Number.isFinite(x)?Number(x).toLocaleString('en-US',{maximumFractionDigits:d}):'—';
 const photonEnergy=wl=>hc_eVnm/wl;
 const planck=(wl_nm,T)=>{const lam=wl_nm*1e-9,xx=h*c/(lam*kB*T);return xx>700?0:(2*h*c*c)/(lam**5*Math.expm1(xx));};
@@ -45,70 +45,132 @@ const box=(w,hh,d,color,x=0,y=0,z=0,parent=root)=>add(new THREE.BoxGeometry(w,hh
 function cyl(r,hh,color,x=0,y=0,z=0,parent=root){return add(new THREE.CylinderGeometry(r,r,hh,32),typeof color==='number'?mat(color):color,x,y,z,parent)}
 function line(a,b,color=0x6cdef8,r=.035,parent=root){const p=new THREE.Vector3(...a),q=new THREE.Vector3(...b),delta=q.clone().sub(p),mesh=add(new THREE.CylinderGeometry(r,r,delta.length(),12),glow(color),0,0,0,parent);mesh.position.copy(p.clone().add(q).multiplyScalar(.5));mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),delta.normalize());return mesh}
 function ring(r,color,x=0,y=0,z=0,parent=root){const o=add(new THREE.TorusGeometry(r,.032,12,80),glow(color),x,y,z,parent);return o}
+function wavelengthToHex(nm){
+  if(nm<380)return 0x8b5cf6;if(nm<440)return 0x6366f1;if(nm<490)return 0x0ea5e9;
+  if(nm<510)return 0x14b8a6;if(nm<580)return 0x22c55e;if(nm<645)return 0xf59e0b;return 0xef4444;
+}
+function label(text,x=0,y=0,z=0,accent='#7cecff',pinY=null){
+  const c2=document.createElement('canvas');const ctx=c2.getContext('2d');
+  ctx.font='700 24px Inter,"Noto Sans Thai",system-ui,sans-serif';
+  const tw=Math.ceil(ctx.measureText(text).width);
+  c2.width=Math.max(160,tw+44);c2.height=54;
+  ctx.fillStyle='rgba(7,18,34,0.88)';ctx.strokeStyle=accent;ctx.lineWidth=3;
+  ctx.beginPath();if(ctx.roundRect)ctx.roundRect(3,3,c2.width-6,c2.height-6,12);else ctx.rect(3,3,c2.width-6,c2.height-6);
+  ctx.fill();ctx.stroke();
+  ctx.font='700 24px Inter,"Noto Sans Thai",system-ui,sans-serif';
+  ctx.fillStyle='#f1f5f9';ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillText(text,c2.width/2,c2.height/2+1);
+  const tex=new THREE.CanvasTexture(c2);tex.colorSpace=THREE.SRGBColorSpace;
+  const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:tex,transparent:true,depthTest:false}));
+  const baseW=c2.width/135,baseH=c2.height/135;
+  sp.userData={baseW,baseH};
+  sp.position.set(x,y,z);
+  sp.scale.set(baseW*labelScale,baseH*labelScale,1);
+  sp.visible=labelsVisible;
+  root.add(sp);sceneText.push(sp);
+  if(pinY!==null){
+    const pin=line([x,y-.22,z],[x,pinY,z],0x38bdf8,.014);
+    pin.visible=labelsVisible;sceneText.push(pin);
+  }
+  return sp;
+}
+function applyLabelPrefs(){
+  sceneText.forEach(o=>{
+    o.visible=labelsVisible;
+    if(o.isSprite&&o.userData?.baseW){
+      o.scale.set(o.userData.baseW*labelScale,o.userData.baseH*labelScale,1);
+    }
+  });
+}
 function equipment(){
- box(13,.24,6.4,mat(0x162b3d,.78,.32),0,-2.65,0);
- for(let fx of [-5.8,5.8])for(let fz of [-2.7,2.7])cyl(.32,.25,mat(0x0b131d,.3,.8),fx,-2.88,fz);
- const grid=new THREE.GridHelper(12.6,18,0x315469,0x1b3446);grid.position.y=-2.52;root.add(grid);
- for(let i=-2;i<=2;i++){sphere(.065,glow(0x517c93),5.5,-2.48,i);box(.18,.12,.18,mat(0xd99b26,.85,.25),5.5,-2.52,i);}
+ const table=box(13.4,.28,6.6,mat(0x111f2e,.72,.35),0,-2.66,0);
+ box(13.56,.08,6.76,mat(0x64748b,.88,.22),0,-2.78,0);
+ for(let fx of [-5.9,5.9])for(let fz of [-2.8,2.8]){cyl(.34,.28,mat(0x0b131d,.45,.65),fx,-2.92,fz);cyl(.26,.08,mat(0xd99b26,.85,.25),fx,-2.76,fz);}
+ const grid=new THREE.GridHelper(12.8,20,0x2b4b63,0x193042);grid.position.y=-2.51;root.add(grid);
+ for(let i=-2;i<=2;i++){sphere(.06,glow(0x38bdf8),5.6,-2.45,i);cyl(.11,.14,mat(0xd99b26,.88,.22),5.6,-2.5,i);}
 }
 function buildScene(){for(const item of [...root.children]){root.remove(item);item.traverse?.(node=>{node.geometry?.dispose?.();if(node.material?.map?.isTexture)node.material.map.dispose();if(node.material)Array.isArray(node.material)?node.material.forEach(m=>m.dispose()):node.material.dispose();});}particles=[];dynamicMeshes=[];sceneText=[];equipment();
  if(current===0){
-  cyl(1.85,2.2,mat(0x334759,.7,.32),-1.2,-1.4,0);
-  const furnaceJacket=cyl(1.75,3.1,mat(0x3e556c,.75,.28),-1.2,0,0);furnaceJacket.rotation.z=Math.PI/2;
-  sphere(1.45,glow(0xffae68),-1.2,0,0);
-  const aperture=ring(1.52,0x8de6ef,0.35,0,0);aperture.rotation.y=Math.PI/2;
-  box(.4,1.9,.4,mat(0x273c4f,.8,.3),3.2,-1.6,0);box(1.1,.85,.9,mat(0xd97706,.82,.26),3.2,-.2,0);
+  cyl(1.4,1.1,mat(0x1e293b,.8,.32),-1.5,-1.98,0);
+  const furnaceJacket=cyl(1.75,3.2,mat(0x334155,.82,.26),-1.5,0,0);furnaceJacket.rotation.z=Math.PI/2;
+  for(let k=-2;k<=2;k++){const fin=cyl(1.88,.08,mat(0x94a3b8,.88,.2),-1.5+k*.55,0,0);fin.rotation.z=Math.PI/2;}
+  const core=sphere(1.38,glow(0xffae68),-1.2,0,0);core.name='bbCore';dynamicMeshes.push(core);
+  const aperture=ring(1.52,0x8de6ef,0.12,0,0);aperture.rotation.y=Math.PI/2;
+  box(.28,1.8,1.8,mat(0x1e293b,.85,.25),1.35,-.2,0);box(.16,.55,.16,mat(0x020617,.9,.2),1.35,0,0);
+  cyl(.22,1.6,mat(0x475569,.82,.25),3.4,-1.7,0);box(1.35,1.0,1.05,mat(0x1e3a5f,.78,.28),3.4,-.25,0);
+  const lens=cyl(.42,.18,new THREE.MeshPhysicalMaterial({color:0xbae6fd,roughness:.06,transmission:.65,transparent:true,opacity:.6}),2.65,-.25,0);lens.rotation.z=Math.PI/2;
   for(let i=0;i<18;i++){const a=i*2.399,r=2.1+i*.07;const p=sphere(.075,glow(0xffbe78,0.85),-1.0+Math.cos(a)*r,Math.sin(a)*r*.6,Math.sin(a)*1.5);particles.push(p)}
-  label('BLACKBODY FURNACE',-1.2,2.25,0);label('SPECTROMETER',3.2,1.65,0);
+  label('เตาวัตถุดำ (Blackbody Furnace)',-1.5,2.45,0,'#fbbf24',1.8);
+  label('ช่องรับแสง (Aperture Slit)',1.35,1.75,0,'#38bdf8',.7);
+  label('เครื่องสเปกโตรมิเตอร์ (Spectrometer)',3.4,1.65,0,'#34d399',.3);
  }
  if(current===1){
-  const glassBulb=new THREE.Mesh(new THREE.CylinderGeometry(1.75,1.75,4.2,36),new THREE.MeshPhysicalMaterial({color:0xa8e0ff,roughness:.08,metalness:.05,transmission:.5,transparent:true,opacity:.22,side:THREE.DoubleSide}));
+  const glassBulb=new THREE.Mesh(new THREE.CylinderGeometry(1.72,1.72,4.3,36),new THREE.MeshPhysicalMaterial({color:0xbce8ff,roughness:.06,metalness:.05,transmission:.55,transparent:true,opacity:.24,side:THREE.DoubleSide}));
   glassBulb.rotation.z=Math.PI/2;glassBulb.position.set(1.5,0,0);root.add(glassBulb);
-  box(1.3,1.5,1.3,mat(0x2b3e52,.7,.35),-4.2,-1.8,0);cyl(.55,1.3,mat(0x475569,.8,.28),-4.0,0,0).rotation.z=Math.PI/2;
-  box(.5,2.4,2.2,mat(0xd6c79c,.85,.22),0,0,0);box(.14,2.6,2.4,mat(0x576d78,.7,.3),.28,0,0);box(.28,2.2,1.9,mat(0x2e678b,.75,.28),2.9,0,0);
-  box(4.2,1.2,2.2,mat(0x1f354a,.65,.4),1.5,-1.95,0);
-  for(let i=0;i<7;i++){const p=sphere(.14,glow(0xffdb73),-3.4+i*.4,(i%3-1)*.35,0);particles.push(p)}
+  ring(1.74,0x94a3b8,-0.65,0,0).rotation.y=Math.PI/2;ring(1.74,0x94a3b8,3.65,0,0).rotation.y=Math.PI/2;
+  box(1.35,1.55,1.35,mat(0x1e293b,.78,.32),-4.2,-1.8,0);
+  const lamp=cyl(.58,1.35,mat(0x475569,.85,.24),-4.0,0,0);lamp.rotation.z=Math.PI/2;
+  const lampGlow=cyl(.46,.22,glow(wavelengthToHex(state.wl)),-3.25,0,0);lampGlow.rotation.z=Math.PI/2;lampGlow.name='lampGlow';dynamicMeshes.push(lampGlow);
+  const beam=line([-3.2,0,0],[0,0,0],wavelengthToHex(state.wl),.22);beam.name='uvBeam';beam.material.opacity=.32;beam.material.transparent=true;dynamicMeshes.push(beam);
+  const metalCol={Na:0xe2e8f0,K:0xcbd5e1,Zn:0x94a3b8,Cu:0xd97706}[state.metal]||0xd6c79c;
+  const cathode=box(.32,2.25,2.1,mat(metalCol,.9,.18),0,0,0);cathode.name='cathodePlate';dynamicMeshes.push(cathode);
+  box(.18,2.45,2.3,mat(0x334155,.8,.3),-.22,0,0);
+  box(.24,2.1,1.8,mat(0x0ea5e9,.8,.22),2.9,0,0);
+  cyl(.16,1.25,mat(0xd99b26,.85,.22),0,-1.85,0);cyl(.16,1.25,mat(0xd99b26,.85,.22),2.9,-1.85,0);
+  box(4.4,1.0,2.3,mat(0x0f253a,.72,.35),1.5,-2.05,0);
+  for(let i=0;i<7;i++){const p=sphere(.13,glow(wavelengthToHex(state.wl)),-3.4+i*.4,(i%3-1)*.35,0);particles.push(p)}
   for(let i=0;i<12;i++){const p=sphere(.08,glow(0x7cecff),.45+(i%5)*.43,(Math.floor(i/5)-1)*.65,(i%3-1)*.36);particles.push(p)}
-  label('UV/VIS SOURCE',-3.8,1.7,0);label('PHOTOTUBE CATHODE',.2,2.0,0);label('ANODE',2.9,2.0,0);line([.3,-1.35,0],[2.9,-1.35,0],0x66a9d0,.04);
+  label('หลอดแสง UV/VIS',-4.0,1.75,0,'#c084fc',.6);
+  label('ขั้วแคโทดโลหะ (Photocathode)',0,2.25,0,'#fbbf24',1.2);
+  label('ขั้วแอโนด (Anode)',2.9,2.15,0,'#38bdf8',1.1);
+  label('แอมมิเตอร์ & แหล่งจ่ายต้าน V',1.5,-1.25,0,'#34d399',-1.55);
+  line([.3,-1.35,0],[2.9,-1.35,0],0x66a9d0,.04);
  }
  if(current===2){
-  const chamber=new THREE.Mesh(new THREE.CylinderGeometry(1.2,1.2,5.6,36),new THREE.MeshPhysicalMaterial({color:0x86c8ec,roughness:.1,metalness:.05,transmission:.48,transparent:true,opacity:.26}));
+  const chamber=new THREE.Mesh(new THREE.CylinderGeometry(1.22,1.22,5.6,36),new THREE.MeshPhysicalMaterial({color:0x93d5f7,roughness:.08,metalness:.05,transmission:.52,transparent:true,opacity:.26}));
   chamber.rotation.z=Math.PI/2;root.add(chamber);
-  cyl(.7,1.4,mat(0x3b4d63,.8,.3),-2.8,-1.8,0);cyl(.7,1.4,mat(0x3b4d63,.8,.3),2.2,-1.8,0);
-  const source=cyl(.65,.55,mat(0xc3c7dc,.85,.22),-2.65,0,0);source.rotation.z=Math.PI/2;
-  const target=box(.48,1.85,1.85,mat(0xf09356,.88,.2),2,0,0);target.rotation.z=.28;
-  for(let i=0;i<15;i++){particles.push(sphere(.055,glow(0x87dfff),-2.5+i*.25,(i%3-1)*.12,(i%4-2)*.08))}
-  for(let i=0;i<14;i++){let x=2.3+i*.18,p=sphere(.065,glow(0xffdb7e),x,(i%5-2)*.27,(i%4-2)*.31);particles.push(p)}
-  label('FILAMENT CATHODE',-2.8,1.65,0);label('COPPER ANODE',2.2,1.9,0);
+  cyl(.65,1.45,mat(0x1e293b,.85,.28),-2.75,-1.8,0);cyl(.65,1.45,mat(0x1e293b,.85,.28),2.25,-1.8,0);
+  const source=cyl(.62,.58,mat(0x94a3b8,.88,.2),-2.65,0,0);source.rotation.z=Math.PI/2;
+  ring(.32,0xf97316,-2.3,0,0).rotation.y=Math.PI/2;
+  const target=box(.48,1.85,1.85,mat(0xea580c,.9,.18),2,0,0);target.rotation.z=.28;target.name='xrayTarget';dynamicMeshes.push(target);
+  cyl(.22,1.4,mat(0xd97706,.9,.2),2.8,0,0).rotation.z=Math.PI/2;
+  for(let i=0;i<15;i++){particles.push(sphere(.055,glow(0x38bdf8),-2.5+i*.25,(i%3-1)*.12,(i%4-2)*.08))}
+  for(let i=0;i<14;i++){let x=2.3+i*.18,p=sphere(.065,glow(0xfbbf24),x,(i%5-2)*.27,(i%4-2)*.31);particles.push(p)}
+  label('ไส้หลอดทังสเตน (Filament Cathode)',-2.6,1.85,0,'#fb923c',.65);
+  label('เป้าโลหะ (Cu / Mo / W Anode)',2.1,2.0,0,'#fbbf24',.95);
  }
  if(current===3){
-  cyl(.35,2.4,mat(0x334155,.8,.3),0,-1.35,0);
-  cyl(1.1,.25,mat(0x475569,.82,.25),0,-2.4,0);
-  sphere(.55,mat(0x64748b,.85,.2),0,0,0);sphere(.19,glow(0x9fe9f7),0,0,0);
-  line([-4.5,0,0],[-.65,0,0],0x69d9fb,.065);
-  for(let i=0;i<9;i++){const p=sphere(.09,glow(0x6be0ff),-4+i*.42,0,0);particles.push(p)}
+  cyl(.35,2.4,mat(0x334155,.85,.25),0,-1.35,0);cyl(1.15,.25,mat(0x475569,.85,.22),0,-2.4,0);
+  box(1.1,1.0,1.0,mat(0x1e293b,.85,.3),-4.2,0,0);
+  sphere(.55,mat(0x334155,.88,.18),0,0,0);sphere(.2,glow(0x9fe9f7),0,0,0);
+  line([-3.6,0,0],[-.65,0,0],0x38bdf8,.065);
+  for(let i=0;i<9;i++){const p=sphere(.09,glow(0x6be0ff),-3.6+i*.35,0,0);particles.push(p)}
   const scatter=line([.5,0,0],[3.5,2.4,0],0xffcf76,.065);scatter.name='scatterLine';dynamicMeshes.push(scatter);
-  const naiDet=cyl(.42,1.1,mat(0xd99b26,.85,.25),3.6,2.45,0);naiDet.name='naiDet';dynamicMeshes.push(naiDet);
-  const outgoing=line([.45,-.07,.1],[2.4,-1.9,.6],0x70aafb,.05);outgoing.name='electronTrack';dynamicMeshes.push(outgoing);
-  const electron=sphere(.19,glow(0xb5d7ff),2.4,-1.9,.6);electron.name='electron';dynamicMeshes.push(electron);
-  label('INCIDENT γ',-3,1.2,0);label('NaI(Tl) DETECTOR θ',3.1,3.1,0);
+  const naiDet=cyl(.46,1.15,mat(0xd99b26,.88,.22),3.6,2.45,0);naiDet.name='naiDet';dynamicMeshes.push(naiDet);
+  const outgoing=line([.45,-.07,.1],[2.4,-1.9,.6],0x60a5fa,.05);outgoing.name='electronTrack';dynamicMeshes.push(outgoing);
+  const electron=sphere(.19,glow(0x93c5fd),2.4,-1.9,.6);electron.name='electron';dynamicMeshes.push(electron);
+  label('โฟตอน γ ตกกระทบ (Pb Shield)',-3.6,1.35,0,'#38bdf8',.5);
+  label('เป้าแกรไฟต์ (Graphite Target)',0,1.25,0,'#e2e8f0',.55);
+  label('หัววัด NaI(Tl) มุม θ',3.2,3.2,0,'#fbbf24',2.55);
  }
  if(current===4){
-  ring(2.2,0x38bdf8,0,0,0);cyl(1.4,1.6,mat(0x334155,.85,.3),-3.2,0,0).rotation.z=Math.PI/2;
-  sphere(1.02,new THREE.MeshStandardMaterial({color:0x55648f,metalness:.2,roughness:.4,wireframe:true}),0,0,0);
-  sphere(.38,glow(0xefbb72),0,0,0);line([-4.4,0,0],[-.95,0,0],0xffd97e,.06);
+  ring(2.2,0x38bdf8,0,0,0);box(1.3,1.2,1.2,mat(0x1e293b,.88,.28),-3.4,0,0);
+  sphere(1.05,new THREE.MeshStandardMaterial({color:0x55648f,metalness:.25,roughness:.4,wireframe:true}),0,0,0);
+  sphere(.4,glow(0xefbb72),0,0,0);line([-4.4,0,0],[-.95,0,0],0xffd97e,.06);
   for(let i=0;i<8;i++)particles.push(sphere(.075,glow(0xffe5a0),-4.2+i*.4,0,0));
-  let electron=sphere(.23,glow(0x71d7ff),2,1.5,0);electron.name='electron';let positron=sphere(.23,glow(0xff748d),2,-1.5,0);positron.name='positron';dynamicMeshes.push(electron,positron);
-  line([.55,.15,0],[3.7,2.4,0],0x7ad6ff,.04);line([.55,-.15,0],[3.7,-2.4,0],0xff7189,.04);
-  label('COULOMB NUCLEUS',0,2.55,0);label('e− (DEFLECT)',3.2,1.8,0);label('e+ (DEFLECT)',3.2,-1.7,0);
+  let electron=sphere(.23,glow(0x38bdf8),2,1.5,0);electron.name='electron';let positron=sphere(.23,glow(0xf43f5e),2,-1.5,0);positron.name='positron';dynamicMeshes.push(electron,positron);
+  line([.55,.15,0],[3.7,2.4,0],0x38bdf8,.04);line([.55,-.15,0],[3.7,-2.4,0],0xf43f5e,.04);
+  label('นิวเคลียสคูลอมบ์ (Heavy Nucleus Z)',0,2.55,0,'#fbbf24',1.05);
+  label('อิเล็กตรอน e⁻ (โค้งขึ้น)',3.2,2.05,0,'#38bdf8',1.55);
+  label('โพซิตรอน e⁺ (โค้งลง)',3.2,-1.95,0,'#fb7185',-1.55);
  }
  updateSceneParameters();}
-function updateSceneParameters(){if(!root)return;if(current===0){const T=state.T;const color=new THREE.Color();const u=Math.min(1,Math.max(0,(T-1000)/10000));color.setHSL(.055+u*.1,.9,.50+u*.25);let o=root.children.find(x=>x.geometry?.type==='SphereGeometry'&&x.geometry.parameters.radius===1.45);if(o)o.material.color.copy(color);}
-if(current===1){const emitted=photonEnergy(state.wl)>workFunctions[state.metal];const available=state.voltage>-(photonEnergy(state.wl)-workFunctions[state.metal]);particles.slice(7).forEach(x=>x.visible=emitted&&available);particles.slice(0,7).forEach((x,i)=>x.visible=i<(state.intensity/100*7));}
+function updateSceneParameters(){if(!root)return;if(current===0){const T=state.T;const color=new THREE.Color();const u=Math.min(1,Math.max(0,(T-1000)/10000));color.setHSL(.055+u*.1,.9,.50+u*.25);const o=dynamicMeshes.find(x=>x.name==='bbCore');if(o)o.material.color.copy(color);}
+if(current===1){const hex=wavelengthToHex(state.wl);const emitted=photonEnergy(state.wl)>workFunctions[state.metal];const available=state.voltage>-(photonEnergy(state.wl)-workFunctions[state.metal]);const lg=dynamicMeshes.find(x=>x.name==='lampGlow');if(lg)lg.material.color.setHex(hex);const bm=dynamicMeshes.find(x=>x.name==='uvBeam');if(bm)bm.material.color.setHex(hex);particles.slice(0,7).forEach((x,i)=>{x.visible=i<(state.intensity/100*7);x.material.color.setHex(hex);});particles.slice(7).forEach(x=>x.visible=emitted&&available);}
 if(current===3){const theta=state.theta*Math.PI/180;const sc=dynamicMeshes.find(x=>x.name==='scatterLine');const det=dynamicMeshes.find(x=>x.name==='naiDet');if(sc){const a=new THREE.Vector3(.5,0,0),b=new THREE.Vector3(.5+3.5*Math.cos(theta),3.5*Math.sin(theta),0);const d=b.clone().sub(a);sc.position.copy(a.clone().add(b).multiplyScalar(.5));sc.scale.y=1;sc.geometry.dispose();sc.geometry=new THREE.CylinderGeometry(.065,.065,d.length(),12);sc.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),d.normalize());if(det){det.position.copy(b);det.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),d.clone().normalize());}}}
 if(current===4){const isCreation=state.mode==='creation',valid=state.E>=2*meC2/1000;dynamicMeshes.forEach(o=>o.visible=!isCreation||valid);}}
 function setup3D(){scene=new THREE.Scene();scene.fog=new THREE.FogExp2(0x081421,.017);camera=new THREE.PerspectiveCamera(43,1,.1,100);renderer=new THREE.WebGLRenderer({antialias:true,alpha:true,preserveDrawingBuffer:true});renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.3;renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;$('scene').appendChild(renderer.domElement);const pmrem=new THREE.PMREMGenerator(renderer),env=new THREE.Scene();env.background=new THREE.Color(0x091625);const card=new THREE.Mesh(new THREE.BoxGeometry(10,5,.4),new THREE.MeshBasicMaterial({color:0xdbf3ff}));card.position.set(-6,8,6);env.add(card);scene.environment=pmrem.fromScene(env,.04).texture;pmrem.dispose();root=new THREE.Group();scene.add(root);scene.add(new THREE.HemisphereLight(0xbbe0ff,0x14263b,1.8));const dir=new THREE.DirectionalLight(0xf5f9ff,2.4);dir.position.set(4,10,8);dir.castShadow=true;scene.add(dir);const key=new THREE.PointLight(0x77d9ff,60,40);key.position.set(-3,6,8);scene.add(key);const warm=new THREE.PointLight(0xffbc81,38,30);warm.position.set(5,2,-4);scene.add(warm);const stars=new THREE.BufferGeometry();const coords=[];for(let i=0;i<160;i++){coords.push((Math.random()-.5)*32,(Math.random()-.5)*20,(Math.random()-.5)*20-5)}stars.setAttribute('position',new THREE.Float32BufferAttribute(coords,3));scene.add(new THREE.Points(stars,new THREE.PointsMaterial({color:0x5c89af,size:.025})));let dragging=false,lastX=0,lastY=0;const el=renderer.domElement;el.addEventListener('pointerdown',ev=>{dragging=true;lastX=ev.clientX;lastY=ev.clientY;el.setPointerCapture(ev.pointerId)});el.addEventListener('pointermove',ev=>{if(!dragging)return;orbit.y+=(ev.clientX-lastX)*.008;orbit.x=Math.max(-1.2,Math.min(1.2,orbit.x+(ev.clientY-lastY)*.008));lastX=ev.clientX;lastY=ev.clientY});el.addEventListener('pointerup',()=>dragging=false);el.addEventListener('wheel',ev=>{ev.preventDefault();orbit.dist=Math.max(7,Math.min(25,orbit.dist+ev.deltaY*.015))},{passive:false});resize();new ResizeObserver(resize).observe($('scene'));function resize(){const r=$('scene').getBoundingClientRect();if(!r.width||!r.height)return;renderer.setSize(r.width,r.height,false);camera.aspect=r.width/r.height;camera.updateProjectionMatrix();drawPlot();}
 let prev=performance.now();function animate(now){requestAnimationFrame(animate);const dt=Math.min(.05,(now-prev)/1000);prev=now;if(playing)clockT+=dt*Number($('timeScale').value);root.rotation.y=orbit.y;root.rotation.x=orbit.x;camera.position.set(0,1,orbit.dist);camera.lookAt(0,-.25,0);if(playing){if(current===0){particles.forEach((p,i)=>{const a=i*2.399+clockT*.35,r=2.4+i*.07;p.position.set(-1.2+Math.cos(a)*r,Math.sin(a)*r*.5,Math.sin(a)*1.3);});}if(current===1){particles.slice(0,7).forEach((p,i)=>{p.position.x=-4.5+((clockT*2+i*.5)%4.7);});particles.slice(7).forEach((p,i)=>{p.position.x=.45+((clockT*(1+Math.max(0,photonEnergy(state.wl)-workFunctions[state.metal]))+i*.32)%2.3);});}if(current===2){particles.forEach((p,i)=>{p.position.x=i<15?-2.4+((clockT*3+i*.26)%4.3):2.3+((clockT*2+i*.22)%2);});}if(current===3){particles.forEach((p,i)=>{p.position.x=-4+((clockT*2+i*.4)%3.5);});}if(current===4){particles.forEach((p,i)=>{p.position.x=-4+((clockT*1.6+i*.42)%3.6);});dynamicMeshes.forEach((obj,i)=>{if(obj.name==='electron')obj.position.set(1+Math.sin(clockT*.7)*.6,1.1+Math.sin(clockT*.5)*.3,0);if(obj.name==='positron')obj.position.set(1+Math.sin(clockT*.7)*.6,-1.1-Math.sin(clockT*.5)*.3,0)});}}
 renderer.render(scene,camera)}requestAnimationFrame(animate);}
-$('toggle').addEventListener('click',()=>{playing=!playing;$('toggle').textContent=playing?'⏸ หยุดชั่วคราว':'▶ เล่นต่อ';$('clock').textContent=playing?'LAB RUNNING':'PAUSED';});$('resetView').addEventListener('click',()=>{orbit={x:-.24,y:.43,dist:13};});$('timeScale').addEventListener('input',ev=>{$('timeScaleValue').textContent=`${Number(ev.target.value).toFixed(1)}×`;});$('reset').addEventListener('click',()=>{state=paramsFor(MODULES[current]);buildControls();update();});$('randomize').addEventListener('click',()=>{for(const a of MODULES[current].controls){if(a[2]==='range'){const v=a[3]+Math.floor(Math.random()*((a[4]-a[3])/a[5]+1))*a[5];state[a[0]]=Number(v.toFixed(6));}else{state[a[0]]=a[3][Math.floor(Math.random()*a[3].length)][0];}}buildControls();update();});$('record').addEventListener('click',()=>{if(log.length>=1000){alert('บันทึกได้สูงสุด 1,000 รายการต่อการทดลอง');return;}log.push([...window.currentLogRow]);renderLog();});$('clearLog').addEventListener('click',()=>{log=[];renderLog();});$('export').addEventListener('click',()=>downloadCSV(`photonlab_${MODULES[current].key}_curve.csv`,[[plotAxes.x,plotAxes.y],...plotData.map(o=>[o.x,o.y])]));$('helpBtn').addEventListener('click',()=>$('help').classList.remove('hidden'));$('closeHelp').addEventListener('click',()=>$('help').classList.add('hidden'));$('help').addEventListener('click',ev=>{if(ev.target===$('help'))$('help').classList.add('hidden');});document.addEventListener('keydown',e=>{if(e.key==='Escape')$('help').classList.add('hidden');});window.addEventListener('resize',()=>drawPlot());
+$('toggle').addEventListener('click',()=>{playing=!playing;$('toggle').textContent=playing?'⏸ หยุดชั่วคราว':'▶ เล่นต่อ';$('clock').textContent=playing?'LAB RUNNING':'PAUSED';});$('resetView').addEventListener('click',()=>{orbit={x:-.24,y:.43,dist:13};});$('toggleLabels')?.addEventListener('click',()=>{labelsVisible=!labelsVisible;$('toggleLabels').textContent=labelsVisible?'🏷️ ป้ายชื่อ: เปิด':'🏷️ ป้ายชื่อ: ซ่อน';applyLabelPrefs();});$('labelSmaller')?.addEventListener('click',()=>{labelScale=Math.max(0.55,Number((labelScale-0.15).toFixed(2)));applyLabelPrefs();});$('labelLarger')?.addEventListener('click',()=>{labelScale=Math.min(1.9,Number((labelScale+0.15).toFixed(2)));applyLabelPrefs();});$('zoomIn')?.addEventListener('click',()=>{orbit.dist=Math.max(6,orbit.dist-1.4);});$('zoomOut')?.addEventListener('click',()=>{orbit.dist=Math.min(25,orbit.dist+1.4);});$('timeScale').addEventListener('input',ev=>{$('timeScaleValue').textContent=`${Number(ev.target.value).toFixed(1)}×`;});$('reset').addEventListener('click',()=>{state=paramsFor(MODULES[current]);buildControls();update();});$('randomize').addEventListener('click',()=>{for(const a of MODULES[current].controls){if(a[2]==='range'){const v=a[3]+Math.floor(Math.random()*((a[4]-a[3])/a[5]+1))*a[5];state[a[0]]=Number(v.toFixed(6));}else{state[a[0]]=a[3][Math.floor(Math.random()*a[3].length)][0];}}buildControls();update();});$('record').addEventListener('click',()=>{if(log.length>=1000){alert('บันทึกได้สูงสุด 1,000 รายการต่อการทดลอง');return;}log.push([...window.currentLogRow]);renderLog();});$('clearLog').addEventListener('click',()=>{log=[];renderLog();});$('export').addEventListener('click',()=>downloadCSV(`photonlab_${MODULES[current].key}_curve.csv`,[[plotAxes.x,plotAxes.y],...plotData.map(o=>[o.x,o.y])]));$('helpBtn').addEventListener('click',()=>$('help').classList.remove('hidden'));$('closeHelp').addEventListener('click',()=>$('help').classList.add('hidden'));$('help').addEventListener('click',ev=>{if(ev.target===$('help'))$('help').classList.add('hidden');});document.addEventListener('keydown',e=>{if(e.key==='Escape')$('help').classList.add('hidden');});window.addEventListener('resize',()=>drawPlot());
 setup3D();setModule(0);
