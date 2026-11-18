@@ -700,14 +700,17 @@
     const betaRaw = parseFloat($('#ipo-beta').value);
     const dtau = parseFloat($('#ipo-dtau').value) || 3.0;
     const l0 = parseFloat($('#ipo-l0').value) || 10.0;
+    const m0 = Math.max(0.01, parseFloat($('#ipo-m0')?.value) || 1.0);
+    const c = 2.99792458e8;
 
     const bIn = $('#ipo-box-in');
     const bChk = $('#ipo-box-chk');
     const bProc = $('#ipo-box-proc');
     const bOut = $('#ipo-box-out');
+    const dynBox = $('#ipo-rel-dynamics');
     [bIn, bChk, bProc, bOut].forEach((b) => b.classList.remove('ok', 'err'));
 
-    $('#ipo-res-in').textContent = `β = ${isNaN(betaRaw) ? 'NaN' : betaRaw.toFixed(2)}, Δτ = ${dtau.toFixed(1)}s, L₀ = ${l0.toFixed(1)}m`;
+    $('#ipo-res-in').textContent = `β = ${isNaN(betaRaw) ? 'NaN' : betaRaw.toFixed(2)}, Δτ = ${dtau.toFixed(1)}s, L₀ = ${l0.toFixed(1)}m, m₀ = ${m0.toFixed(2)}kg`;
 
     if (isNaN(betaRaw)) {
       bIn.classList.add('err');
@@ -715,6 +718,7 @@
       $('#ipo-res-chk').textContent = 'INVALID TYPE: ค่าไม่ใช่ตัวเลข';
       $('#ipo-res-proc').textContent = 'ข้ามการคำนวณ (Guard Halt)';
       $('#ipo-res-out').textContent = 'ERROR: กรุณาป้อนตัวเลข β';
+      if (dynBox) dynBox.innerHTML = '<div class="watch-row"><span>Relativistic Dynamics</span><span class="watch-val">กรุณาป้อนค่า β เป็นตัวเลข</span></div>';
       return;
     }
 
@@ -724,6 +728,7 @@
       $('#ipo-res-chk').textContent = `REJECTED (Erroneous): |β| = ${Math.abs(betaRaw).toFixed(2)} ≥ 1.0`;
       $('#ipo-res-proc').textContent = '1 − β² ≤ 0 → ป้องกันรากที่สองติดลบ';
       $('#ipo-res-out').textContent = 'ABORTED: วัตถุมีมวลเร็วเท่ากับ/เกิน c ไม่ได้';
+      if (dynBox) dynBox.innerHTML = '<div class="watch-row"><span>Relativistic Mass / Momentum / Energy</span><span class="watch-val">∞ (ไม่นิยามสำหรับอนุภาคมีมวลเมื่อ |β| ≥ 1)</span></div>';
       state.snapshot.ipo_checked = true;
       saveState();
       return;
@@ -732,6 +737,13 @@
     const gamma = 1 / Math.sqrt(1 - betaRaw * betaRaw);
     const dt = gamma * dtau;
     const len = l0 / gamma;
+    const mRel = gamma * m0;
+    const v = Math.abs(betaRaw) * c;
+    const pRel = gamma * m0 * v;
+    const pCls = m0 * v;
+    const E0 = m0 * c * c;
+    const Etot = gamma * E0;
+    const Krel = (gamma - 1) * E0;
     const isBoundary = Math.abs(betaRaw) >= 0.98;
 
     bIn.classList.add('ok');
@@ -741,8 +753,23 @@
     $('#ipo-res-chk').textContent = isBoundary
       ? `BOUNDARY PASS: |β| = ${Math.abs(betaRaw).toFixed(2)} (ใกล้ความเร็วแสง)`
       : `PASS: |β| = ${Math.abs(betaRaw).toFixed(2)} < 1.0`;
-    $('#ipo-res-proc').textContent = `γ = ${gamma.toFixed(3)} → ยืดเวลา & หดสั้น`;
-    $('#ipo-res-out').textContent = `Δt = ${dt.toFixed(2)} s, L = ${len.toFixed(2)} m`;
+    $('#ipo-res-proc').textContent = `γ = ${gamma.toFixed(3)} → ยืดเวลา หดสั้น & เพิ่มมวลสัมพัทธ์`;
+    $('#ipo-res-out').textContent = `Δt = ${dt.toFixed(2)} s, L = ${len.toFixed(2)} m, m_rel = ${mRel.toFixed(3)} kg`;
+
+    if (dynBox) {
+      dynBox.innerHTML = `
+        <div class="watch-row"><span>มวลสัมพัทธ์ $m_{\\text{rel}} = \\gamma m_0$ (เทียบมวลนิ่ง $m_0 = ${m0.toFixed(2)}\\text{ kg}$)</span><span class="watch-val">${mRel.toFixed(4)} kg ($\\gamma = ${gamma.toFixed(3)}$)</span></div>
+        <div class="watch-row"><span>โมเมนตัมสัมพัทธ์ $p = \\gamma m_0 v$ (เทียบคลาสสิก $m_0 v = ${pCls.toExponential(3)}$)</span><span class="watch-val">${pRel.toExponential(3)} kg·m/s</span></div>
+        <div class="watch-row"><span>พลังงานนิ่ง $E_0 = m_0 c^2$ | พลังงานจลน์ $K = (\\gamma - 1)m_0 c^2$</span><span class="watch-val">$E_0 = ${E0.toExponential(2)}\\text{ J}$ | $K = ${Krel.toExponential(2)}\\text{ J}$</span></div>
+        <div class="watch-row"><span>พลังงานรวมสัมพัทธ์ $E = \\gamma m_0 c^2 = \\sqrt{(pc)^2 + (m_0 c^2)^2}$</span><span class="watch-val">${Etot.toExponential(3)} J</span></div>
+      `;
+      if (typeof window.renderMathInElement === 'function') {
+        window.renderMathInElement(dynBox, {
+          delimiters: [{ left: '$$', right: '$$', display: true }, { left: '$', right: '$', display: false }],
+          throwOnError: false,
+        });
+      }
+    }
 
     const setClock = (prefix, sec) => {
       const sDeg = (sec % 60) * 6;

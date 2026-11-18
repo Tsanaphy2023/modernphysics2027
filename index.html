@@ -613,7 +613,7 @@
             <div>
               <div class="eyebrow">MODULE 01 • SPECIAL RELATIVITY</div>
               <h2>01 ทฤษฎีสัมพัทธภาพพิเศษ: IPO Model &amp; Four-Tier Test Data</h2>
-              <p>ทดสอบโมเดล Input → Boundary Check → Lorentz Transform → Output และจำแนกชุดข้อมูลทดสอบ 4 ระดับ</p>
+              <p>ทดสอบโมเดล Input → Boundary Check → Lorentz Transform → Output (เวลา $\Delta t$, ความยาว $L$, มวลสัมพัทธ์ $\gamma m_0$, โมเมนตัม $p$, พลังงานรวม $E$)</p>
             </div>
             <a class="btn btn-teal btn-small" href="./special_relativity_theory/index.html">🚀 เปิดห้องทดลอง 3D สัมพัทธภาพพิเศษ ↗</a>
           </div>
@@ -643,6 +643,10 @@
               <div class="field">
                 <label for="ipo-l0">ความยาวแท้ L₀ (m)</label>
                 <input id="ipo-l0" type="number" step="0.5" value="10.0" />
+              </div>
+              <div class="field">
+                <label for="ipo-m0">มวลนิ่ง m₀ (kg)</label>
+                <input id="ipo-m0" type="number" step="0.5" min="0.01" value="1.0" />
               </div>
               <div class="field" style="display:flex;align-items:flex-end;">
                 <button id="ipo-run-btn" class="btn btn-primary btn-block">▶ รัน IPO Pipeline</button>
@@ -703,6 +707,7 @@
                 </div>
               </div>
             </div>
+            <div id="ipo-rel-dynamics" class="watch-card" style="margin-top:12px;"></div>
           </div>
 
           <div class="panel">
