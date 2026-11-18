@@ -426,6 +426,12 @@
     applyUiMode(savedMode);
     trackTelemetry('lab_open', { mode: savedMode });
 
+    if (!window.MP27QBot && !document.querySelector('script[src*="q_bot.js"]')) {
+      const qb = document.createElement('script');
+      qb.src = '../shared/q_bot.js';
+      document.head.appendChild(qb);
+    }
+
     let sliderTimer = null;
     document.addEventListener('input', (ev) => {
       if (ev.target && ev.target.type === 'range') {
