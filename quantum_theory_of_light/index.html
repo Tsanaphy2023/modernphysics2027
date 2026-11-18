@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#07101c"><title>Photon Lab 2027 | Quantum Theory of Light</title>
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="../shared/ct_physics_suite.css">
+</head>
+<body>
+<div class="shell">
+<aside class="sidebar"><div class="brand"><div class="brandmark">✦</div><div><strong>PHOTON LAB <em>2027</em></strong><small>MODERN PHYSICS • VIRTUAL LAB</small></div></div>
+<div class="side-label">ชุดทดลองเสมือนจริง</div><nav id="tabs" aria-label="หัวข้อการทดลอง"></nav>
+<div class="sidebar-foot"><span class="statusdot"></span> REALTIME PHYSICS ENGINE<br><span class="muted">Quantum Theory of Light</span></div></aside>
+<main class="main"><header class="topbar"><div class="breadcrumbs">MODERN PHYSICS <span>/</span> QUANTUM THEORY OF LIGHT</div><div class="topright"><span id="clock">LAB READY</span><button id="helpBtn" class="btn ghost">คู่มือ</button></div></header>
+<section class="intro"><div class="eyebrow" id="eyebrow">EXPERIMENT 01 / 05</div><h1 id="title">ทฤษฎีควอนตัมของแสง</h1><p id="subtitle"></p></section>
+<section class="workgrid"><div class="visual-area"><div class="scene-card"><div class="scene-top"><span><span class="statusdot"></span> 3D INTERACTIVE VIEWPORT</span><div class="scene-tags"><span id="sceneTag">REALTIME</span><span>DRAG TO ROTATE · SCROLL TO ZOOM</span></div></div><div id="scene"></div><div class="scene-bottom"><button id="toggle" class="btn primary">⏸ หยุดชั่วคราว</button><button id="resetView" class="btn ghost">⟲ มุมกล้อง</button><div class="speed">TIME SCALE <input id="timeScale" type="range" min="0.2" max="2.5" step="0.1" value="1"><span id="timeScaleValue">1.0×</span></div></div></div>
+<div class="plot-card"><div class="section-head"><div><div class="mini-title">LIVE DATA ANALYSIS</div><h2 id="plotTitle">กราฟการทดลอง</h2></div><button class="btn ghost" id="export">↓ CSV</button></div><div class="plot-wrapper"><canvas id="plot" aria-label="กราฟข้อมูลการทดลอง"></canvas></div><p id="plotNote" class="note"></p></div></div>
+<aside class="control-area"><div class="panel"><div class="panel-title"><span>01</span> EXPERIMENT CONTROLS <span class="live">● LIVE</span></div><div id="controls"></div><div class="quickrow"><button class="btn ghost" id="reset">คืนค่าเริ่มต้น</button><button class="btn ghost" id="randomize">ทดลองค่าตัวอย่าง</button></div></div>
+<div class="panel measurements"><div class="panel-title"><span>02</span> MEASUREMENT INSTRUMENTS</div><div id="metrics"></div></div>
+<div class="panel theory"><div class="panel-title"><span>03</span> PHYSICS MODEL</div><div id="equations"></div><p id="explanation"></p></div></aside></section>
+<section class="bottom"><div class="activity"><div class="mini-title">ACTIVE LEARNING • INVESTIGATION</div><h2>ภารกิจการทดลอง</h2><p id="challenge"></p><div class="challenge-actions"><button class="btn primary" id="record">＋ บันทึกค่าการทดลอง</button><button class="btn ghost" id="clearLog">ล้างข้อมูล</button></div></div><div class="data-log"><div class="section-head"><h2>สมุดบันทึกการวัด</h2><span id="logCount">0 RECORDS</span></div><div class="table-wrap"><table><thead id="logHead"></thead><tbody id="logBody"><tr><td>ยังไม่มีข้อมูล</td></tr></tbody></table></div></div></section>
+<footer>PHOTON LAB 2027 • ค่าคำนวณจากสมการทางฟิสิกส์ • รูปแบบจำลองสามมิติใช้เพื่อการสอน ไม่ใช่ภาพถ่ายอุปกรณ์จริง</footer></main></div>
+<div id="help" class="modal hidden"><div class="modalcard"><button class="close" id="closeHelp">✕</button><h2>คู่มือการใช้งาน Photon Lab</h2><p>เลือกหัวข้อด้านซ้าย ปรับพารามิเตอร์ของเครื่องมือทดลองด้านขวา สังเกตแบบจำลองสามมิติ ผลวัดและกราฟที่อัปเดตทันที</p><ul><li>ลากเมาส์เพื่อหมุนมุมกล้อง ใช้ล้อเมาส์เพื่อซูม</li><li>ใช้ปุ่มหยุดชั่วคราว เพื่อหยุดการเคลื่อนไหวโดยไม่เปลี่ยนค่าคำนวณ</li><li>กด “บันทึกค่าการทดลอง” เพื่อสร้างตารางข้อมูล และ “CSV” เพื่อส่งออกกราฟ</li><li>ใช้ข้อมูลและสมการในแผง Physics Model อภิปรายผลกับนักศึกษา</li></ul><p class="note">หมายเหตุ: ปรากฏการณ์หลายชนิดแสดงโดยการขยายสเกลหรือใช้ตัวแทนภาพเพื่อให้มองเห็นได้ ไม่ได้รักษาสเกลระยะทางจริง</p></div></div>
+<script type="module" src="app.js"></script>
+<script defer src="../shared/ct_physics_suite.js" data-ct-module="quantum_light"></script>
+</body></html>

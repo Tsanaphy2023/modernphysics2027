@@ -1,0 +1,1262 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0f1e36" />
+  <title>Modern Physics 2027 — CT-Lab &amp; 3D Virtual Laboratories</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div id="mobile-overlay" class="mobile-overlay"></div>
+
+  <div class="app-shell">
+    <!-- Sidebar -->
+    <aside id="sidebar" class="sidebar">
+      <div class="brand">
+        <div class="brand-mark">MP27</div>
+        <div>
+          <div class="brand-title">Modern Physics 2027</div>
+          <div class="brand-sub">CT-Lab &amp; 3D Physics Portal</div>
+        </div>
+      </div>
+
+      <nav class="nav-list" aria-label="โมดูลการเรียนรู้">
+        <button class="nav-item active" data-nav="overview">
+          <span>🏠 ภาพรวมห้องปฏิบัติการ</span>
+          <span class="tag soft" style="font-size:10px;padding:2px 6px;">Portal</span>
+        </button>
+        <button class="nav-item" data-nav="pretest">
+          <span>00 แบบทดสอบก่อนเรียน (Pre)</span>
+          <span class="nav-check" data-check="pretest">○</span>
+        </button>
+        <button class="nav-item" data-nav="relativity">
+          <span>01 สัมพัทธภาพพิเศษ (IPO)</span>
+          <span class="nav-check" data-check="relativity">○</span>
+        </button>
+        <button class="nav-item" data-nav="quantum_light">
+          <span>02 ควอนตัมของแสง (Pseudo)</span>
+          <span class="nav-check" data-check="quantum_light">○</span>
+        </button>
+        <button class="nav-item" data-nav="matter_waves">
+          <span>03 คลื่นอนุภาค (ISO SVG)</span>
+          <span class="nav-check" data-check="matter_waves">○</span>
+        </button>
+        <button class="nav-item" data-nav="electron_diffraction">
+          <span>04 เลี้ยวเบน e⁻ (Trace Table)</span>
+          <span class="nav-check" data-check="electron_diffraction">○</span>
+        </button>
+        <button class="nav-item" data-nav="atomic_models">
+          <span>05 แบบจำลองอะตอม &amp; โบร์</span>
+          <span class="nav-check" data-check="atomic_models">○</span>
+        </button>
+        <button class="nav-item" data-nav="quantum_mechanics">
+          <span>06 กลศาสตร์ควอนตัมเบื้องต้น</span>
+          <span class="nav-check" data-check="quantum_mechanics">○</span>
+        </button>
+        <button class="nav-item" data-nav="solid_state">
+          <span>07 โมเลกุลและของแข็ง</span>
+          <span class="nav-check" data-check="solid_state">○</span>
+        </button>
+        <button class="nav-item" data-nav="nuclear_physics">
+          <span>08 นิวเคลียร์ &amp; กัมมันตภาพรังสี</span>
+          <span class="nav-check" data-check="nuclear_physics">○</span>
+        </button>
+        <button class="nav-item" data-nav="particle_physics">
+          <span>09 อนุภาคมูลฐาน (Standard)</span>
+          <span class="nav-check" data-check="particle_physics">○</span>
+        </button>
+        <button class="nav-item" data-nav="challenge10">
+          <span>10 แบบทดสอบวัดผล (10 ข้อ)</span>
+          <span class="nav-check" data-check="challenge10">○</span>
+        </button>
+        <button class="nav-item" data-nav="research_lab">
+          <span>11 วิจัยฟิสิกส์เชิงคำนวณ (Track B)</span>
+          <span class="tag soft" style="font-size:10px;padding:2px 6px;">R&amp;D</span>
+        </button>
+      </nav>
+
+      <div class="side-links">
+        <div class="side-links-label">ห้องทดลอง 3 มิติ (Interactive 3D)</div>
+        <a class="side-ext-link" href="./special_relativity_theory/index.html">
+          <span>🚀 01 3D สัมพัทธภาพพิเศษ</span><span>↗</span>
+        </a>
+        <a class="side-ext-link" href="./quantum_theory_of_light/index.html">
+          <span>💡 02 3D ควอนตัมของแสง</span><span>↗</span>
+        </a>
+        <a class="side-ext-link" href="./wave_properties_of_particles/index.html">
+          <span>〰️ 03 3D คลื่นของอนุภาค</span><span>↗</span>
+        </a>
+        <a class="side-ext-link" href="./electron_diffraction_lab/index.html">
+          <span>🔬 04 3D เลี้ยวเบนอิเล็กตรอน</span><span>↗</span>
+        </a>
+        <a class="side-ext-link" href="./atomic_structure_models/index.html">
+          <span>⚛️ 05 3D แบบจำลองอะตอม</span><span>↗</span>
+        </a>
+        <a class="side-ext-link" href="./introductory_quantum_mechanics_1/index.html">
+          <span>🌊 06 3D กลศาสตร์ควอนตัม</span><span>↗</span>
+        </a>
+        <a class="side-ext-link" href="./molecular_solid_state_physics/index.html">
+          <span>💎 07 3D โมเลกุลและของแข็ง</span><span>↗</span>
+        </a>
+        <a class="side-ext-link" href="./nuclear_structure_radioactivity/index.html">
+          <span>☢️ 08 3D นิวเคลียร์และกัมมันตภาพ</span><span>↗</span>
+        </a>
+        <a class="side-ext-link" href="./elementary_particle_physics/index.html">
+          <span>✨ 09 3D อนุภาคมูลฐาน</span><span>↗</span>
+        </a>
+      </div>
+
+      <div class="side-progress">
+        <div id="side-student-badge" class="side-student-badge">ยังไม่ได้เลือกชื่อนักศึกษา</div>
+        <div class="progress-head">
+          <span>ความก้าวหน้า 9 โมดูล</span>
+          <span id="side-prog-text">0/9</span>
+        </div>
+        <div class="progress-track">
+          <div id="side-prog-fill" class="progress-fill"></div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Workspace -->
+    <div class="main-wrap">
+      <header class="topbar">
+        <div class="top-left">
+          <button id="mobile-menu-btn" class="mobile-menu-btn" aria-label="เปิดเมนู">☰</button>
+          <div>
+            <div class="eyebrow">RBRU MODERN PHYSICS • COMPUTATIONAL THINKING LAB</div>
+            <strong style="font-size:15px;">ฟิสิกส์ยุคใหม่ 2027 &amp; ระบบตรวจงาน AI อัตโนมัติ</strong>
+          </div>
+        </div>
+
+        <div class="top-actions">
+          <button id="mode-toggle-btn" class="btn btn-outline btn-small">💡 โหมดแนวคิด</button>
+          <button class="btn btn-outline btn-small" data-go="pretest">📝 Pre-Test</button>
+          <button id="top-student-btn" class="btn btn-outline btn-small">👤 เลือกนักศึกษา</button>
+          <button id="export-json-btn" class="btn btn-outline btn-small">↓ ส่งออก JSON</button>
+          <button id="open-submit-modal" class="btn btn-primary btn-small">📤 ส่งงาน / ดูผลตรวจ AI</button>
+          <a href="./teacher.html" class="btn btn-quiet btn-small">🔐 Admin / รายงาน AI</a>
+        </div>
+      </header>
+
+      <main class="content">
+        <!-- PAGE 0: OVERVIEW -->
+        <section class="page active" data-page="overview">
+          <div class="hero-card">
+            <div>
+              <div class="eyebrow">CT-LAB ARCHITECTURE × 3D VIRTUAL PHYSICS</div>
+              <h1>ห้องปฏิบัติการฟิสิกส์ยุคใหม่ด้วย AR:XR 3D Simulator Lab</h1>
+              <p>
+                บูรณาการห้องทดลองเสมือนจริง 3 มิติ (WebGL PBR) ร่วมกับโมเดล IPO, รหัสเทียม (Pseudocode),
+                ผังงานมาตรฐาน ISO 5807 และตารางติดตามค่าตัวแปร (Trace Table / Dry Run) พร้อมระบบตรวจงาน AI ทันที
+              </p>
+              <div class="btn-row">
+                <button class="btn btn-teal" data-go="relativity">🚀 เริ่มปฏิบัติการ 01</button>
+                <a class="btn btn-outline" href="./electron_diffraction_lab/index.html" style="background:rgba(255,255,255,0.12);color:#fff;border-color:rgba(255,255,255,0.35);">
+                  🔬 เปิดแล็บ 3D เลี้ยวเบนอิเล็กตรอน ↗
+                </a>
+              </div>
+            </div>
+
+            <!-- ISO 5807 Flowchart generated by ct-academic-engine MCP -->
+            <div class="hero-svg-box" title="ISO 5807 Flowchart: Electron Diffraction &amp; de Broglie Verification">
+              <svg viewBox="0 0 360 622" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="ISO 5807 Flowchart">
+                <defs>
+                  <marker id="ct-arrow-hero" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                    <path d="M 0 1 L 10 5 L 0 9 z" fill="#1e293b"/>
+                  </marker>
+                </defs>
+                <rect x="0" y="0" width="360" height="622" rx="12" fill="#f8fafc"/>
+                <rect x="12" y="10" width="336" height="44" rx="22" fill="#e0f2fe" stroke="#0284c7" stroke-width="2"/>
+                <text x="180" y="36" text-anchor="middle" font-size="12" font-weight="bold" fill="#0f172a">START (Modern Physics Lab)</text>
+                <line x1="180" y1="54" x2="180" y2="86" stroke="#1e293b" stroke-width="2" marker-end="url(#ct-arrow-hero)"/>
+
+                <polygon points="34,86 326,86 346,108 326,130 34,130 14,108" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+                <text x="180" y="104" text-anchor="middle" font-size="11" font-weight="bold" fill="#0f172a">INITIALISE Va ← 2.0 kV,</text>
+                <text x="180" y="119" text-anchor="middle" font-size="11" font-weight="bold" fill="#0f172a">MaxCycles ← 4, L ← 0.135 m</text>
+                <line x1="180" y1="130" x2="180" y2="162" stroke="#1e293b" stroke-width="2" marker-end="url(#ct-arrow-hero)"/>
+
+                <polygon points="44,162 346,162 316,206 14,206" fill="#e0e7ff" stroke="#4f46e5" stroke-width="2"/>
+                <text x="180" y="188" text-anchor="middle" font-size="11.5" font-weight="bold" fill="#0f172a">INPUT Accelerating Voltage Va (kV)</text>
+                <line x1="180" y1="206" x2="180" y2="238" stroke="#1e293b" stroke-width="2" marker-end="url(#ct-arrow-hero)"/>
+
+                <polygon points="180,238 334,264 180,290 26,264" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/>
+                <text x="180" y="268" text-anchor="middle" font-size="11.5" font-weight="bold" fill="#0f172a">2.0 &lt;= Va &lt;= 5.0 kV ?</text>
+                <line x1="180" y1="290" x2="180" y2="322" stroke="#1e293b" stroke-width="2" marker-end="url(#ct-arrow-hero)"/>
+
+                <rect x="16" y="322" width="328" height="44" rx="6" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+                <text x="180" y="348" text-anchor="middle" font-size="11.5" font-weight="bold" fill="#0f172a">COMPUTE λ = h/√(2mₑeVa) &amp; R₁, R₂</text>
+                <line x1="180" y1="366" x2="180" y2="398" stroke="#1e293b" stroke-width="2" marker-end="url(#ct-arrow-hero)"/>
+
+                <path d="M 16,398 L 284,398 A 60,22 0 0 1 284,442 L 16,442 Z" fill="#f3e8ff" stroke="#9333ea" stroke-width="2"/>
+                <text x="170" y="424" text-anchor="middle" font-size="11.5" font-weight="bold" fill="#0f172a">DELAY 1s (Measure Phosphor Ring)</text>
+                <line x1="180" y1="442" x2="180" y2="474" stroke="#1e293b" stroke-width="2" marker-end="url(#ct-arrow-hero)"/>
+
+                <rect x="16" y="474" width="328" height="44" rx="6" fill="#ffedd5" stroke="#ea580c" stroke-width="2"/>
+                <line x1="34" y1="474" x2="34" y2="518" stroke="#ea580c" stroke-width="2"/>
+                <line x1="326" y1="474" x2="326" y2="518" stroke="#ea580c" stroke-width="2"/>
+                <text x="180" y="500" text-anchor="middle" font-size="11" font-weight="bold" fill="#0f172a">CALL LinearRegression_GraphFit(R, 1/√Va)</text>
+                <line x1="180" y1="518" x2="180" y2="550" stroke="#1e293b" stroke-width="2" marker-end="url(#ct-arrow-hero)"/>
+
+                <rect x="16" y="550" width="328" height="44" rx="22" fill="#e0f2fe" stroke="#0284c7" stroke-width="2"/>
+                <text x="180" y="576" text-anchor="middle" font-size="12" font-weight="bold" fill="#0f172a">FAIL-SAFE OFF &amp; END</text>
+              </svg>
+            </div>
+          </div>
+
+          <!-- 5 Module Progress Cards -->
+          <div class="module-grid">
+            <div class="module-card" data-go="relativity">
+              <div class="module-card-top">
+                <span class="tag">MODULE 01</span>
+                <span class="tag soft" data-card-status="relativity">ยังไม่ส่ง</span>
+              </div>
+              <h3>ทฤษฎีสัมพัทธภาพพิเศษ</h3>
+              <p>วิเคราะห์ IPO Model &amp; ทดสอบขอบเขต Four-Tier สำหรับ Light Clock, γ, Δt = γΔτ และ L = L₀/γ</p>
+            </div>
+
+            <div class="module-card" data-go="quantum_light">
+              <div class="module-card-top">
+                <span class="tag">MODULE 02</span>
+                <span class="tag soft" data-card-status="quantum_light">ยังไม่ส่ง</span>
+              </div>
+              <h3>ทฤษฎีควอนตัมของแสง</h3>
+              <p>Pseudocode Step Runner จำลองโฟโตอิเล็กทริก ฟังก์ชันงาน φ และตรวจจับตัวแปร Watch Table</p>
+            </div>
+
+            <div class="module-card" data-go="matter_waves">
+              <div class="module-card-top">
+                <span class="tag">MODULE 03</span>
+                <span class="tag soft" data-card-status="matter_waves">ยังไม่ส่ง</span>
+              </div>
+              <h3>สมบัติคลื่นของอนุภาค</h3>
+              <p>สร้างและลากจัดเรียงผังงาน ISO 5807 แบบ SVG พร้อมจำลองทางเลือกคลื่นเดอบรอยล์และไฮเซนเบิร์ก</p>
+            </div>
+
+            <div class="module-card" data-go="electron_diffraction">
+              <div class="module-card-top">
+                <span class="tag">MODULE 04</span>
+                <span class="tag soft" data-card-status="electron_diffraction">ยังไม่ส่ง</span>
+              </div>
+              <h3>เลี้ยวเบนอิเล็กตรอน &amp; Trace</h3>
+              <p>Dry Run 4 ชุดทดลองจริง (Teltron EHT, de Broglie, Bragg Crystal, Double-Slit) + Logic Error Taxonomy</p>
+            </div>
+
+            <div class="module-card" data-go="atomic_models">
+              <div class="module-card-top">
+                <span class="tag">MODULE 05</span>
+                <span class="tag soft" data-card-status="atomic_models">ยังไม่ส่ง</span>
+              </div>
+              <h3>แบบจำลองอะตอมและสเปกตรัม</h3>
+              <p>Rutherford α Scattering, Hydrogen Rydberg, แบบจำลองโบร์ และฟรังก์–เฮิรตซ์</p>
+            </div>
+
+            <div class="module-card" data-go="quantum_mechanics">
+              <div class="module-card-top">
+                <span class="tag">MODULE 06</span>
+                <span class="tag soft" data-card-status="quantum_mechanics">ยังไม่ส่ง</span>
+              </div>
+              <h3>กลศาสตร์ควอนตัมเบื้องต้น (1)</h3>
+              <p>ฟังก์ชันคลื่น ψ(x,t), บ่อศักย์อนันต์ Eₙ, Quantum Tunneling และ Harmonic Oscillator</p>
+            </div>
+
+            <div class="module-card" data-go="solid_state">
+              <div class="module-card-top">
+                <span class="tag">MODULE 07</span>
+                <span class="tag soft" data-card-status="solid_state">ยังไม่ส่ง</span>
+              </div>
+              <h3>โมเลกุลและฟิสิกส์ของแข็ง</h3>
+              <p>ศักย์มอร์ส ผลึก SC/BCC/FCC แถบพลังงานกึ่งตัวนำ และตัวนำยวดยิ่ง (Meissner)</p>
+            </div>
+
+            <div class="module-card" data-go="nuclear_physics">
+              <div class="module-card-top">
+                <span class="tag">MODULE 08</span>
+                <span class="tag soft" data-card-status="nuclear_physics">ยังไม่ส่ง</span>
+              </div>
+              <h3>โครงสร้างนิวเคลียสและกัมมันตภาพ</h3>
+              <p>รัศมี R = r₀A^(1/3), พลังงานยึดเหนี่ยว B/A, กฎอนุรักษ์ α/β/γ และครึ่งชีวิต T½</p>
+            </div>
+
+            <div class="module-card" data-go="particle_physics">
+              <div class="module-card-top">
+                <span class="tag">MODULE 09</span>
+                <span class="tag soft" data-card-status="particle_physics">ยังไม่ส่ง</span>
+              </div>
+              <h3>ฟิสิกส์อนุภาคมูลฐาน</h3>
+              <p>แรงพื้นฐาน 4 ชนิด ควาร์ก เลปตอน เกจโบซอน ฮิกส์ และ Standard Model</p>
+            </div>
+
+            <div class="module-card" data-go="challenge10">
+              <div class="module-card-top">
+                <span class="tag">MODULE 10</span>
+                <span class="tag soft" data-card-status="challenge10">วัดผล 10 ข้อ</span>
+              </div>
+              <h3>แบบทดสอบวัดผลท้ายบทเรียน</h3>
+              <p>ข้อสอบ 10 ข้อครอบคลุมทั้ง 9 หัวข้อและ Fail-Safe Control (ป้องกันเฉลยฝั่ง Server-Side)</p>
+            </div>
+          </div>
+
+          <!-- Interactive 3D Virtual Lab Suites -->
+          <div class="panel">
+            <div class="panel-top">
+              <div>
+                <div class="eyebrow">INTERACTIVE 3D WEBGL VIRTUAL LABS</div>
+                <h3>ชุดห้องปฏิบัติการ 3 มิติเต็มรูปแบบ (PBR Studio + Graph Axes + STL/PNG Export)</h3>
+              </div>
+              <span class="tag done">9 Active 3D Labs</span>
+            </div>
+
+            <div class="lab3d-grid">
+              <article class="lab3d-card">
+                <div class="lab3d-thumb">
+                  <div>
+                    <strong>01 Special Relativity 3D</strong>
+                    <span>Light Clock · Length Contraction · Minkowski</span>
+                  </div>
+                  <span class="tag" style="background:rgba(56,189,248,0.2);color:#bae6fd;">WebGL 3D</span>
+                </div>
+                <div class="lab3d-body">
+                  <span class="equation-pill">γ = 1/√(1−β²), Δt = γΔτ</span>
+                  <p>จำลองนาฬิกาแสงบนยานอวกาศ กรอบ S vs S′ แผนภาพมินคอฟสกี และสมการแกนกราฟ实时</p>
+                  <a class="btn btn-primary btn-small" href="./special_relativity_theory/index.html">เปิดห้องทดลอง 3D ↗</a>
+                </div>
+              </article>
+
+              <article class="lab3d-card">
+                <div class="lab3d-thumb">
+                  <div>
+                    <strong>02 Quantum Light 3D</strong>
+                    <span>Blackbody · Photoelectric · Compton · X-Ray</span>
+                  </div>
+                  <span class="tag" style="background:rgba(56,189,248,0.2);color:#bae6fd;">WebGL PBR</span>
+                </div>
+                <div class="lab3d-body">
+                  <span class="equation-pill">Kmax = hf − φ, Δλ = λc(1−cosθ)</span>
+                  <p>หลอดสุญญากาศโฟโตทิวบ์ เตาแผ่รังสีวัตถุดำ และเครื่องตรวจจับคอมพ์ตันพร้อมกราฟแสดงสมการ</p>
+                  <a class="btn btn-primary btn-small" href="./quantum_theory_of_light/index.html">เปิดห้องทดลอง 3D ↗</a>
+                </div>
+              </article>
+
+              <article class="lab3d-card">
+                <div class="lab3d-thumb">
+                  <div>
+                    <strong>03 Matter Waves 3D</strong>
+                    <span>de Broglie · Davisson–Germer · Heisenberg</span>
+                  </div>
+                  <span class="tag" style="background:rgba(56,189,248,0.2);color:#bae6fd;">WebGL PBR</span>
+                </div>
+                <div class="lab3d-body">
+                  <span class="equation-pill">λ = h/p, Δx·Δp ≥ ℏ/2</span>
+                  <p>สถานี Goniometer ดาวิสสัน-เจอร์เมอร์ กลุ่มคลื่นฟูริเยร์ และเครื่องวิเคราะห์หลักความไม่แน่นอน</p>
+                  <a class="btn btn-primary btn-small" href="./wave_properties_of_particles/index.html">เปิดห้องทดลอง 3D ↗</a>
+                </div>
+              </article>
+
+              <article class="lab3d-card">
+                <div class="lab3d-thumb">
+                  <div>
+                    <strong>04 Electron Diffraction 3D</strong>
+                    <span>Teltron Tube · Vernier · Bragg · Double-Slit</span>
+                  </div>
+                  <span class="tag" style="background:rgba(56,189,248,0.2);color:#bae6fd;">WebGL PBR</span>
+                </div>
+                <div class="lab3d-body">
+                  <span class="equation-pill">R ≈ Lλ/d, R₂/R₁ = √3 ≈ 1.732</span>
+                  <p>หลอดเลี้ยวเบนอิเล็กตรอน Teltron คาลิปเปอร์ดิจิทัล สายวัดไฮโวลต์ และชุดช่องแคบคู่ควอนตัม</p>
+                  <a class="btn btn-primary btn-small" href="./electron_diffraction_lab/index.html">เปิดห้องทดลอง 3D ↗</a>
+                </div>
+              </article>
+
+              <article class="lab3d-card">
+                <div class="lab3d-thumb">
+                  <div>
+                    <strong>05 Atomic Structure 3D</strong>
+                    <span>Rutherford · Rydberg · Bohr · Franck–Hertz</span>
+                  </div>
+                  <span class="tag" style="background:rgba(56,189,248,0.2);color:#bae6fd;">WebGL PBR</span>
+                </div>
+                <div class="lab3d-body">
+                  <span class="equation-pill">Eₙ = −13.6/n² eV, 1/λ = R_H(1/n₁²−1/n₂²)</span>
+                  <p>สถานีกระเจิงแผ่นทองคำ หลอดปล่อยก๊าซสเปกตรัมไฮโดรเจน วงโคจรโบร์ และหลอดฟรังก์–เฮิรตซ์</p>
+                  <a class="btn btn-primary btn-small" href="./atomic_structure_models/index.html">เปิดห้องทดลอง 3D ↗</a>
+                </div>
+              </article>
+
+              <article class="lab3d-card">
+                <div class="lab3d-thumb">
+                  <div>
+                    <strong>06 Quantum Mechanics I 3D</strong>
+                    <span>Wavefunction · Wells · Tunneling · QHO</span>
+                  </div>
+                  <span class="tag" style="background:rgba(56,189,248,0.2);color:#bae6fd;">WebGL PBR</span>
+                </div>
+                <div class="lab3d-body">
+                  <span class="equation-pill">iℏ∂ψ/∂t = Ĥψ , T ≈ e^(−2κa)</span>
+                  <p>จำลองส่วนจริง/จินตภาพของ ψ(x,t) ความหนาแน่น |ψ|² บ่อศักย์อนันต์ และการทะลุผ่านกำแพง</p>
+                  <a class="btn btn-primary btn-small" href="./introductory_quantum_mechanics_1/index.html">เปิดห้องทดลอง 3D ↗</a>
+                </div>
+              </article>
+
+              <article class="lab3d-card">
+                <div class="lab3d-thumb">
+                  <div>
+                    <strong>07 Molecular &amp; Solid-State 3D</strong>
+                    <span>Morse Bond · SC/BCC/FCC · Bands · Meissner</span>
+                  </div>
+                  <span class="tag" style="background:rgba(56,189,248,0.2);color:#bae6fd;">WebGL PBR</span>
+                </div>
+                <div class="lab3d-body">
+                  <span class="equation-pill">U(r) = Dₑ[1−e^(−aΔr)]², Bc(T) = Bc₀[1−(T/Tc)²]</span>
+                  <p>โมเลกุลคู่สั่น-หมุน โครงผลึก SC/BCC/FCC การนำไฟฟ้ากึ่งตัวนำ และตัวนำยวดยิ่งลอยตัว</p>
+                  <a class="btn btn-primary btn-small" href="./molecular_solid_state_physics/index.html">เปิดห้องทดลอง 3D ↗</a>
+                </div>
+              </article>
+
+              <article class="lab3d-card">
+                <div class="lab3d-thumb">
+                  <div>
+                    <strong>08 Nuclear &amp; Radioactivity 3D</strong>
+                    <span>Radius · SEMF B/A · α/β/γ · Half-Life</span>
+                  </div>
+                  <span class="tag" style="background:rgba(56,189,248,0.2);color:#bae6fd;">WebGL PBR</span>
+                </div>
+                <div class="lab3d-body">
+                  <span class="equation-pill">R ≈ r₀A^(1/3), N(t) = N₀ e^(−λt)</span>
+                  <p>จำลองโปรตอน/นิวตรอน 3 มิติ หัววัดรังสี GM กฎอนุรักษ์นิวเคลียร์ และเส้นโค้งครึ่งชีวิต</p>
+                  <a class="btn btn-primary btn-small" href="./nuclear_structure_radioactivity/index.html">เปิดห้องทดลอง 3D ↗</a>
+                </div>
+              </article>
+
+              <article class="lab3d-card">
+                <div class="lab3d-thumb">
+                  <div>
+                    <strong>09 Particle Physics 3D</strong>
+                    <span>4 Forces · Quarks · Leptons · Higgs</span>
+                  </div>
+                  <span class="tag" style="background:rgba(56,189,248,0.2);color:#bae6fd;">WebGL PBR</span>
+                </div>
+                <div class="lab3d-body">
+                  <span class="equation-pill">Proton = uud (+1e), 12 Fermions + 5 Bosons</span>
+                  <p>วงแหวนเครื่องตรวจวัดอนุภาค การแลกเปลี่ยนโบซอนสื่อแรง และตารางแบบจำลองมาตรฐาน 17 อนุภาค</p>
+                  <a class="btn btn-primary btn-small" href="./elementary_particle_physics/index.html">เปิดห้องทดลอง 3D ↗</a>
+                </div>
+              </article>
+            </div>
+          </div>
+
+          <!-- 4 Pillars Panel (from ct-academic-engine domain pack) -->
+          <div class="panel">
+            <div class="panel-top">
+              <div>
+                <div class="eyebrow">4 COMPUTATIONAL THINKING PILLARS</div>
+                <h3>โครงสร้างการคิดเชิงคำนวณสำหรับห้องปฏิบัติการฟิสิกส์ (IPO × ISO 5807 × Dry Run)</h3>
+              </div>
+              <span class="tag">Domain Pack: Physics</span>
+            </div>
+            <div class="pillar-grid">
+              <div class="pillar-card">
+                <span class="tag">1. Decomposition</span>
+                <h4>แยกย่อยระบบทดลอง</h4>
+                <p>แบ่งระบบวัดค่าเป็น 4 ส่วน: อ่านเซนเซอร์/พารามิเตอร์ → ตรวจสอบขอบเขตความปลอดภัย → ประมวลผลสมการฟิสิกส์ → แสดงผลและส่งออก</p>
+              </div>
+              <div class="pillar-card">
+                <span class="tag">2. Pattern Recognition</span>
+                <h4>สังเกตแบบรูปเชิงกายภาพ</h4>
+                <p>ระบุความสัมพันธ์เชิงเส้น $R$ กับ $1/\sqrt{V_a}$, $K_{\max}$ กับ $f$, และอัตราส่วนคงตัว $R_2/R_1 = d_{10}/d_{11} \approx 1.732$</p>
+              </div>
+              <div class="pillar-card">
+                <span class="tag">3. Abstraction</span>
+                <h4>สร้างแบบจำลองนามธรรม</h4>
+                <p>สกัดตัวแปรต้น ($\beta, \lambda, V_a$) ตัวแปรควบคุม ($h, c, \varphi, L$) และสมมติฐานจำกัดกรอบเฉื่อย/ความเร็วต่ำกว่า $c$</p>
+              </div>
+              <div class="pillar-card">
+                <span class="tag">4. Algorithm &amp; Safety</span>
+                <h4>ออกแบบขั้นตอนวิธีและ Fail-Safe</h4>
+                <p>วางผังงาน ISO 5807 ที่มี Decision Guard และ Reset/Fail-Safe OFF ก่อนจบทุกครั้งเพื่อป้องกัน Logic Error 4 ประเภท</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- PAGE 00: PRE-TEST (ISOMORPHIC DIAGNOSTIC) -->
+        <section class="page" data-page="pretest">
+          <div class="page-head">
+            <div>
+              <div class="eyebrow">PRE-TEST • PHYSICS EDUCATION RESEARCH (PER)</div>
+              <h2>00 แบบทดสอบก่อนเรียน (Isomorphic Pre-Test 10 ข้อ)</h2>
+              <p>ใช้วัดพื้นฐานความรู้ก่อนทดลองเพื่อคำนวณ Normalized Learning Gain (⟨g⟩) ร่วมกับแบบทดสอบหลังเรียน</p>
+            </div>
+            <span class="tag" id="pre-timer-pill">เวลา: 00:00</span>
+          </div>
+
+          <div class="panel">
+            <div class="panel-top">
+              <div>
+                <div class="eyebrow">DIAGNOSTIC BASELINE</div>
+                <h3>แบบทดสอบก่อนเรียน 10 ข้อ (คู่ขนานกับบทเรียน 01–09)</h3>
+              </div>
+              <span class="tag soft">10 Questions</span>
+            </div>
+            <form id="pre-form" class="ch-options" style="gap:14px;"></form>
+            <div class="btn-row" style="margin-top:14px;">
+              <button id="pre-submit-btn" type="button" class="btn btn-primary">📤 ส่งคำตอบ Pre-Test</button>
+              <button type="button" class="btn btn-teal" data-go="relativity">ถัดไป: เริ่มปฏิบัติการ 01 →</button>
+            </div>
+            <div id="pre-result" class="feedback"></div>
+          </div>
+        </section>
+
+        <!-- PAGE 1: SPECIAL RELATIVITY (IPO + FOUR-TIER) -->
+        <section class="page" data-page="relativity">
+          <div class="page-head">
+            <div>
+              <div class="eyebrow">MODULE 01 • SPECIAL RELATIVITY</div>
+              <h2>01 ทฤษฎีสัมพัทธภาพพิเศษ: IPO Model &amp; Four-Tier Test Data</h2>
+              <p>ทดสอบโมเดล Input → Boundary Check → Lorentz Transform → Output และจำแนกชุดข้อมูลทดสอบ 4 ระดับ</p>
+            </div>
+            <a class="btn btn-teal btn-small" href="./special_relativity_theory/index.html">🚀 เปิดห้องทดลอง 3D สัมพัทธภาพพิเศษ ↗</a>
+          </div>
+
+          <div class="panel">
+            <div class="panel-top">
+              <div>
+                <div class="eyebrow">INTERACTIVE SANDBOX</div>
+                <h3>1.1 ทดลองจำลองโมเดล IPO (Light Clock &amp; Lorentz Factor)</h3>
+              </div>
+              <div class="btn-row">
+                <button class="btn btn-outline btn-small ipo-preset" data-beta="0.60" data-dtau="3.0" data-l0="10.0">Normal (0.60c)</button>
+                <button class="btn btn-outline btn-small ipo-preset" data-beta="0.99" data-dtau="2.0" data-l0="10.0">Boundary (0.99c)</button>
+                <button class="btn btn-outline btn-small ipo-preset" data-beta="1.15" data-dtau="2.0" data-l0="10.0">Erroneous (1.15c)</button>
+              </div>
+            </div>
+
+            <div class="field-grid">
+              <div class="field">
+                <label for="ipo-beta">ความเร็วสัมพัทธ์ β = v/c</label>
+                <input id="ipo-beta" type="number" step="0.01" value="0.80" />
+              </div>
+              <div class="field">
+                <label for="ipo-dtau">เวลาแท้บนยาน Δτ (s)</label>
+                <input id="ipo-dtau" type="number" step="0.1" value="3.0" />
+              </div>
+              <div class="field">
+                <label for="ipo-l0">ความยาวแท้ L₀ (m)</label>
+                <input id="ipo-l0" type="number" step="0.5" value="10.0" />
+              </div>
+              <div class="field" style="display:flex;align-items:flex-end;">
+                <button id="ipo-run-btn" class="btn btn-primary btn-block">▶ รัน IPO Pipeline</button>
+              </div>
+            </div>
+
+            <div class="ipo-grid">
+              <div class="ipo-box" id="ipo-box-in">
+                <div class="ipo-box-title">1. INPUT</div>
+                <div class="ipo-box-body" id="ipo-res-in">β = 0.80, Δτ = 3.0s, L₀ = 10.0m</div>
+              </div>
+              <div class="ipo-box" id="ipo-box-chk">
+                <div class="ipo-box-title">2. GUARD CHECK</div>
+                <div class="ipo-box-body" id="ipo-res-chk">ตรวจสอบ |β| &lt; 1.0 ...</div>
+              </div>
+              <div class="ipo-box" id="ipo-box-proc">
+                <div class="ipo-box-title">3. LORENTZ PROCESS</div>
+                <div class="ipo-box-body" id="ipo-res-proc">γ = 1/√(1−β²)</div>
+              </div>
+              <div class="ipo-box" id="ipo-box-out">
+                <div class="ipo-box-title">4. OUTPUT</div>
+                <div class="ipo-box-body" id="ipo-res-out">Δt = 5.00s, L = 6.00m</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-top">
+              <div>
+                <div class="eyebrow">FOUR-TIER TEST DATA STRATEGY</div>
+                <h3>1.2 กิจกรรมจำแนกชุดข้อมูลทดสอบ 4 ระดับ (Normal / Boundary / Invalid / Erroneous)</h3>
+              </div>
+              <button id="ft-check-btn" class="btn btn-primary btn-small">✓ ตรวจคำตอบ Four-Tier</button>
+            </div>
+            <div class="trace-wrap">
+              <table class="trace-table">
+                <thead>
+                  <tr>
+                    <th>ชุดข้อมูลทดลอง</th>
+                    <th>ค่าที่ป้อนเข้า (β = v/c)</th>
+                    <th>พฤติกรรมที่คาดหวังจากระบบ</th>
+                    <th>ประเภท Test Data</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Case 1</td>
+                    <td><code>β = 0.60</code></td>
+                    <td>คำนวณ γ = 1.250 และยืดเวลา Δt = 1.25Δτ</td>
+                    <td>
+                      <select class="trace-select ft-select" data-ans="Normal">
+                        <option value="">-- เลือก --</option>
+                        <option value="Normal">Normal (ค่าปกติ)</option>
+                        <option value="Boundary">Boundary (ค่าขอบเขต)</option>
+                        <option value="Invalid">Invalid (ค่าผิดรูปแบบ/ว่าง)</option>
+                        <option value="Erroneous">Erroneous (ค่าเกินขีดจำกัดฟิสิกส์)</option>
+                      </select>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Case 2</td>
+                    <td><code>β = 0.99</code></td>
+                    <td>ค่าติดเพดานใช้งานสูงสุดก่อนแตะความเร็วแสง c</td>
+                    <td>
+                      <select class="trace-select ft-select" data-ans="Boundary">
+                        <option value="">-- เลือก --</option>
+                        <option value="Normal">Normal (ค่าปกติ)</option>
+                        <option value="Boundary">Boundary (ค่าขอบเขต)</option>
+                        <option value="Invalid">Invalid (ค่าผิดรูปแบบ/ว่าง)</option>
+                        <option value="Erroneous">Erroneous (ค่าเกินขีดจำกัดฟิสิกส์)</option>
+                      </select>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Case 3</td>
+                    <td><code>β = "fast"</code> (String / NaN)</td>
+                    <td>ดัก Error ชนิดข้อมูลไม่เป็นตัวเลข ป้องกัน NaN</td>
+                    <td>
+                      <select class="trace-select ft-select" data-ans="Invalid">
+                        <option value="">-- เลือก --</option>
+                        <option value="Normal">Normal (ค่าปกติ)</option>
+                        <option value="Boundary">Boundary (ค่าขอบเขต)</option>
+                        <option value="Invalid">Invalid (ค่าผิดรูปแบบ/ว่าง)</option>
+                        <option value="Erroneous">Erroneous (ค่าเกินขีดจำกัดฟิสิกส์)</option>
+                      </select>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Case 4</td>
+                    <td><code>β = 1.25</code> (มากกว่าแสง c)</td>
+                    <td>ปฏิเสธคำนวณ γ เพราะ 1−β² &lt; 0 จะเกิดรากติดลบ</td>
+                    <td>
+                      <select class="trace-select ft-select" data-ans="Erroneous">
+                        <option value="">-- เลือก --</option>
+                        <option value="Normal">Normal (ค่าปกติ)</option>
+                        <option value="Boundary">Boundary (ค่าขอบเขต)</option>
+                        <option value="Invalid">Invalid (ค่าผิดรูปแบบ/ว่าง)</option>
+                        <option value="Erroneous">Erroneous (ค่าเกินขีดจำกัดฟิสิกส์)</option>
+                      </select>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div id="ft-feedback" class="feedback"></div>
+          </div>
+
+          <div class="semi-target" data-semi-module="relativity"></div>
+        </section>
+
+        <!-- PAGE 2: QUANTUM LIGHT (PSEUDOCODE RUNNER) -->
+        <section class="page" data-page="quantum_light">
+          <div class="page-head">
+            <div>
+              <div class="eyebrow">MODULE 02 • QUANTUM THEORY OF LIGHT</div>
+              <h2>02 ทฤษฎีควอนตัมของแสง: Pseudocode Step Runner</h2>
+              <p>ฝึกอ่านและดีบักรหัสเทียม (Pseudocode) ทีละบรรทัดพร้อมตารางเฝ้าสังเกตตัวแปร (Watch Table)</p>
+            </div>
+            <a class="btn btn-teal btn-small" href="./quantum_theory_of_light/index.html">💡 เปิดห้องทดลอง 3D ควอนตัมของแสง ↗</a>
+          </div>
+
+          <div class="panel">
+            <div class="panel-top">
+              <div>
+                <div class="eyebrow">STEP-BY-STEP EXECUTION</div>
+                <h3>2.1 Photoelectric &amp; Threshold Frequency Debugger</h3>
+              </div>
+              <div class="btn-row">
+                <button id="ps-step-btn" class="btn btn-primary btn-small">⏭ Step ทีละบรรทัด</button>
+                <button id="ps-run-btn" class="btn btn-teal btn-small">▶ รันอัตโนมัติ</button>
+                <button id="ps-reset-btn" class="btn btn-quiet btn-small">↻ รีเซ็ต PC</button>
+              </div>
+            </div>
+
+            <div class="field-grid">
+              <div class="field">
+                <label for="ps-metal">โลหะแคโทด (Work Function φ)</label>
+                <select id="ps-metal">
+                  <option value="2.14">Cesium (Cs) — φ = 2.14 eV</option>
+                  <option value="2.28">Sodium (Na) — φ = 2.28 eV</option>
+                  <option value="4.28">Aluminum (Al) — φ = 4.28 eV</option>
+                  <option value="4.70">Copper (Cu) — φ = 4.70 eV</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="ps-lambda">ความยาวคลื่นแสง λ (nm)</label>
+                <input id="ps-lambda" type="number" min="100" max="900" step="10" value="400" />
+              </div>
+              <div class="field">
+                <label for="ps-intensity">ความเข้มสัมพัทธ์ (%)</label>
+                <input id="ps-intensity" type="number" min="10" max="100" step="10" value="80" />
+              </div>
+            </div>
+
+            <div class="pseudo-grid">
+              <div class="code-box" id="ps-code-box">
+                <div class="code-line" data-line="1"><span class="code-ln">01</span><span>START Photoelectric_Solver</span></div>
+                <div class="code-line" data-line="2"><span class="code-ln">02</span><span>INITIALISE hc ← 1239.84 eV·nm, φ ← SelectedMetal</span></div>
+                <div class="code-line" data-line="3"><span class="code-ln">03</span><span>INPUT λ (nm), Intensity (%)</span></div>
+                <div class="code-line" data-line="4"><span class="code-ln">04</span><span>COMPUTE E_photon ← hc / λ</span></div>
+                <div class="code-line" data-line="5"><span class="code-ln">05</span><span>IF E_photon &gt;= φ THEN</span></div>
+                <div class="code-line" data-line="6"><span class="code-ln">06</span><span>&nbsp;&nbsp;COMPUTE K_max ← E_photon - φ ; V_stop ← K_max</span></div>
+                <div class="code-line" data-line="7"><span class="code-ln">07</span><span>ELSE</span></div>
+                <div class="code-line" data-line="8"><span class="code-ln">08</span><span>&nbsp;&nbsp;SET K_max ← 0 ; OUTPUT "NO EMISSION (ต่ำกว่าขีดเริ่ม)"</span></div>
+                <div class="code-line" data-line="9"><span class="code-ln">09</span><span>END IF &amp; OUTPUT Spectrum</span></div>
+              </div>
+
+              <div class="watch-card">
+                <strong style="font-size:13px;display:block;margin-bottom:8px;">👁️ Variable Watch Table</strong>
+                <div class="watch-row"><span>Program Counter (PC)</span><span class="watch-val" id="w-pc">Line 01</span></div>
+                <div class="watch-row"><span>φ (Work Function)</span><span class="watch-val" id="w-phi">--</span></div>
+                <div class="watch-row"><span>λ (Wavelength)</span><span class="watch-val" id="w-lam">--</span></div>
+                <div class="watch-row"><span>E_photon = hc/λ</span><span class="watch-val" id="w-ephot">--</span></div>
+                <div class="watch-row"><span>Condition E ≥ φ</span><span class="watch-val" id="w-cond">--</span></div>
+                <div class="watch-row"><span>K_max (eV) / V_stop</span><span class="watch-val" id="w-kmax">--</span></div>
+                <div class="watch-row"><span>Threshold λ₀ = hc/φ</span><span class="watch-val" id="w-lam0">--</span></div>
+              </div>
+            </div>
+            <div id="ps-feedback" class="feedback"></div>
+          </div>
+
+          <div class="semi-target" data-semi-module="quantum_light"></div>
+        </section>
+
+        <!-- PAGE 3: MATTER WAVES (ISO 5807 DYNAMIC FLOWCHART + MULTI-BRANCH) -->
+        <section class="page" data-page="matter_waves">
+          <div class="page-head">
+            <div>
+              <div class="eyebrow">MODULE 03 • MATTER WAVES &amp; ISO 5807</div>
+              <h2>03 สมบัติคลื่นของอนุภาค: ISO 5807 SVG Builder &amp; Branch Simulator</h2>
+              <p>เรียนรู้สัญลักษณ์ผังงาน ISO 5807 ลากจัดลำดับโหนดบน SVG และจำลองเส้นทางเงื่อนไขคลื่นเดอบรอยล์ + ไฮเซนเบิร์ก</p>
+            </div>
+            <a class="btn btn-teal btn-small" href="./wave_properties_of_particles/index.html">〰️ เปิดห้องทดลอง 3D คลื่นอนุภาค ↗</a>
+          </div>
+
+          <div class="panel">
+            <div class="panel-top">
+              <div>
+                <div class="eyebrow">ISO 5807 STANDARD SYMBOLS</div>
+                <h3>3.1 สัญลักษณ์ผังงานมาตรฐาน ISO 5807 ที่ใช้ในฟิสิกส์ทดลอง</h3>
+              </div>
+            </div>
+            <div class="symbol-strip">
+              <div class="symbol-chip"><strong>⬭ Terminator (วงรี)</strong><span>START / END / FAIL-SAFE OFF</span></div>
+              <div class="symbol-chip"><strong>⬡ Preparation (หกเหลี่ยม)</strong><span>INITIALISE ค่าคงที่ h, c, m</span></div>
+              <div class="symbol-chip"><strong>▱ Input/Output (ด้านขนาน)</strong><span>INPUT K, Δx / OUTPUT กราฟ</span></div>
+              <div class="symbol-chip"><strong>◇ Decision (ข้าวหลามตัด)</strong><span>ตรวจเงื่อนไข K &gt; 0 &amp; Δx &gt; 0 ?</span></div>
+              <div class="symbol-chip"><strong>▭ Process (สี่เหลี่ยม)</strong><span>คำนวณ λ = h/p, Δp ≥ ℏ/(2Δx)</span></div>
+              <div class="symbol-chip"><strong>◖ Delay / Subprogram</strong><span>หน่วงเวลาวัด / เรียก Routine กราฟ</span></div>
+            </div>
+
+            <div class="lab4-split">
+              <div>
+                <div class="svg-toolbar">
+                  <strong style="font-size:12px;">Interactive SVG Flowchart (ลากสลับโหนดได้)</strong>
+                  <label class="fc3-chk-label">
+                    <input type="checkbox" id="fc3-shuffle-btn" /> สลับลำดับโหนดเพื่อฝึกเรียงใหม่
+                  </label>
+                </div>
+                <div class="svg-stage" id="fc3-svg-preview"></div>
+                <div class="fc3-drag-hint">💡 ลากกล่องสัญลักษณ์ใน SVG ขึ้น/ลงเพื่อสลับตำแหน่ง หรือกดตรวจสอบผังงานด้านขวา</div>
+              </div>
+
+              <div>
+                <div class="watch-card" style="margin-bottom:14px;">
+                  <strong style="font-size:14px;display:block;margin-bottom:10px;">🔀 Multi-Branch Matter Wave Simulator</strong>
+                  <div class="field-grid">
+                    <div class="field">
+                      <label for="mw-particle">ชนิดอนุภาค</label>
+                      <select id="mw-particle">
+                        <option value="electron">อิเล็กตรอน (e⁻, m = 9.11×10⁻³¹ kg)</option>
+                        <option value="proton">โปรตอน (p⁺, m = 1.67×10⁻²⁷ kg)</option>
+                        <option value="neutron">นิวตรอน (n⁰, m = 1.675×10⁻²⁷ kg)</option>
+                      </select>
+                    </div>
+                    <div class="field">
+                      <label for="mw-energy">พลังงานจลน์ K (eV)</label>
+                      <input id="mw-energy" type="number" step="5" value="54" />
+                    </div>
+                    <div class="field">
+                      <label for="mw-dx">ความไม่แน่นอนตำแหน่ง Δx (nm)</label>
+                      <input id="mw-dx" type="number" step="0.05" value="0.20" />
+                    </div>
+                  </div>
+                  <div class="btn-row">
+                    <button id="mw-sim-btn" class="btn btn-primary btn-small">▶ จำลองเส้นทาง (Branch Trace)</button>
+                    <button id="mw-verify-svg-btn" class="btn btn-teal btn-small">✓ ตรวจลำดับผังงาน SVG</button>
+                  </div>
+                </div>
+                <div id="mw-branch-result" class="watch-card">
+                  <div class="watch-row"><span>Decision Branch</span><span class="watch-val" id="mw-br-cond">--</span></div>
+                  <div class="watch-row"><span>de Broglie λ</span><span class="watch-val" id="mw-br-lam">--</span></div>
+                  <div class="watch-row"><span>Min Δp ≥ ℏ/(2Δx)</span><span class="watch-val" id="mw-br-dp">--</span></div>
+                  <div class="watch-row"><span>Action Taken</span><span class="watch-val" id="mw-br-act">--</span></div>
+                </div>
+                <div id="fc3-feedback" class="feedback"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="semi-target" data-semi-module="matter_waves"></div>
+        </section>
+
+        <!-- PAGE 4: ELECTRON DIFFRACTION & TRACE TABLE -->
+        <section class="page" data-page="electron_diffraction">
+          <div class="page-head">
+            <div>
+              <div class="eyebrow">MODULE 04 • ELECTRON DIFFRACTION &amp; DRY RUN</div>
+              <h2>04 ปฏิบัติการเลี้ยวเบนอิเล็กตรอน &amp; Trace Table Verification</h2>
+              <p>ไล่ค่าตัวแปร (Dry Run) จากผังงาน ISO 5807 ทั้ง 4 ชุดทดลองจริง และระบุ Logic Error 4 ประเภท</p>
+            </div>
+            <a class="btn btn-teal btn-small" href="./electron_diffraction_lab/index.html">🔬 เปิดห้องทดลอง 3D เลี้ยวเบนอิเล็กตรอน ↗</a>
+          </div>
+
+          <div class="panel">
+            <div class="sub-tabs" id="trace-exp-tabs">
+              <button class="sub-tab active" data-exp="teltron_band">4.1 Teltron EHT Safety Band</button>
+              <button class="sub-tab" data-exp="debroglie_sweep">4.2 de Broglie λ &amp; Ring R</button>
+              <button class="sub-tab" data-exp="bragg_crystal">4.3 Graphite Bragg R₂/R₁</button>
+              <button class="sub-tab" data-exp="double_slit">4.4 Double-Slit Which-Way</button>
+            </div>
+
+            <div class="lab4-split">
+              <div class="svg-stage" id="trace-svg-box"></div>
+
+              <div>
+                <div class="panel-top" style="margin-bottom:10px;">
+                  <div>
+                    <div class="eyebrow" id="trace-exp-tag">EXPERIMENT 01</div>
+                    <h3 id="trace-exp-title">Teltron EHT Safety Band Control</h3>
+                  </div>
+                  <span class="tag soft" id="trace-score-pill">ยังไม่ตรวจ</span>
+                </div>
+                <p id="trace-exp-desc" style="font-size:13px;color:var(--muted);margin-top:0;"></p>
+
+                <div class="trace-wrap">
+                  <table class="trace-table">
+                    <thead id="trace-thead"></thead>
+                    <tbody id="trace-tbody"></tbody>
+                  </table>
+                </div>
+
+                <div class="btn-row" style="margin-top:12px;">
+                  <button id="trace-dryrun-btn" class="btn btn-outline btn-small">▶ Dry Run ทีละขั้น</button>
+                  <button id="trace-check-btn" class="btn btn-primary btn-small">✓ ตรวจคำตอบ Trace Table</button>
+                  <button id="trace-reset-btn" class="btn btn-quiet btn-small">↻ ล้างค่า</button>
+                </div>
+                <div id="trace-feedback" class="feedback"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4 Logic Error Taxonomy Panel -->
+          <div class="panel">
+            <div class="panel-top">
+              <div>
+                <div class="eyebrow">LOGIC ERROR TAXONOMY (CT STANDARD)</div>
+                <h3>ข้อผิดพลาดเชิงตรรกะ 4 ประเภทที่พบบ่อยในการทดลองฟิสิกส์สมัยใหม่</h3>
+              </div>
+            </div>
+            <div class="pillar-grid">
+              <div class="pillar-card">
+                <span class="tag done">PASS</span>
+                <h4>1. Condition Inversion (&lt; vs &gt;)</h4>
+                <p>สลับเครื่องหมายในเงื่อนไขตรวจช่วง $2.0 \le V_a \le 5.0$ kV หรือ $E_{\text{photon}} \ge \varphi$ จนยิงลำอิเล็กตรอนผิดย่าน</p>
+              </div>
+              <div class="pillar-card">
+                <span class="tag done">PASS</span>
+                <h4>2. Missing Initialisation</h4>
+                <p>ลืมตั้งค่าเริ่มต้น $h, e, m_e, L=0.135$ m หรือ $d_{10}, d_{11}$ ก่อนเข้าสู่ลูปคำนวณ ทำให้ค่าเริ่มต้นเป็นขยะ/NaN</p>
+              </div>
+              <div class="pillar-card">
+                <span class="tag done">PASS</span>
+                <h4>3. Missing State Update</h4>
+                <p>ลืมอัปเดตตัวนับรอบ <code>Cycle ← Cycle + 1</code> หรือเพิ่มค่า $V_a$ จนเกิด Infinite Loop ค้างที่แรงดันเดิม</p>
+              </div>
+              <div class="pillar-card">
+                <span class="tag done">PASS</span>
+                <h4>4. Missing Fail-Safe Reset</h4>
+                <p>ลืมปิดแหล่งจ่าย EHT High Voltage (`EHT ← OFF`) เมื่อครบ $MaxCycles = 4$ ทำให้หลอดแกรไฟต์ไหม้เสียหาย</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="semi-target" data-semi-module="electron_diffraction"></div>
+        </section>
+
+        <!-- PAGE 5: ATOMIC MODELS -->
+        <section class="page" data-page="atomic_models">
+          <div class="page-head">
+            <div>
+              <div class="eyebrow">MODULE 05 • ATOMIC STRUCTURE &amp; SPECTRA</div>
+              <h2>05 แบบจำลองอะตอมและสเปกตรัม: Rutherford × Bohr × Rydberg</h2>
+              <p>คำนวณมุมกระเจิงอนุภาคแอลฟาและสเปกตรัมการเปลี่ยนระดับพลังงานไฮโดรเจน พร้อมจัดเรียงผังงาน ISO 5807</p>
+            </div>
+            <a class="btn btn-teal btn-small" href="./atomic_structure_models/index.html">⚛️ เปิดห้องทดลอง 3D แบบจำลองอะตอม ↗</a>
+          </div>
+          <div class="panel">
+            <div class="panel-top">
+              <div><div class="eyebrow">ATOMIC IPO &amp; SPECTRAL TRANSITION SOLVER</div><h3>5.1 คำนวณมุมกระเจิงรัทเทอร์ฟอร์ด &amp; ความยาวคลื่นสเปกตรัมไฮโดรเจน</h3></div>
+              <button id="am-calc-btn" class="btn btn-primary btn-small">▶ คำนวณและบันทึกกิจกรรม</button>
+            </div>
+            <div class="field-grid">
+              <div class="field"><label for="am-energy">พลังงานแอลฟา E (MeV)</label><input id="am-energy" type="number" step="0.5" value="5.0" /></div>
+              <div class="field"><label for="am-impact">ระยะเฉียด b (fm)</label><input id="am-impact" type="number" step="0.5" value="7.0" /></div>
+              <div class="field"><label for="am-ni">ระดับเริ่มต้น nᵢ (2–7)</label><input id="am-ni" type="number" min="2" max="7" value="3" /></div>
+              <div class="field"><label for="am-nf">ระดับปลายทาง n_f (1–6)</label><input id="am-nf" type="number" min="1" max="6" value="2" /></div>
+            </div>
+            <div id="am-out" class="watch-card"></div>
+          </div>
+          <div class="semi-target" data-semi-module="atomic_models"></div>
+        </section>
+
+        <!-- PAGE 6: QUANTUM MECHANICS I -->
+        <section class="page" data-page="quantum_mechanics">
+          <div class="page-head">
+            <div>
+              <div class="eyebrow">MODULE 06 • INTRODUCTORY QUANTUM MECHANICS I</div>
+              <h2>06 กลศาสตร์ควอนตัมเบื้องต้น (1): Infinite Well &amp; Tunneling Guard</h2>
+              <p>จำลองพลังงานบ่อศักย์อนันต์ 1 มิติและสัมประสิทธิ์การทะลุผ่านกำแพงศักย์จำกัด (E &lt; V₀)</p>
+            </div>
+            <a class="btn btn-teal btn-small" href="./introductory_quantum_mechanics_1/index.html">🌊 เปิดห้องทดลอง 3D กลศาสตร์ควอนตัม ↗</a>
+          </div>
+          <div class="panel">
+            <div class="panel-top">
+              <div><div class="eyebrow">1D SCHRÖDINGER DECISION SOLVER</div><h3>6.1 ตรวจสอบการทะลุผ่านกำแพงควอนตัม (ℏ = m = 1)</h3></div>
+              <button id="qm-calc-btn" class="btn btn-primary btn-small">▶ คำนวณ T, R และ Eₙ</button>
+            </div>
+            <div class="field-grid">
+              <div class="field"><label for="qm-n">เลขควอนตัมบ่ออนันต์ n</label><input id="qm-n" type="number" min="1" max="7" value="2" /></div>
+              <div class="field"><label for="qm-L">ความกว้างบ่อ L</label><input id="qm-L" type="number" step="0.5" value="4.0" /></div>
+              <div class="field"><label for="qm-E">พลังงานอนุภาค E</label><input id="qm-E" type="number" step="0.2" value="2.6" /></div>
+              <div class="field"><label for="qm-V">ความสูงกำแพง V₀ &amp; หนา a=1.2</label><input id="qm-V" type="number" step="0.5" value="4.0" /></div>
+            </div>
+            <div id="qm-out" class="watch-card"></div>
+          </div>
+          <div class="semi-target" data-semi-module="quantum_mechanics"></div>
+        </section>
+
+        <!-- PAGE 7: MOLECULAR & SOLID-STATE -->
+        <section class="page" data-page="solid_state">
+          <div class="page-head">
+            <div>
+              <div class="eyebrow">MODULE 07 • MOLECULAR &amp; SOLID-STATE PHYSICS</div>
+              <h2>07 ฟิสิกส์โมเลกุลและสถานะของแข็ง: Bands &amp; Meissner Check</h2>
+              <p>วิเคราะห์เงื่อนไขคู่ของตัวนำยวดยิ่ง (T &lt; Tc และ B &lt; Bc(T)) และอิทธิพลของ Band Gap Eg</p>
+            </div>
+            <a class="btn btn-teal btn-small" href="./molecular_solid_state_physics/index.html">💎 เปิดห้องทดลอง 3D โมเลกุลและของแข็ง ↗</a>
+          </div>
+          <div class="panel">
+            <div class="panel-top">
+              <div><div class="eyebrow">MEISSNER CONDITION &amp; SEMICONDUCTOR CHECKER</div><h3>7.1 ตรวจสอบสถานะตัวนำยวดยิ่งและ Band Gap</h3></div>
+              <button id="ss-calc-btn" class="btn btn-primary btn-small">▶ ตรวจสอบสถานะสสาร</button>
+            </div>
+            <div class="field-grid">
+              <div class="field"><label for="ss-T">อุณหภูมิ T (K)</label><input id="ss-T" type="number" step="5" value="40" /></div>
+              <div class="field"><label for="ss-Tc">อุณหภูมิวิกฤต Tc (K)</label><input id="ss-Tc" type="number" step="5" value="90" /></div>
+              <div class="field"><label for="ss-B">สนามแม่เหล็กที่ใช้ B (T)</label><input id="ss-B" type="number" step="0.05" value="0.20" /></div>
+              <div class="field"><label for="ss-Bc0">สนามวิกฤต Bc(0) (T)</label><input id="ss-Bc0" type="number" step="0.05" value="0.70" /></div>
+            </div>
+            <div id="ss-out" class="watch-card"></div>
+          </div>
+          <div class="semi-target" data-semi-module="solid_state"></div>
+        </section>
+
+        <!-- PAGE 8: NUCLEAR & RADIOACTIVITY -->
+        <section class="page" data-page="nuclear_physics">
+          <div class="page-head">
+            <div>
+              <div class="eyebrow">MODULE 08 • NUCLEAR STRUCTURE &amp; RADIOACTIVITY</div>
+              <h2>08 โครงสร้างนิวเคลียสและกัมมันตภาพรังสี: Conservation &amp; Half-Life Dry Run</h2>
+              <p>คำนวณรัศมีนิวเคลียส $R = r_0 A^{1/3}$, พลังงานยึดเหนี่ยว SEMF ($B/A$), และจำนวนนิวเคลียสคงเหลือ $N(t)$</p>
+            </div>
+            <a class="btn btn-teal btn-small" href="./nuclear_structure_radioactivity/index.html">☢️ เปิดห้องทดลอง 3D นิวเคลียร์ ↗</a>
+          </div>
+          <div class="panel">
+            <div class="panel-top">
+              <div><div class="eyebrow">SEMF &amp; DECAY LAW SIMULATOR</div><h3>8.1 คำนวณรัศมี B/A และกฎการสลายตัวของนิวไคลด์</h3></div>
+              <button id="np-calc-btn" class="btn btn-primary btn-small">▶ คำนวณสมบัติและครึ่งชีวิต</button>
+            </div>
+            <div class="field-grid">
+              <div class="field"><label for="np-Z">เลขอะตอม Z (โปรตอน)</label><input id="np-Z" type="number" min="1" max="92" value="26" /></div>
+              <div class="field"><label for="np-A">เลขมวล A (นิวคลีออน)</label><input id="np-A" type="number" min="2" max="240" value="56" /></div>
+              <div class="field"><label for="np-N0">นิวเคลียสเริ่มต้น N₀</label><input id="np-N0" type="number" step="500" value="8000" /></div>
+              <div class="field"><label for="np-half-n">จำนวนครึ่งชีวิต (t / T½)</label><input id="np-half-n" type="number" step="0.5" value="3" /></div>
+            </div>
+            <div id="np-out" class="watch-card"></div>
+          </div>
+          <div class="semi-target" data-semi-module="nuclear_physics"></div>
+        </section>
+
+        <!-- PAGE 9: ELEMENTARY PARTICLE PHYSICS -->
+        <section class="page" data-page="particle_physics">
+          <div class="page-head">
+            <div>
+              <div class="eyebrow">MODULE 09 • ELEMENTARY PARTICLES &amp; STANDARD MODEL</div>
+              <h2>09 ฟิสิกส์อนุภาคมูลฐาน: Quark Charge Validator &amp; Force Mediators</h2>
+              <p>ทวนสอบผลรวมประจุไฟฟ้าจากโครงสร้างควาร์กและจำแนกตัวกลางสื่อแรงพื้นฐานทั้ง 4 ชนิด</p>
+            </div>
+            <a class="btn btn-teal btn-small" href="./elementary_particle_physics/index.html">✨ เปิดห้องทดลอง 3D อนุภาคมูลฐาน ↗</a>
+          </div>
+          <div class="panel">
+            <div class="panel-top">
+              <div><div class="eyebrow">STANDARD MODEL HADRON BUILDER</div><h3>9.1 ตรวจสอบประจุรวม (Q) และตัวกลางสื่อแรง</h3></div>
+              <button id="pp-calc-btn" class="btn btn-primary btn-small">▶ ตรวจสอบโครงสร้างอนุภาค</button>
+            </div>
+            <div class="field-grid">
+              <div class="field">
+                <label for="pp-hadron">เลือกชุดควาร์ก (Hadron)</label>
+                <select id="pp-hadron">
+                  <option value="uud">Proton (uud)</option>
+                  <option value="udd">Neutron (udd)</option>
+                  <option value="uuu">Delta++ (uuu)</option>
+                  <option value="udbar">Pion+ (u + anti-d)</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="pp-force">เลือกแรงพื้นฐาน</label>
+                <select id="pp-force">
+                  <option value="strong">Strong Interaction (Gluon g)</option>
+                  <option value="em">Electromagnetic (Photon γ)</option>
+                  <option value="weak">Weak Interaction (W±, Z⁰)</option>
+                  <option value="gravity">Gravity (Outside Standard Model)</option>
+                </select>
+              </div>
+            </div>
+            <div id="pp-out" class="watch-card"></div>
+          </div>
+          <div class="semi-target" data-semi-module="particle_physics"></div>
+        </section>
+
+        <!-- PAGE 11: TRACK B COMPUTATIONAL & EXPERIMENTAL RESEARCH WORKBENCH -->
+        <section class="page" data-page="research_lab">
+          <div class="page-head">
+            <div>
+              <div class="eyebrow">TRACK B • COMPUTATIONAL &amp; EXPERIMENTAL PHYSICS RESEARCH</div>
+              <h2>11 ห้องปฏิบัติการวิจัยฟิสิกส์เชิงคำนวณ (Solvers, Monte Carlo &amp; Curve Fitting)</h2>
+              <p>เครื่องมือวิจัยพื้นฐาน: แก้สมการ TDSE ด้วย Split-Step Fourier Method, จำลองสถิติ Monte Carlo, และ Curve Fitting ข้อมูลทดลองจริง</p>
+            </div>
+            <span class="tag done">CODATA-2022 · FAIR v1</span>
+          </div>
+
+          <div class="sub-tabs" id="rb-tabs">
+            <button class="sub-tab active" data-rbtab="tdse">B1: Numerical TDSE (SSFM)</button>
+            <button class="sub-tab" data-rbtab="mc">B2: Monte Carlo &amp; Poisson Noise</button>
+            <button class="sub-tab" data-rbtab="fit">B3: Experimental CSV &amp; LM Fit</button>
+          </div>
+
+          <!-- B1: TDSE Split-Step Fourier -->
+          <div class="panel" id="rb-panel-tdse">
+            <div class="panel-top">
+              <div><div class="eyebrow">SPLIT-STEP FOURIER METHOD (N = 256)</div><h3>B1. แก้สมการชเรอดิงเงอร์ขึ้นกับเวลา iℏ∂ψ/∂t = Ĥψ บนศักย์ V(x) ใดๆ</h3></div>
+              <button id="rb-tdse-run" class="btn btn-primary btn-small">▶ รัน TDSE Solver</button>
+            </div>
+            <div class="field-grid">
+              <div class="field">
+                <label for="rb-tdse-pot">รูปแบบศักย์ V(x)</label>
+                <select id="rb-tdse-pot">
+                  <option value="single_barrier">Single Rectangular Barrier</option>
+                  <option value="double_barrier">Double Barrier (Resonant Tunneling)</option>
+                  <option value="harmonic">Harmonic Trap ½kx²</option>
+                  <option value="step">Potential Step</option>
+                </select>
+              </div>
+              <div class="field"><label for="rb-tdse-v0">ความสูงศักย์ V₀</label><input id="rb-tdse-v0" type="number" step="0.5" value="4.5" /></div>
+              <div class="field"><label for="rb-tdse-k0">โมเมนตัมเริ่มต้น k₀</label><input id="rb-tdse-k0" type="number" step="0.2" value="2.8" /></div>
+              <div class="field"><label for="rb-tdse-steps">จำนวนขั้นเวลา (dt=0.025)</label><input id="rb-tdse-steps" type="number" min="10" max="300" step="10" value="100" /></div>
+            </div>
+            <canvas id="rb-tdse-canvas" style="width:100%;height:260px;border-radius:12px;background:#081422;display:block;"></canvas>
+            <div id="rb-tdse-readouts" class="watch-card" style="margin-top:12px;"></div>
+          </div>
+
+          <!-- B2: Monte Carlo Stochastic Decay -->
+          <div class="panel" id="rb-panel-mc" style="display:none;">
+            <div class="panel-top">
+              <div><div class="eyebrow">SEEDED MONTE CARLO (MULBERRY32 + POISSON)</div><h3>B2. การจำลองการสลายตัวเชิงสุ่มและความคลาดเคลื่อน ±√N</h3></div>
+              <button id="rb-mc-run" class="btn btn-primary btn-small">▶ จำลอง Monte Carlo</button>
+            </div>
+            <div class="field-grid">
+              <div class="field"><label for="rb-mc-seed">Random Seed (Reproducible)</label><input id="rb-mc-seed" type="number" value="2027" /></div>
+              <div class="field"><label for="rb-mc-n0">จำนวนนิวเคลียสเริ่มต้น N₀</label><input id="rb-mc-n0" type="number" step="100" value="1000" /></div>
+              <div class="field"><label for="rb-mc-half">ครึ่งชีวิต T½</label><input id="rb-mc-half" type="number" step="0.5" value="8.0" /></div>
+            </div>
+            <canvas id="rb-mc-canvas" style="width:100%;height:260px;border-radius:12px;background:#081422;display:block;"></canvas>
+            <div id="rb-mc-readouts" class="watch-card" style="margin-top:12px;"></div>
+          </div>
+
+          <!-- B3: Experimental CSV Upload & Levenberg-Marquardt Fitting -->
+          <div class="panel" id="rb-panel-fit" style="display:none;">
+            <div class="panel-top">
+              <div><div class="eyebrow">LEVENBERG-MARQUARDT NON-LINEAR LEAST SQUARES</div><h3>B3. อัปโหลดไฟล์ CSV จากเครื่องมือวัดจริงและ Curve Fitting (R², χ²ν, ±SE)</h3></div>
+              <div class="btn-row">
+                <button id="rb-csv-sample" class="btn btn-outline btn-small">📂 โหลดข้อมูลตัวอย่าง (Decay)</button>
+                <button id="rb-fair-export" class="btn btn-teal btn-small">↓ ส่งออก FAIR Manifest JSON</button>
+              </div>
+            </div>
+            <div class="field-grid">
+              <div class="field"><label for="rb-csv-file">อัปโหลดไฟล์ CSV (x, y [, sigma_y])</label><input id="rb-csv-file" type="file" accept=".csv,.txt" /></div>
+              <div class="field">
+                <label for="rb-fit-model">แบบจำลองทางฟิสิกส์</label>
+                <select id="rb-fit-model">
+                  <option value="linear">Linear (y = ax + b)</option>
+                  <option value="exponential_decay" selected>Exponential Decay N(t) = N₀e^(−λt)</option>
+                  <option value="inverse_square">Inverse Square y = A/(x+x₀)² + B</option>
+                </select>
+              </div>
+              <div class="field" style="display:flex;align-items:flex-end;">
+                <button id="rb-fit-run" class="btn btn-primary btn-block">▶ คำนวณ Curve Fitting</button>
+              </div>
+            </div>
+            <div class="field">
+              <label for="rb-csv-text">หรือวาง/แก้ไขข้อมูล CSV (x, y, sigma)</label>
+              <textarea id="rb-csv-text" rows="4" style="font-family:monospace;font-size:12px;">0, 1000, 31.6
+4, 708, 26.6
+8, 492, 22.2
+12, 358, 18.9
+16, 245, 15.6
+20, 180, 13.4
+24, 122, 11.0</textarea>
+            </div>
+            <canvas id="rb-fit-canvas" style="width:100%;height:260px;border-radius:12px;background:#081422;display:block;"></canvas>
+            <div id="rb-fit-readouts" class="watch-card" style="margin-top:12px;"></div>
+          </div>
+        </section>
+
+        <!-- PAGE 10: ASSESSMENT CHALLENGE -->
+        <section class="page" data-page="challenge10">
+          <div class="page-head">
+            <div>
+              <div class="eyebrow">MODULE 10 • SUMMATIVE ASSESSMENT</div>
+              <h2>10 แบบทดสอบวัดผลความเข้าใจ Modern Physics &amp; CT (10 ข้อ)</h2>
+              <p>เฉลยและคำอธิบายเก็บไว้อย่างปลอดภัยฝั่ง Server-Side (ครอบคลุมครบทั้ง 9 บทปฏิบัติการ)</p>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-top">
+              <div>
+                <div class="eyebrow">SERVER-SIDE PROTECTED QUIZ</div>
+                <h3>แบบทดสอบ 10 ข้อ ครอบคลุมทั้ง 9 หน่วยการเรียนรู้</h3>
+              </div>
+              <span class="tag">10 Questions · 100 pts</span>
+            </div>
+
+            <form id="ch-form" class="ch-options" style="gap:16px;"></form>
+
+            <div class="field" style="margin-top:16px;">
+              <label for="ch-note">สรุปข้อสังเกตหรือแนวคิดสำคัญที่ได้จากการทดลอง (ไม่บังคับ — เพิ่มคะแนนการให้เหตุผล AI)</label>
+              <textarea id="ch-note" rows="3" placeholder="เช่น ความสัมพันธ์ระหว่าง Va กับรัศมีวงแหวน R ∝ 1/√Va และหลัก Fail-Safe Reset..."></textarea>
+            </div>
+
+            <div class="btn-row" style="margin-top:12px;">
+              <button id="ch-submit-btn" type="button" class="btn btn-primary">📤 ส่งคำตอบและตรวจผล AI</button>
+            </div>
+            <div id="ch-result" class="feedback"></div>
+            <div id="ch-ai-box"></div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <!-- Student Submission & History Modal -->
+  <dialog id="submit-dialog" class="submit-dialog">
+    <div class="dialog-head">
+      <div>
+        <div class="eyebrow">STUDENT SUBMISSION PORTAL</div>
+        <h2>ส่งงาน &amp; ตรวจสอบคะแนน AI / อาจารย์ผู้สอน</h2>
+      </div>
+      <button id="close-submit-dialog" class="icon-btn" aria-label="ปิดหน้าต่าง">✕</button>
+    </div>
+
+    <div class="submit-tabs">
+      <button id="tab-submit-btn" class="active" data-stab="submit">📤 ส่งงานเข้าระบบ</button>
+      <button id="tab-history-btn" data-stab="history">📜 ประวัติการส่ง &amp; ผลตรวจ</button>
+    </div>
+
+    <div id="stab-submit">
+      <div class="field-grid">
+        <div class="field">
+          <label for="sub-section-filter">กรองสาขา / กลุ่มเรียน</label>
+          <select id="sub-section-filter">
+            <option value="">ทั้งหมด</option>
+            <option value="661/วิทย์">661/วิทย์</option>
+            <option value="อาจารย์/ทดสอบ">อาจารย์/ทดสอบ</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="sub-student-select">เลือกชื่อนักศึกษาจากรายชื่อ</label>
+          <select id="sub-student-select">
+            <option value="">-- กำลังโหลดรายชื่อนักศึกษา... --</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field-grid">
+        <div class="field">
+          <label for="sub-student-id">รหัสนักศึกษา</label>
+          <input id="sub-student-id" type="text" placeholder="เช่น 6614611001" />
+        </div>
+        <div class="field">
+          <label for="sub-full-name">ชื่อ-นามสกุล</label>
+          <input id="sub-full-name" type="text" placeholder="เช่น นางสาวกนกวรรณ พึ่งฉ่ำ" />
+        </div>
+      </div>
+
+      <div class="field-grid">
+        <div class="field">
+          <label for="sub-module-id">ขอบเขตงานที่ต้องการส่ง</label>
+          <select id="sub-module-id">
+            <option value="all">ส่งครบทุกโมดูล (01–09 ทั้งหมด)</option>
+            <option value="relativity">เฉพาะ Module 01: ทฤษฎีสัมพัทธภาพพิเศษ</option>
+            <option value="quantum_light">เฉพาะ Module 02: ทฤษฎีควอนตัมของแสง</option>
+            <option value="matter_waves">เฉพาะ Module 03: สมบัติคลื่นของอนุภาค</option>
+            <option value="electron_diffraction">เฉพาะ Module 04: เลี้ยวเบนอิเล็กตรอน &amp; Trace Table</option>
+            <option value="atomic_models">เฉพาะ Module 05: แบบจำลองอะตอมและสเปกตรัม</option>
+            <option value="quantum_mechanics">เฉพาะ Module 06: กลศาสตร์ควอนตัมเบื้องต้น (1)</option>
+            <option value="solid_state">เฉพาะ Module 07: โมเลกุลและสถานะของแข็ง</option>
+            <option value="nuclear_physics">เฉพาะ Module 08: โครงสร้างนิวเคลียสและกัมมันตภาพ</option>
+            <option value="particle_physics">เฉพาะ Module 09: อนุภาคมูลฐานและ Standard Model</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="sub-note">หมายเหตุถึงอาจารย์ผู้สอน</label>
+          <input id="sub-note" type="text" placeholder="สรุปผลการทดลองหรือคำถามเพิ่มเติม (ถ้ามี)" />
+        </div>
+      </div>
+
+      <div class="submit-summary-box">
+        <strong style="font-size:13px;">สถานะความพร้อมในการส่ง (Progress Snapshot)</strong>
+        <div id="sub-pills" class="submit-module-pills"></div>
+      </div>
+
+      <div class="btn-row" style="margin-top:12px;">
+        <button id="confirm-submit-btn" class="btn btn-primary btn-block">📤 ยืนยันส่งงานและให้ AI ตรวจทันที</button>
+      </div>
+      <div id="sub-modal-feedback" class="feedback"></div>
+      <div id="sub-modal-ai-card"></div>
+    </div>
+
+    <div id="stab-history" style="display:none;">
+      <div class="btn-row" style="justify-content:space-between;margin-bottom:10px;">
+        <span id="hist-student-label" style="font-size:13px;font-weight:700;color:var(--muted);">กรุณาเลือกนักศึกษาก่อนดูประวัติ</span>
+        <button id="refresh-history-btn" class="btn btn-outline btn-small">🔄 โหลดประวัติใหม่</button>
+      </div>
+      <div id="history-list" class="history-list">
+        <div class="empty-state">ยังไม่มีประวัติการส่งงาน</div>
+      </div>
+    </div>
+  </dialog>
+
+  <div id="toast" class="toast"></div>
+  <script src="./shared/physics_solvers.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>

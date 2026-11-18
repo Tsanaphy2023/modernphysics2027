@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Modern Physics 2027 — Teacher &amp; AI Grading Portal</title>
+  <link rel="stylesheet" href="./styles.css" />
+  <style>
+    .t-wrap { max-width: 1280px; margin: 0 auto; padding: 20px; }
+    .t-header {
+      background: linear-gradient(135deg, #0f1e36 0%, #1d4ed8 100%);
+      color: #fff;
+      border-radius: 18px;
+      padding: 20px 24px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 18px;
+      box-shadow: 0 14px 30px rgba(15, 30, 54, 0.18);
+    }
+    .t-header h1 { margin: 2px 0 4px; font-size: 22px; }
+    .t-header p { margin: 0; font-size: 13px; color: #dbeafe; }
+    .login-card { max-width: 440px; margin: 56px auto; background: #fff; border: 1px solid var(--line); border-radius: 18px; padding: 26px; box-shadow: var(--shadow); }
+    .t-filters { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; margin-bottom: 14px; }
+    .t-table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 12px; background: #fff; }
+    .t-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .t-table th { background: #f1f5f9; color: #1e293b; font-weight: 800; padding: 10px 12px; border-bottom: 1px solid var(--line); text-align: left; white-space: nowrap; }
+    .t-table td { padding: 10px 12px; border-bottom: 1px solid #edf2f7; vertical-align: top; }
+    .t-table tr:hover td { background: #f8fbff; }
+    .score-chip { display: inline-block; padding: 2px 8px; border-radius: 99px; font-size: 12px; font-weight: 800; background: #eef4ff; color: #1d4ed8; }
+    .score-chip.hi { background: #dcfce7; color: #15803d; }
+    .score-chip.lo { background: #fee2e2; color: #b91c1c; }
+    dialog.t-dialog { width: min(640px, 94vw); border: 1px solid var(--line); border-radius: 18px; padding: 22px; box-shadow: 0 24px 50px rgba(15, 23, 42, 0.25); }
+    @media print {
+      .t-header .btn-row, .submit-tabs, .t-filters, #air-toolbar, #t-login-view { display: none !important; }
+      body { background: #fff !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="t-wrap">
+    <header class="t-header">
+      <div>
+        <div class="eyebrow" style="color:#93c5fd;">RBRU MODERN PHYSICS • TEACHER &amp; AI DASHBOARD</div>
+        <h1>ระบบตรวจงาน ปพ.3 (Gradebook) และรายงานวิเคราะห์ผล AI</h1>
+        <p>วิชาฟิสิกส์ยุคใหม่ (Modern Physics 2027) — ฐานข้อมูล Dual-Engine (SQLite / MySQL) &amp; CT Evaluation</p>
+      </div>
+      <div class="btn-row">
+        <a href="./index.html" class="btn btn-outline btn-small" style="background:rgba(255,255,255,0.14);color:#fff;border-color:rgba(255,255,255,0.3);">← กลับหน้าหลักห้องปฏิบัติการ</a>
+        <span id="db-engine-pill" class="tag" style="background:rgba(255,255,255,0.2);color:#fff;">DB: Ready</span>
+        <button id="t-logout-btn" class="btn btn-quiet btn-small" style="display:none;">🔒 ออกจากระบบ</button>
+      </div>
+    </header>
+
+    <!-- LOGIN VIEW -->
+    <section id="t-login-view" class="login-card">
+      <div class="eyebrow">TEACHER AUTHENTICATION</div>
+      <h2 style="margin:4px 0 8px;font-size:20px;">เข้าสู่ระบบสำหรับอาจารย์ผู้สอน</h2>
+      <p style="font-size:13px;color:var(--muted);margin-top:0;">กรอกรหัสผ่านอาจารย์เพื่อดูผลตรวจ AI, รายชื่อนักศึกษา, สมุดคะแนน และเฉลยแบบทดสอบ</p>
+      <div class="field">
+        <label for="t-pin-input">รหัสผ่านอาจารย์ (Teacher PIN)</label>
+        <input id="t-pin-input" type="password" placeholder="กรอกรหัสผ่านอาจารย์..." autocomplete="current-password" />
+      </div>
+      <button id="t-login-btn" class="btn btn-primary btn-block">🔓 เข้าสู่ระบบอาจารย์</button>
+      <div id="t-login-fb" class="feedback"></div>
+    </section>
+
+    <!-- DASHBOARD VIEW -->
+    <main id="t-dash-view" style="display:none;">
+      <div class="metric-grid">
+        <div class="metric"><strong id="kpi-students">0</strong><span>นักศึกษาทั้งหมดในระบบ</span></div>
+        <div class="metric"><strong id="kpi-subs">0</strong><span>รายการส่งงานทั้งหมด</span></div>
+        <div class="metric"><strong id="kpi-graded">0</strong><span>ตรวจแล้ว / รอตรวจ (<span id="kpi-pending">0</span>)</span></div>
+        <div class="metric"><strong id="kpi-avg">0%</strong><span>คะแนนเฉลี่ยรวมทั้งห้อง</span></div>
+      </div>
+
+      <div class="panel" style="padding:14px 18px;">
+        <div class="btn-row" style="justify-content:space-between;">
+          <div class="btn-row">
+            <button id="btn-ai-batch" class="btn btn-primary btn-small">⚡ ให้ AI ตรวจงานที่ค้าง</button>
+            <button id="btn-ai-cfg" class="btn btn-outline btn-small">🤖 ตั้งค่า AI Engine</button>
+            <button id="btn-seed-demo" class="btn btn-teal btn-small">🌱 จำลองข้อมูลส่งงาน (12 คน)</button>
+          </div>
+          <div class="btn-row">
+            <button id="btn-export-subs" class="btn btn-outline btn-small">↓ Export Submissions CSV</button>
+            <button id="btn-export-gb" class="btn btn-outline btn-small">↓ Export Gradebook CSV</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="submit-tabs" id="t-tabs">
+        <button class="active" data-ttab="submissions">📥 รายการส่งงาน (Submissions)</button>
+        <button data-ttab="roster">👥 รายชื่อนักศึกษา (Roster)</button>
+        <button data-ttab="gradebook">📊 สมุดคะแนนรวม (Gradebook)</button>
+        <button data-ttab="aireport">🤖 รายงาน AI รายห้อง (Class Report)</button>
+        <button data-ttab="per">🔬 วิจัย PER &amp; สถิติ (Hake Gain)</button>
+        <button data-ttab="answers">🔑 เฉลยแบบทดสอบ (10 ข้อ)</button>
+      </div>
+
+      <!-- TAB 1: SUBMISSIONS -->
+      <section class="panel" id="tab-submissions">
+        <div class="t-filters">
+          <div class="field" style="margin:0;min-width:140px;">
+            <label for="f-section">กลุ่มเรียน</label>
+            <select id="f-section"><option value="">ทั้งหมด</option></select>
+          </div>
+          <div class="field" style="margin:0;min-width:170px;">
+            <label for="f-module">โมดูล</label>
+            <select id="f-module">
+              <option value="">ทุกโมดูล</option>
+              <option value="all">ส่งรวมทั้งหมด (all)</option>
+              <option value="relativity">01 Special Relativity</option>
+              <option value="quantum_light">02 Quantum Light</option>
+              <option value="matter_waves">03 Matter Waves</option>
+              <option value="electron_diffraction">04 Electron Diffraction &amp; Trace</option>
+              <option value="atomic_models">05 Atomic Models</option>
+              <option value="quantum_mechanics">06 Quantum Mechanics I</option>
+              <option value="solid_state">07 Solid-State Physics</option>
+              <option value="nuclear_physics">08 Nuclear Physics</option>
+              <option value="particle_physics">09 Particle Physics</option>
+              <option value="challenge10">10 Assessment (10 ข้อ)</option>
+            </select>
+          </div>
+          <div class="field" style="margin:0;min-width:130px;">
+            <label for="f-status">สถานะ</label>
+            <select id="f-status">
+              <option value="">ทั้งหมด</option>
+              <option value="submitted">รอตรวจ</option>
+              <option value="graded">ตรวจแล้ว</option>
+              <option value="resubmit">ส่งแก้ไข</option>
+            </select>
+          </div>
+          <div class="field" style="margin:0;min-width:180px;flex:1;">
+            <label for="f-q">ค้นหารหัส / ชื่อ</label>
+            <input id="f-q" type="text" placeholder="พิมพ์รหัสหรือชื่อนักศึกษา..." />
+          </div>
+          <button id="f-apply-btn" class="btn btn-primary btn-small">🔍 กรองข้อมูล</button>
+        </div>
+
+        <div class="t-table-wrap">
+          <table class="t-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>นักศึกษา</th>
+                <th>กลุ่ม</th>
+                <th>โมดูล</th>
+                <th>AI Score</th>
+                <th>Teacher</th>
+                <th>สถานะ</th>
+                <th>เวลาส่ง</th>
+                <th>จัดการ</th>
+              </tr>
+            </thead>
+            <tbody id="sub-tbody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- TAB 2: ROSTER -->
+      <section class="panel" id="tab-roster" style="display:none;">
+        <div class="panel-top">
+          <div>
+            <div class="eyebrow">STUDENT ROSTER MANAGEMENT</div>
+            <h3>รายชื่อนักศึกษาทั้งหมดในรายวิชา Modern Physics 2027</h3>
+          </div>
+          <button id="btn-add-student" class="btn btn-primary btn-small">+ เพิ่มนักศึกษาใหม่</button>
+        </div>
+        <div class="t-table-wrap">
+          <table class="t-table">
+            <thead>
+              <tr>
+                <th>รหัสนักศึกษา</th>
+                <th>ชื่อ-นามสกุล</th>
+                <th>กลุ่มเรียน</th>
+                <th>จำนวนครั้งที่ส่ง</th>
+                <th>คะแนนล่าสุด</th>
+                <th>สถานะล่าสุด</th>
+                <th>จัดการ</th>
+              </tr>
+            </thead>
+            <tbody id="roster-tbody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- TAB 3: GRADEBOOK -->
+      <section class="panel" id="tab-gradebook" style="display:none;">
+        <div class="panel-top">
+          <div>
+            <div class="eyebrow">COURSE GRADEBOOK MATRIX</div>
+            <h3>ตารางคะแนนสูงสุดรายโมดูลของนักศึกษาทุกคน</h3>
+          </div>
+          <div class="btn-row">
+            <select id="gb-section" class="trace-select" style="width:auto;"></select>
+            <button id="gb-refresh-btn" class="btn btn-outline btn-small">🔄 รีเฟรช</button>
+          </div>
+        </div>
+        <div class="t-table-wrap">
+          <table class="t-table">
+            <thead>
+              <tr>
+                <th>รหัส</th>
+                <th>ชื่อ-นามสกุล</th>
+                <th>กลุ่ม</th>
+                <th>01 Relativity</th>
+                <th>02 Quantum</th>
+                <th>03 Matter</th>
+                <th>04 Diff/Trace</th>
+                <th>05 Atomic</th>
+                <th>06 QM I</th>
+                <th>07 Solid</th>
+                <th>08 Nuclear</th>
+                <th>09 Particle</th>
+                <th>10 Quiz</th>
+                <th>ส่งแล้ว</th>
+                <th>เฉลี่ย (%)</th>
+              </tr>
+            </thead>
+            <tbody id="gb-tbody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- TAB 4: AI CLASS REPORT -->
+      <section class="panel" id="tab-aireport" style="display:none;">
+        <div id="air-toolbar" class="panel-top">
+          <div>
+            <div class="eyebrow">AI CLASS ANALYTICS &amp; TQF5 REPORT</div>
+            <h3>รายงานวิเคราะห์สมรรถนะนักศึกษาและ 4 ด้านทักษะ Modern Physics</h3>
+          </div>
+          <div class="btn-row">
+            <select id="air-section" class="trace-select" style="width:auto;"><option value="">ทุกกลุ่มเรียน</option></select>
+            <button id="air-gen-btn" class="btn btn-primary btn-small">🤖 วิเคราะห์และบันทึกรายงานใหม่</button>
+            <button onclick="window.print()" class="btn btn-outline btn-small">🖨️ พิมพ์ / PDF</button>
+          </div>
+        </div>
+        <div id="air-body">
+          <div class="empty-state">กดปุ่ม “วิเคราะห์และบันทึกรายงานใหม่” เพื่อประมวลผลข้อมูลทั้งชั้นเรียน</div>
+        </div>
+      </section>
+
+      <!-- TAB 5: PER RESEARCH & HAKE GAIN -->
+      <section class="panel" id="tab-per" style="display:none;">
+        <div class="panel-top">
+          <div>
+            <div class="eyebrow">PHYSICS EDUCATION RESEARCH (PER) &amp; LEARNING ANALYTICS</div>
+            <h3>วิเคราะห์ Pre/Post Test, Hake Normalized Gain ⟨g⟩, กลุ่มทดลอง A/B และ Telemetry</h3>
+          </div>
+          <div class="btn-row">
+            <button id="per-seed-btn" class="btn btn-teal btn-small">🌱 จำลองข้อมูล PER (20 คน)</button>
+            <button id="per-refresh-btn" class="btn btn-outline btn-small">🔄 รีเฟรชสถิติ</button>
+            <button id="per-export-btn" class="btn btn-primary btn-small">🔒 Export Anonymized CSV (SPSS/R)</button>
+          </div>
+        </div>
+        <div id="per-body">
+          <div class="empty-state">กำลังโหลดข้อมูลวิเคราะห์วิจัย PER...</div>
+        </div>
+      </section>
+
+      <!-- TAB 6: SERVER-SIDE ANSWERS -->
+      <section class="panel" id="tab-answers" style="display:none;">
+        <div class="panel-top">
+          <div>
+            <div class="eyebrow">TEACHER REFERENCE KEY</div>
+            <h3>เฉลยและคำอธิบายประกอบแบบทดสอบวัดผลทั้ง 10 ข้อ</h3>
+          </div>
+          <span class="tag done">Protected Teacher Key</span>
+        </div>
+        <div id="answers-body" style="display:flex;flex-direction:column;gap:12px;"></div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Grade Modal -->
+  <dialog id="grade-dialog" class="t-dialog">
+    <div class="dialog-head">
+      <div>
+        <div class="eyebrow">GRADE SUBMISSION</div>
+        <h2 id="g-title">ตรวจงาน #0</h2>
+      </div>
+      <button id="g-close" class="icon-btn">✕</button>
+    </div>
+    <div id="g-ai-preview" style="margin:12px 0;"></div>
+    <div class="field-grid">
+      <div class="field">
+        <label for="g-score">คะแนนอาจารย์ (0–100)</label>
+        <input id="g-score" type="number" min="0" max="100" step="0.5" />
+      </div>
+      <div class="field">
+        <label for="g-status">สถานะงาน</label>
+        <select id="g-status">
+          <option value="graded">graded (ตรวจแล้ว)</option>
+          <option value="submitted">submitted (รอตรวจ)</option>
+          <option value="resubmit">resubmit (ส่งแก้ไข)</option>
+        </select>
+      </div>
+    </div>
+    <div class="field">
+      <label for="g-feedback">ข้อเสนอแนะถึงนักศึกษา</label>
+      <textarea id="g-feedback" rows="4"></textarea>
+    </div>
+    <div class="btn-row" style="justify-content:flex-end;">
+      <button id="g-save-btn" class="btn btn-primary">💾 บันทึกคะแนนและสถานะ</button>
+    </div>
+  </dialog>
+
+  <!-- Student Modal -->
+  <dialog id="student-dialog" class="t-dialog">
+    <div class="dialog-head">
+      <div>
+        <div class="eyebrow">STUDENT RECORD</div>
+        <h2 id="st-dlg-title">เพิ่ม / แก้ไขข้อมูลนักศึกษา</h2>
+      </div>
+      <button id="st-close" class="icon-btn">✕</button>
+    </div>
+    <input type="hidden" id="st-orig-id" />
+    <div class="field-grid" style="margin-top:12px;">
+      <div class="field">
+        <label for="st-id">รหัสนักศึกษา</label>
+        <input id="st-id" type="text" placeholder="เช่น 6614611030" />
+      </div>
+      <div class="field">
+        <label for="st-sec">กลุ่มเรียน</label>
+        <input id="st-sec" type="text" placeholder="เช่น 661/วิทย์" />
+      </div>
+    </div>
+    <div class="field">
+      <label for="st-name">ชื่อ-นามสกุล</label>
+      <input id="st-name" type="text" placeholder="เช่น นายทดสอบ ฟิสิกส์" />
+    </div>
+    <div class="btn-row" style="justify-content:flex-end;">
+      <button id="st-save-btn" class="btn btn-primary">💾 บันทึกข้อมูลนักศึกษา</button>
+    </div>
+  </dialog>
+
+  <!-- AI Config Modal -->
+  <dialog id="ai-cfg-dialog" class="t-dialog">
+    <div class="dialog-head">
+      <div>
+        <div class="eyebrow">AI AUTO-GRADING SETTINGS</div>
+        <h2>ตั้งค่าระบบตรวจงาน AI อัตโนมัติ</h2>
+      </div>
+      <button id="aic-close" class="icon-btn">✕</button>
+    </div>
+    <div class="field-grid" style="margin-top:12px;">
+      <div class="field">
+        <label for="aic-provider">ผู้ให้บริการ AI (Provider)</label>
+        <select id="aic-provider">
+          <option value="hybrid_local">Hybrid Local Physics Rubric (เร็ว ไม่อาศัยเน็ต)</option>
+          <option value="gemini">Google Gemini API Polish</option>
+          <option value="ollama">Local Ollama LLM</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="aic-threshold">เกณฑ์ส่งแก้ไขใหม่ (Resubmit &lt; %)</label>
+        <input id="aic-threshold" type="number" min="0" max="100" value="0" />
+      </div>
+      <div class="field">
+        <label for="aic-gemini-model">Gemini Model</label>
+        <input id="aic-gemini-model" type="text" value="gemini-2.5-flash" />
+      </div>
+      <div class="field">
+        <label for="aic-gemini-key">Gemini API Key (เว้นว่างเพื่อคงเดิม)</label>
+        <input id="aic-gemini-key" type="password" placeholder="AIza..." />
+      </div>
+      <div class="field">
+        <label for="aic-ollama-url">Ollama Endpoint URL</label>
+        <input id="aic-ollama-url" type="text" value="http://127.0.0.1:11434" />
+      </div>
+      <div class="field">
+        <label for="aic-ollama-model">Ollama Model</label>
+        <input id="aic-ollama-model" type="text" value="llama3.2" />
+      </div>
+    </div>
+    <div class="btn-row" style="justify-content:space-between;margin:10px 0;">
+      <label class="fc3-chk-label"><input type="checkbox" id="aic-auto-grade" checked /> ตรวจอัตโนมัติทันทีเมื่อส่งงาน</label>
+      <label class="fc3-chk-label"><input type="checkbox" id="aic-auto-approve" checked /> อนุมัติคะแนน AI เป็นคะแนนอาจารย์ทันที</label>
+    </div>
+    <div class="btn-row" style="justify-content:flex-end;">
+      <button id="aic-save-btn" class="btn btn-primary">💾 บันทึกการตั้งค่า AI</button>
+    </div>
+  </dialog>
+
+  <div id="toast" class="toast"></div>
+
+  <script>
+  (() => {
+    'use strict';
+    const $ = (s, r = document) => r.querySelector(s);
+    const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+    let activePin = sessionStorage.getItem('mp2027_tpin') || '';
+    let staticMode = false;
+    let currentSubs = [];
+    let currentGradeId = 0;
+
+    function esc(s) {
+      return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    function showToast(msg) {
+      const t = $('#toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      clearTimeout(t._t);
+      t._t = setTimeout(() => t.classList.remove('show'), 2800);
+    }
+
+    async function tApi(action, opts = {}, qs = '') {
+      const headers = Object.assign({ 'X-Teacher-Pin': activePin }, opts.headers || {});
+      const url = `./api/admin.php?action=${encodeURIComponent(action)}${qs}`;
+      const res = await fetch(url, Object.assign({}, opts, { headers }));
+      const ct = (res.headers.get('content-type') || '').toLowerCase();
+      if (!ct.includes('application/json')) {
+        staticMode = true;
+        throw new Error('STATIC_MODE');
+      }
+      const data = await res.json();
+      if (!res.ok || data.ok === false) throw new Error(data.error || `HTTP ${res.status}`);
+      return data;
+    }
+
+    function scoreChip(v) {
+      if (v == null || v === '') return '<span class="score-chip">--</span>';
+      const n = Number(v);
+      return `<span class="score-chip ${n >= 80 ? 'hi' : n < 50 ? 'lo' : ''}">${n.toFixed(1)}</span>`;
+    }
+
+    function loadStaticFallbackData() {
+      $('#db-engine-pill').textContent = 'DB: Static Browser Preview';
+      let subs = [];
+      try { subs = JSON.parse(localStorage.getItem('mp2027_local_submissions') || '[]'); } catch (_) {}
+      currentSubs = subs;
+      $('#kpi-students').textContent = '26';
+      $('#kpi-subs').textContent = String(subs.length);
+      const graded = subs.filter((s) => s.status === 'graded').length;
+      $('#kpi-graded').textContent = String(graded);
+      $('#kpi-pending').textContent = String(subs.length - graded);
+      const avg = subs.length ? (subs.reduce((a, b) => a + Number(b.ai_score || 0), 0) / subs.length).toFixed(1) : '0';
+      $('#kpi-avg').textContent = `${avg}%`;
+      renderSubmissionsTable(subs);
+    }
+
+    async function loadDashboard() {
+      const params = [
+        $('#f-section')?.value ? `&section=${encodeURIComponent($('#f-section').value)}` : '',
+        $('#f-module')?.value ? `&module_id=${encodeURIComponent($('#f-module').value)}` : '',
+        $('#f-status')?.value ? `&status=${encodeURIComponent($('#f-status').value)}` : '',
+        $('#f-q')?.value ? `&q=${encodeURIComponent($('#f-q').value.trim())}` : '',
+      ].join('');
+
+      try {
+        const res = await tApi('list', {}, params);
+        staticMode = false;
+        $('#db-engine-pill').textContent = `DB: ${res.db_engine || 'sqlite'}`;
+        const k = res.kpi || {};
+        $('#kpi-students').textContent = String(k.total_students || 0);
+        $('#kpi-subs').textContent = String(k.total_submissions || 0);
+        $('#kpi-graded').textContent = String(k.graded_count || 0);
+        $('#kpi-pending').textContent = String(k.pending_count || 0);
+        $('#kpi-avg').textContent = `${k.avg_score || 0}%`;
+
+        const secs = res.sections || [];
+        ['#f-section', '#gb-section', '#air-section'].forEach((id) => {
+          const sel = $(id);
+          if (!sel) return;
+          const prev = sel.value;
+          sel.innerHTML = `<option value="">${id === '#air-section' ? 'ทุกกลุ่มเรียน' : 'ทั้งหมด'}</option>` +
+            secs.map((s) => `<option value="${esc(s)}">${esc(s)}</option>`).join('');
+          if (secs.includes(prev)) sel.value = prev;
+        });
+
+        currentSubs = res.submissions || [];
+        renderSubmissionsTable(currentSubs);
+      } catch (err) {
+        if (err.message === 'STATIC_MODE') loadStaticFallbackData();
+        else showToast(err.message);
+      }
+    }
+
+    function renderSubmissionsTable(rows) {
+      const tb = $('#sub-tbody');
+      if (!rows.length) {
+        tb.innerHTML = '<tr><td colspan="9" class="empty-state">ไม่พบรายการส่งงาน</td></tr>';
+        return;
+      }
+      tb.innerHTML = rows.map((r) => `
+        <tr>
+          <td>#${esc(r.id)}</td>
+          <td><strong>${esc(r.student_id)}</strong><br><span style="font-size:12px;color:var(--muted);">${esc(r.full_name)}</span></td>
+          <td>${esc(r.section || '-')}</td>
+          <td><code>${esc(r.module_id)}</code></td>
+          <td>${scoreChip(r.ai_score)}</td>
+          <td>${scoreChip(r.teacher_score)}</td>
+          <td><span class="badge badge-${esc(r.status)}">${esc(r.status)}</span></td>
+          <td style="font-size:12px;color:var(--muted);">${esc(r.submitted_at)}</td>
+          <td>
+            <div class="btn-row" style="gap:4px;">
+              <button class="btn btn-outline btn-small act-ai" data-id="${r.id}" title="AI ตรวจใหม่">🤖</button>
+              <button class="btn btn-primary btn-small act-grade" data-id="${r.id}">✏️ ตรวจ</button>
+              <button class="btn btn-quiet btn-small act-del" data-id="${r.id}" style="color:var(--red);">✕</button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+
+      $$('.act-grade', tb).forEach((b) => b.addEventListener('click', () => openGradeModal(Number(b.dataset.id))));
+      $$('.act-ai', tb).forEach((b) => b.addEventListener('click', async () => {
+        try {
+          const res = await tApi('ai_grade_single', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: Number(b.dataset.id), apply_to_teacher: true }),
+          });
+          showToast(res.message);
+          loadDashboard();
+        } catch (e) { showToast(e.message); }
+      }));
+      $$('.act-del', tb).forEach((b) => b.addEventListener('click', async () => {
+        if (!confirm(`ยืนยันลบรายการส่งงาน #${b.dataset.id} ?`)) return;
+        try {
+          const res = await tApi('submission_delete', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: Number(b.dataset.id) }),
+          });
+          showToast(res.message);
+          loadDashboard();
+        } catch (e) { showToast(e.message); }
+      }));
+    }
+
+    function openGradeModal(id) {
+      const row = currentSubs.find((r) => Number(r.id) === id);
+      if (!row) return;
+      currentGradeId = id;
+      $('#g-title').textContent = `ตรวจงาน #${id} — ${row.full_name} (${row.module_id})`;
+      $('#g-score').value = row.teacher_score != null ? row.teacher_score : (row.ai_score != null ? row.ai_score : row.auto_score);
+      $('#g-status').value = row.status || 'graded';
+      $('#g-feedback').value = row.teacher_feedback || row.ai_feedback || '';
+      $('#g-ai-preview').innerHTML = row.ai_feedback
+        ? `<div class="ai-eval-card"><div class="ai-eval-head"><strong>ผลวิเคราะห์ AI (${row.ai_score ?? '--'}%)</strong></div><pre class="ai-feedback-pre">${esc(row.ai_feedback)}</pre></div>`
+        : '<div class="empty-state">ยังไม่มีผลประเมิน AI สำหรับรายการนี้</div>';
+      $('#grade-dialog').showModal();
+    }
+
+    async function loadRosterTab() {
+      try {
+        const res = await tApi('roster');
+        const tb = $('#roster-tbody');
+        tb.innerHTML = (res.roster || []).map((st) => `
+          <tr>
+            <td><strong>${esc(st.student_id)}</strong></td>
+            <td>${esc(st.full_name)}</td>
+            <td>${esc(st.section || '-')}</td>
+            <td>${esc(st.submit_count || 0)}</td>
+            <td>${scoreChip(st.latest_score)}</td>
+            <td>${st.latest_status ? `<span class="badge badge-${esc(st.latest_status)}">${esc(st.latest_status)}</span>` : '-'}</td>
+            <td>
+              <div class="btn-row" style="gap:4px;">
+                <button class="btn btn-outline btn-small st-edit" data-sid="${esc(st.student_id)}" data-name="${esc(st.full_name)}" data-sec="${esc(st.section || '')}">แก้ไข</button>
+                <button class="btn btn-quiet btn-small st-del" data-sid="${esc(st.student_id)}" style="color:var(--red);">ลบ</button>
+              </div>
+            </td>
+          </tr>
+        `).join('');
+
+        $$('.st-edit', tb).forEach((b) => b.addEventListener('click', () => {
+          $('#st-dlg-title').textContent = 'แก้ไขข้อมูลนักศึกษา';
+          $('#st-orig-id').value = b.dataset.sid;
+          $('#st-id').value = b.dataset.sid;
+          $('#st-name').value = b.dataset.name;
+          $('#st-sec').value = b.dataset.sec;
+          $('#student-dialog').showModal();
+        }));
+
+        $$('.st-del', tb).forEach((b) => b.addEventListener('click', async () => {
+          if (!confirm(`ลบข้อมูลนักศึกษา ${b.dataset.sid} และงานทั้งหมดของคนนี้?`)) return;
+          try {
+            const res = await tApi('student_delete', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ student_id: b.dataset.sid }),
+            });
+            showToast(res.message);
+            loadRosterTab();
+          } catch (e) { showToast(e.message); }
+        }));
+      } catch (e) {
+        showToast(e.message === 'STATIC_MODE' ? 'ดู Roster เต็มรูปแบบเมื่อรันผ่าน Apache/PHP' : e.message);
+      }
+    }
+
+    async function loadGradebookTab() {
+      try {
+        const sec = $('#gb-section')?.value || '';
+        const res = await tApi('gradebook', {}, sec ? `&section=${encodeURIComponent(sec)}` : '');
+        const tb = $('#gb-tbody');
+        tb.innerHTML = (res.rows || []).map((r) => {
+          const sc = r.scores || {};
+          return `
+            <tr>
+              <td><strong>${esc(r.student_id)}</strong></td>
+              <td>${esc(r.full_name)}</td>
+              <td>${esc(r.section || '-')}</td>
+              <td>${scoreChip(sc.relativity)}</td>
+              <td>${scoreChip(sc.quantum_light)}</td>
+              <td>${scoreChip(sc.matter_waves)}</td>
+              <td>${scoreChip(sc.electron_diffraction)}</td>
+              <td>${scoreChip(sc.atomic_models)}</td>
+              <td>${scoreChip(sc.quantum_mechanics)}</td>
+              <td>${scoreChip(sc.solid_state)}</td>
+              <td>${scoreChip(sc.nuclear_physics)}</td>
+              <td>${scoreChip(sc.particle_physics)}</td>
+              <td>${scoreChip(sc.challenge10)}</td>
+              <td>${esc(r.completed_modules)}/10</td>
+              <td><strong>${esc(r.avg_score)}%</strong></td>
+            </tr>
+          `;
+        }).join('');
+      } catch (e) {
+        if (e.message !== 'STATIC_MODE') showToast(e.message);
+      }
+    }
+
+    async function loadAiReportTab(save = false) {
+      const body = $('#air-body');
+      const sec = $('#air-section')?.value || '';
+      try {
+        const res = await tApi('ai_report', {
+          method: save ? 'POST' : 'GET',
+          headers: save ? { 'Content-Type': 'application/json' } : {},
+          body: save ? JSON.stringify({ section: sec, save: true }) : undefined,
+        }, !save && sec ? `&section=${encodeURIComponent(sec)}` : '');
+
+        const rep = res.report;
+        if (!rep) return;
+        const k = rep.kpi || {};
+        const ra = rep.rubric_avg || {};
+
+        body.innerHTML = `
+          <div class="metric-grid">
+            <div class="metric"><strong>${k.submitted_students || 0}/${k.total_students || 0}</strong><span>อัตราการส่ง (${k.submission_rate || 0}%)</span></div>
+            <div class="metric"><strong>${k.mean_score || 0}%</strong><span>คะแนนเฉลี่ย Mean</span></div>
+            <div class="metric"><strong>${k.sd_score || 0}</strong><span>ส่วนเบี่ยงเบน S.D.</span></div>
+            <div class="metric"><strong>${k.min_score || 0}% – ${k.max_score || 0}%</strong><span>พิสัยคะแนน Min–Max</span></div>
+          </div>
+
+          <div class="ai-narrative-box">${esc(rep.narrative || '')}</div>
+
+          <div class="ai-report-grid">
+            <div class="ai-stat-card">
+              <h3>เกณฑ์ Rubric เฉลี่ยทั้งชั้นเรียน</h3>
+              <div class="ai-pillar-item">
+                <div class="ai-pillar-head"><span>1. ห้องจำลอง 3D &amp; Trace Table</span><span>${ra.simulation || 0}/40</span></div>
+                <div class="ai-pillar-track"><div class="ai-pillar-fill" style="width:${((ra.simulation || 0) / 40) * 100}%"></div></div>
+              </div>
+              <div class="ai-pillar-item">
+                <div class="ai-pillar-head"><span>2. เรียงลำดับขั้นตอน / ISO 5807</span><span>${ra.sequencing || 0}/35</span></div>
+                <div class="ai-pillar-track"><div class="ai-pillar-fill" style="width:${((ra.sequencing || 0) / 35) * 100}%"></div></div>
+              </div>
+              <div class="ai-pillar-item">
+                <div class="ai-pillar-head"><span>3. การให้เหตุผลเชิงวิทยาศาสตร์</span><span>${ra.subjective || 0}/25</span></div>
+                <div class="ai-pillar-track"><div class="ai-pillar-fill" style="width:${((ra.subjective || 0) / 25) * 100}%"></div></div>
+              </div>
+            </div>
+
+            <div class="ai-stat-card">
+              <h3>สมรรถนะ 4 หัวข้อ Modern Physics</h3>
+              ${(rep.pillars || []).map((p) => `
+                <div class="ai-pillar-item">
+                  <div class="ai-pillar-head"><span>${esc(p.label)}</span><span>${p.avg_score}% (n=${p.sample_count})</span></div>
+                  <div class="ai-pillar-track"><div class="ai-pillar-fill" style="width:${p.avg_score}%"></div></div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+
+          <div class="ai-stat-card" style="margin-bottom:16px;">
+            <h3>สถิติวิเคราะห์รายโมดูล (Module Analytics)</h3>
+            <div class="t-table-wrap">
+              <table class="t-table">
+                <thead><tr><th>โมดูล</th><th>จำนวนส่ง</th><th>คะแนนเฉลี่ย</th><th>อัตราผ่าน (≥50%)</th><th>ติดตัวลวง</th><th>ไม่เขียนอธิบาย</th></tr></thead>
+                <tbody>
+                  ${(rep.modules || []).map((m) => `
+                    <tr>
+                      <td><strong>${esc(m.label)}</strong></td>
+                      <td>${m.submissions}</td>
+                      <td>${scoreChip(m.avg_score)}</td>
+                      <td>${m.pass_rate}%</td>
+                      <td>${m.distractor_hits}</td>
+                      <td>${m.missing_subj}</td>
+                    </tr>
+                  `).join('')}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="ai-report-grid">
+            <div class="ai-stat-card">
+              <h3>🌟 นักศึกษาคะแนนดีเด่น (≥ 80%)</h3>
+              ${(rep.top_performers || []).length
+                ? (rep.top_performers || []).map((t) => `<div style="padding:6px 0;border-bottom:1px dashed #e2e8f0;font-size:13px;"><strong>${esc(t.student_id)} ${esc(t.full_name)}</strong> (${esc(t.section)}) — ${scoreChip(t.avg_score)}</div>`).join('')
+                : '<div class="empty-state">ยังไม่มีข้อมูล</div>'}
+            </div>
+            <div class="ai-stat-card">
+              <h3>⚠️ กลุ่มที่ควรติดตามเสริมพิเศษ (&lt; 50% / ยังไม่ส่ง)</h3>
+              <div style="max-height:240px;overflow-y:auto;">
+                ${(rep.at_risk || []).map((a) => `<div style="padding:6px 0;border-bottom:1px dashed #e2e8f0;font-size:12.5px;"><strong>${esc(a.student_id)} ${esc(a.full_name)}</strong> — ${scoreChip(a.avg_score)}<br><span style="color:var(--muted);">${esc(a.reason)}</span></div>`).join('')}
+              </div>
+            </div>
+          </div>
+        `;
+      } catch (e) {
+        if (e.message !== 'STATIC_MODE') showToast(e.message);
+      }
+    }
+
+    async function loadPerTab() {
+      const body = $('#per-body');
+      try {
+        const res = await tApi('per_analytics');
+        const p = res.per;
+        const k = p.kpi || {};
+        const misEntries = Object.entries(p.misconceptions || {});
+        const telEntries = Object.entries(p.telemetry_breakdown || {});
+
+        body.innerHTML = `
+          <div class="metric-grid">
+            <div class="metric"><strong>${k.matched_pairs || 0}</strong><span>คู่ข้อมูล Pre–Post (N)</span></div>
+            <div class="metric"><strong>${k.mean_pre || 0}% → ${k.mean_post || 0}%</strong><span>ค่าเฉลี่ย Pre → Post</span></div>
+            <div class="metric"><strong>⟨g⟩ = ${k.mean_hake_gain || 0}</strong><span>Hake Normalized Gain</span></div>
+            <div class="metric"><strong>d = ${k.cohen_d || 0}</strong><span>Effect Size (Cohen's d) · Events: ${k.total_telemetry_events || 0}</span></div>
+          </div>
+
+          <div class="ai-report-grid">
+            <div class="ai-stat-card">
+              <h3>เปรียบเทียบกลุ่มทดลอง A/B (Cohort Comparison)</h3>
+              <div class="t-table-wrap">
+                <table class="t-table">
+                  <thead><tr><th>กลุ่มทดลอง</th><th>n</th><th>Mean Pre</th><th>Mean Post</th><th>Mean ⟨g⟩</th><th>S.D.(g)</th></tr></thead>
+                  <tbody>
+                    ${(p.cohorts || []).map((c) => `
+                      <tr>
+                        <td><strong>${esc(c.label)}</strong></td>
+                        <td>${c.n}</td>
+                        <td>${c.mean_pre}%</td>
+                        <td>${c.mean_post}%</td>
+                        <td>${scoreChip(c.mean_gain * 100)}</td>
+                        <td>${c.sd_gain}</td>
+                      </tr>
+                    `).join('')}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="ai-stat-card">
+              <h3>ความเข้าใจคลาดเคลื่อน (Misconceptions) &amp; Telemetry</h3>
+              <div style="font-size:12.5px;margin-bottom:8px;">
+                <strong>Misconceptions (Pre-Test):</strong><br>
+                ${misEntries.length ? misEntries.map(([m, c]) => `<span class="tag soft" style="margin:2px;">${esc(m)}: ${c}</span>`).join('') : 'ยังไม่มีข้อมูล'}
+              </div>
+              <div style="font-size:12.5px;">
+                <strong>Telemetry Events:</strong><br>
+                ${telEntries.length ? telEntries.map(([t, c]) => `<span class="tag" style="margin:2px;">${esc(t)}: ${c}</span>`).join('') : 'ยังไม่มีเหตุการณ์บันทึก'}
+              </div>
+            </div>
+          </div>
+
+          <div class="ai-stat-card">
+            <h3>ตารางรายบุคคล (Anonymized IRB Hash + Hake Gain)</h3>
+            <div class="t-table-wrap">
+              <table class="t-table">
+                <thead><tr><th>Anon ID (SHA-256)</th><th>นักศึกษา</th><th>Cohort</th><th>Pre (%)</th><th>Post (%)</th><th>Hake ⟨g⟩</th><th>Events</th><th>AR/XR</th><th>Distractor</th></tr></thead>
+                <tbody>
+                  ${(p.students || []).map((st) => `
+                    <tr>
+                      <td><code>${esc(st.anon_id)}</code></td>
+                      <td>${esc(st.student_id)} ${esc(st.full_name)}</td>
+                      <td><code>${esc(st.experiment_group)}</code></td>
+                      <td>${st.pre_score != null ? st.pre_score + '%' : '--'}</td>
+                      <td>${st.post_score != null ? st.post_score + '%' : '--'}</td>
+                      <td><strong>${st.hake_gain != null ? st.hake_gain : '--'}</strong></td>
+                      <td>${st.telemetry_total}</td>
+                      <td>${st.ar_xr_events}</td>
+                      <td>${st.distractor_hits}</td>
+                    </tr>
+                  `).join('')}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        `;
+      } catch (e) {
+        body.innerHTML = `<div class="empty-state">${e.message === 'STATIC_MODE' ? 'ต้องรันผ่าน Apache/PHP API เพื่อประมวลผล SQLite PER Analytics' : esc(e.message)}</div>`;
+      }
+    }
+
+    async function loadAnswersTab() {
+      const host = $('#answers-body');
+      try {
+        const res = await tApi('answers');
+        host.innerHTML = (res.answers || []).map((q, idx) => `
+          <div class="panel" style="margin:0;padding:15px;">
+            <div class="eyebrow">ข้อ ${idx + 1} • ${esc(q.topic)}</div>
+            <p style="font-weight:750;margin:6px 0;">${esc(q.question)}</p>
+            <div style="color:#15803d;font-weight:800;font-size:13px;">✓ เฉลย: ข้อ ${esc(q.answer)} — ${esc(q.options[q.answer])}</div>
+            <p style="margin:6px 0 0;font-size:13px;color:var(--muted);">💡 คำอธิบาย: ${esc(q.explanation)}</p>
+          </div>
+        `).join('');
+      } catch (e) {
+        host.innerHTML = `<div class="empty-state">ต้องรันผ่าน PHP API เพื่อเข้าถึงเฉลย Server-Side (${esc(e.message)})</div>`;
+      }
+    }
+
+    async function attemptLogin(pin) {
+      try {
+        await tApi('login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ pin }),
+        });
+        activePin = pin;
+        sessionStorage.setItem('mp2027_tpin', pin);
+        $('#t-login-view').style.display = 'none';
+        $('#t-dash-view').style.display = 'block';
+        $('#t-logout-btn').style.display = 'inline-flex';
+        loadDashboard();
+      } catch (err) {
+        if (err.message === 'STATIC_MODE' && pin === 'physicss') {
+          activePin = pin;
+          sessionStorage.setItem('mp2027_tpin', pin);
+          $('#t-login-view').style.display = 'none';
+          $('#t-dash-view').style.display = 'block';
+          $('#t-logout-btn').style.display = 'inline-flex';
+          loadStaticFallbackData();
+          return;
+        }
+        const fb = $('#t-login-fb');
+        fb.className = 'feedback bad';
+        fb.textContent = err.message || 'รหัสผ่านไม่ถูกต้อง';
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      if (activePin) {
+        tApi('check').then((res) => {
+          if (res.authenticated) {
+            $('#t-login-view').style.display = 'none';
+            $('#t-dash-view').style.display = 'block';
+            $('#t-logout-btn').style.display = 'inline-flex';
+            loadDashboard();
+          }
+        }).catch(() => {
+          if (activePin === 'physicss') {
+            $('#t-login-view').style.display = 'none';
+            $('#t-dash-view').style.display = 'block';
+            loadStaticFallbackData();
+          }
+        });
+      }
+
+      $('#t-login-btn')?.addEventListener('click', () => attemptLogin($('#t-pin-input').value.trim()));
+      $('#t-pin-input')?.addEventListener('keydown', (e) => { if (e.key === 'Enter') attemptLogin($('#t-pin-input').value.trim()); });
+
+      $('#t-logout-btn')?.addEventListener('click', async () => {
+        sessionStorage.removeItem('mp2027_tpin');
+        activePin = '';
+        try { await tApi('logout'); } catch (_) {}
+        location.reload();
+      });
+
+      $$('[data-ttab]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          $$('[data-ttab]').forEach((b) => b.classList.remove('active'));
+          btn.classList.add('active');
+          const tab = btn.dataset.ttab;
+          ['submissions', 'roster', 'gradebook', 'aireport', 'per', 'answers'].forEach((t) => {
+            $(`#tab-${t}`).style.display = t === tab ? 'block' : 'none';
+          });
+          if (tab === 'roster') loadRosterTab();
+          else if (tab === 'gradebook') loadGradebookTab();
+          else if (tab === 'aireport') loadAiReportTab(false);
+          else if (tab === 'per') loadPerTab();
+          else if (tab === 'answers') loadAnswersTab();
+        });
+      });
+
+      $('#f-apply-btn')?.addEventListener('click', loadDashboard);
+      $('#gb-refresh-btn')?.addEventListener('click', loadGradebookTab);
+      $('#air-gen-btn')?.addEventListener('click', () => loadAiReportTab(true));
+      $('#per-refresh-btn')?.addEventListener('click', loadPerTab);
+      $('#per-seed-btn')?.addEventListener('click', async () => {
+        try {
+          const res = await tApi('seed_per_demo', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' });
+          showToast(res.message);
+          loadPerTab();
+        } catch (e) { showToast(e.message); }
+      });
+      $('#per-export-btn')?.addEventListener('click', () => {
+        window.open('./api/admin.php?action=export_per_csv', '_blank');
+      });
+
+      $('#g-close')?.addEventListener('click', () => $('#grade-dialog').close());
+      $('#g-save-btn')?.addEventListener('click', async () => {
+        try {
+          const res = await tApi('grade', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              id: currentGradeId,
+              teacher_score: $('#g-score').value,
+              status: $('#g-status').value,
+              teacher_feedback: $('#g-feedback').value,
+            }),
+          });
+          showToast(res.message);
+          $('#grade-dialog').close();
+          loadDashboard();
+        } catch (e) { showToast(e.message); }
+      });
+
+      $('#btn-add-student')?.addEventListener('click', () => {
+        $('#st-dlg-title').textContent = 'เพิ่มนักศึกษาใหม่';
+        $('#st-orig-id').value = '';
+        $('#st-id').value = '';
+        $('#st-name').value = '';
+        $('#st-sec').value = '661/วิทย์';
+        $('#student-dialog').showModal();
+      });
+      $('#st-close')?.addEventListener('click', () => $('#student-dialog').close());
+      $('#st-save-btn')?.addEventListener('click', async () => {
+        try {
+          const res = await tApi('student_save', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              original_id: $('#st-orig-id').value,
+              student_id: $('#st-id').value.trim(),
+              full_name: $('#st-name').value.trim(),
+              section: $('#st-sec').value.trim(),
+            }),
+          });
+          showToast(res.message);
+          $('#student-dialog').close();
+          loadRosterTab();
+        } catch (e) { showToast(e.message); }
+      });
+
+      $('#btn-ai-batch')?.addEventListener('click', async () => {
+        try {
+          const res = await tApi('ai_grade_batch', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ mode: 'pending' }),
+          });
+          showToast(res.message);
+          loadDashboard();
+        } catch (e) { showToast(e.message); }
+      });
+
+      $('#btn-seed-demo')?.addEventListener('click', async () => {
+        try {
+          const res = await tApi('seed_demo_submissions', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' });
+          showToast(res.message);
+          loadDashboard();
+        } catch (e) { showToast(e.message); }
+      });
+
+      $('#btn-ai-cfg')?.addEventListener('click', async () => {
+        try {
+          const res = await tApi('ai_config_get');
+          const c = res.config || {};
+          $('#aic-provider').value = c.provider || 'hybrid_local';
+          $('#aic-threshold').value = c.resubmit_threshold || 0;
+          $('#aic-gemini-model').value = c.gemini_model || 'gemini-2.5-flash';
+          $('#aic-ollama-url').value = c.ollama_url || 'http://127.0.0.1:11434';
+          $('#aic-ollama-model').value = c.ollama_model || 'llama3.2';
+          $('#aic-auto-grade').checked = !!c.auto_grade_on_submit;
+          $('#aic-auto-approve').checked = !!c.auto_approve;
+          $('#ai-cfg-dialog').showModal();
+        } catch (e) { showToast(e.message); }
+      });
+      $('#aic-close')?.addEventListener('click', () => $('#ai-cfg-dialog').close());
+      $('#aic-save-btn')?.addEventListener('click', async () => {
+        try {
+          const res = await tApi('ai_config_save', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              provider: $('#aic-provider').value,
+              resubmit_threshold: Number($('#aic-threshold').value || 0),
+              gemini_model: $('#aic-gemini-model').value.trim(),
+              gemini_api_key: $('#aic-gemini-key').value.trim(),
+              ollama_url: $('#aic-ollama-url').value.trim(),
+              ollama_model: $('#aic-ollama-model').value.trim(),
+              auto_grade_on_submit: $('#aic-auto-grade').checked,
+              auto_approve: $('#aic-auto-approve').checked,
+            }),
+          });
+          showToast(res.message);
+          $('#ai-cfg-dialog').close();
+        } catch (e) { showToast(e.message); }
+      });
+
+      $('#btn-export-subs')?.addEventListener('click', () => {
+        window.open('./api/admin.php?action=export', '_blank');
+      });
+      $('#btn-export-gb')?.addEventListener('click', () => {
+        const sec = $('#gb-section')?.value || '';
+        window.open(`./api/admin.php?action=export_gradebook${sec ? '&section=' + encodeURIComponent(sec) : ''}`, '_blank');
+      });
+    });
+  })();
+  </script>
+</body>
+</html>

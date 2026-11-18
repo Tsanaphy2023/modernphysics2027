@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Wave–Particle Lab 2027 | Modern Physics</title>
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="../shared/ct_physics_suite.css">
+</head>
+<body>
+<header><div><div class="eyebrow">MODERN PHYSICS 2027 · VIRTUAL LAB</div><h1>สมบัติความเป็นคลื่นของอนุภาค <span>Wave–Particle Lab</span></h1></div><div class="status"><span class="led"></span> REALTIME 3D · SI PHYSICS</div></header>
+<main>
+<nav class="tabs" aria-label="เลือกปฏิบัติการ"><button data-module="debroglie" class="active">01 · คลื่นเดอบรอยล์</button><button data-module="davisson">02 · เดวิสสัน–เจอร์เมอร์</button><button data-module="uncertainty">03 · กลุ่มคลื่น / ไฮเซนเบิร์ก</button></nav>
+<section class="layout"><aside class="panel controls"><div class="paneltop"><h2 id="moduleTitle">สมมติฐานคลื่นสสารของเดอบรอยล์</h2><p id="moduleDesc">อนุภาคมีความยาวคลื่นสัมพันธ์กับโมเมนตัม λ = h/p</p></div><div id="controls"></div><div class="actions"><button id="play" class="primary">⏸ หยุดเวลา</button><button id="reset">↺ ค่าเริ่มต้น</button><button id="export">↓ ส่งออก CSV</button></div><p class="hint">ลากเมาส์เพื่อหมุนฉาก · เลื่อนล้อเพื่อซูม · ปรับตัวเลื่อนเพื่อทดลอง</p></aside>
+<section class="center"><div class="viewport"><div class="overlay"><span class="tag" id="sceneLabel">ELECTRON MATTER WAVE</span><span class="tag">3D VIEW · DRAG TO ROTATE</span></div><div id="scene"></div><div id="fallback" hidden>ไม่สามารถโหลด Three.js ได้ โปรดตรวจสอบอินเทอร์เน็ต<br>ข้อมูลคำนวณและกราฟด้านล่างยังใช้งานได้</div></div><div class="metrics" id="metrics"></div><div class="graphpanel"><div class="graphhead"><strong id="graphTitle">Matter-wave profile</strong><span id="graphHint">ค่าคำนวณตามสมการฟิสิกส์</span></div><canvas id="chart" aria-label="กราฟผลการจำลอง"></canvas></div></section>
+<aside class="panel theory"><h2>ทฤษฎีและการทดลอง</h2><div id="theory"></div><div class="assignment"><h3>ภารกิจทดลอง</h3><p id="task"></p></div><div class="note">การจำลองใช้สมการฟิสิกส์ที่ระบุไว้ แต่ขนาดอะตอม เส้นทางคลื่น และอัตราเวลาในฉาก 3D ถูกขยายเพื่อให้สังเกตเห็นได้ ไม่ใช่การแสดงภาพตามสเกลจริง</div></aside></section>
+</main><footer>© Modern Physics 2027 · Interactive teaching laboratory · Three.js · No backend required</footer>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.1/examples/jsm/"}}</script>
+<script type="module" src="app.js"></script>
+<script defer src="../shared/ct_physics_suite.js" data-ct-module="matter_waves"></script>
+</body></html>

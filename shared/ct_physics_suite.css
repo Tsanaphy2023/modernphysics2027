@@ -1,0 +1,334 @@
+/* CT-Lab04 Physics Suite Unified Top Bar & Computational Thinking Drawer */
+.ct-suite-bar {
+  position: sticky;
+  top: 0;
+  z-index: 95;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 9px 16px;
+  background: linear-gradient(90deg, #0b182e 0%, #162e55 100%);
+  color: #e2ecf9;
+  border-bottom: 1px solid rgba(56, 189, 248, 0.28);
+  font-family: "Sarabun", "Noto Sans Thai", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 12.5px;
+}
+
+.ct-suite-left,
+.ct-suite-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 7px;
+}
+
+.ct-suite-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-weight: 800;
+  color: #fff;
+  text-decoration: none;
+  padding: 5px 10px;
+  border-radius: 8px;
+  background: rgba(56, 189, 248, 0.16);
+  border: 1px solid rgba(56, 189, 248, 0.35);
+}
+
+.ct-suite-brand:hover {
+  background: rgba(56, 189, 248, 0.28);
+}
+
+.ct-suite-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.08);
+  color: #f1f5f9;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+  transition: 0.15s;
+}
+
+.ct-suite-btn:hover {
+  background: rgba(255, 255, 255, 0.18);
+  border-color: rgba(147, 197, 253, 0.65);
+}
+
+.ct-suite-btn.primary {
+  background: #2563eb;
+  border-color: #3b82f6;
+  color: #fff;
+}
+
+.ct-suite-btn.primary:hover {
+  background: #1d4ed8;
+}
+
+.ct-suite-section {
+  max-width: 1240px;
+  margin: 18px auto 26px;
+  padding: 20px;
+  background: #ffffff;
+  color: #11243e;
+  border: 1px solid #dbe4f0;
+  border-radius: 16px;
+  box-shadow: 0 10px 26px rgba(15, 23, 42, 0.12);
+  font-family: "Sarabun", "Noto Sans Thai", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.ct-suite-head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.ct-suite-head h3 {
+  margin: 2px 0 0;
+  font-size: 17px;
+  color: #0f172a;
+}
+
+.ct-suite-eyebrow {
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: #2563eb;
+}
+
+.ct-suite-grid {
+  display: grid;
+  grid-template-columns: 320px minmax(0, 1fr);
+  gap: 18px;
+  align-items: start;
+}
+
+.ct-suite-svg-box {
+  background: #f8fafc;
+  border: 1px solid #dbe6f6;
+  border-radius: 12px;
+  padding: 10px;
+}
+
+.ct-suite-svg-box svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.ct-suite-col {
+  background: #fffdf7;
+  border: 1px solid #ead9b8;
+  border-radius: 12px;
+  padding: 14px;
+}
+
+.ct-suite-seq-list,
+.ct-suite-bank-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.ct-seq-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #f6faff;
+  border: 1px solid #cfe0f5;
+  border-radius: 8px;
+  padding: 7px 10px;
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.ct-seq-num {
+  width: 21px;
+  height: 21px;
+  border-radius: 50%;
+  background: #2563eb;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 800;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+}
+
+.ct-bank-item {
+  text-align: left;
+  padding: 7px 10px;
+  border: 1px solid #dce5f0;
+  background: #fff;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 650;
+  color: #0f172a;
+  cursor: pointer;
+}
+
+.ct-bank-item.used {
+  background: #ecfdf5;
+  border-color: #a7f3d0;
+  color: #047857;
+  opacity: 0.72;
+}
+
+.ct-suite-textarea {
+  width: 100%;
+  border: 1px solid #cbd5e1;
+  border-radius: 9px;
+  padding: 9px 11px;
+  font-size: 13px;
+  color: #0f172a;
+  background: #fff;
+  box-sizing: border-box;
+  margin-top: 6px;
+}
+
+.ct-suite-ai-box {
+  margin-top: 12px;
+  padding: 12px 14px;
+  background: linear-gradient(135deg, #f3f7ff 0%, #f8fbf8 100%);
+  border: 1px solid #c7dafc;
+  border-radius: 10px;
+  font-size: 12.5px;
+  color: #12335b;
+}
+
+dialog.ct-suite-dialog {
+  width: min(560px, 94vw);
+  border: 1px solid #cbd5e1;
+  border-radius: 16px;
+  padding: 20px;
+  background: #fff;
+  color: #0f172a;
+  font-family: "Sarabun", "Noto Sans Thai", sans-serif;
+  box-shadow: 0 24px 48px rgba(15, 23, 42, 0.35);
+}
+
+dialog.ct-suite-dialog::backdrop {
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(3px);
+}
+
+.ct-suite-field {
+  margin-bottom: 10px;
+}
+
+.ct-suite-field label {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  color: #334155;
+  margin-bottom: 4px;
+}
+
+.ct-suite-field input,
+.ct-suite-field select,
+.ct-suite-field textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 8px 10px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 13px;
+  color: #0f172a;
+  background: #fff;
+}
+
+@media (max-width: 860px) {
+  .ct-suite-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Phase 1: Conceptual Mode vs Equations Mode & AR:XR Stage */
+.ct-suite-btn.active-mode {
+  background: #0d9488;
+  border-color: #2dd4bf;
+  color: #fff;
+}
+
+.ct-concept-callout {
+  display: none;
+  margin: 10px 0 14px;
+  padding: 12px 15px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #ecfdf5 0%, #eff6ff 100%);
+  border: 1px solid #99f6e4;
+  border-left: 4px solid #0d9488;
+  color: #134e4a;
+  font-size: 13px;
+  line-height: 1.65;
+}
+
+body.mode-conceptual .ct-concept-callout {
+  display: block;
+}
+
+body.mode-conceptual .formula,
+body.mode-conceptual .equation,
+body.mode-conceptual .equation-pill {
+  opacity: 0.35;
+  filter: blur(0.4px);
+  transition: 0.2s;
+}
+
+body.mode-conceptual .formula:hover,
+body.mode-conceptual .equation:hover,
+body.mode-conceptual .equation-pill:hover {
+  opacity: 1;
+  filter: none;
+}
+
+.ct-xr-hud {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(6, 15, 30, 0.94);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  color: #e2ecf9;
+  font-family: "Sarabun", "Noto Sans Thai", sans-serif;
+}
+
+.ct-xr-hud video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+.ct-xr-reticle {
+  position: relative;
+  z-index: 2;
+  border: 2px dashed rgba(56, 189, 248, 0.7);
+  border-radius: 18px;
+  padding: 20px;
+  max-width: 560px;
+  width: 92%;
+  text-align: center;
+  background: rgba(15, 30, 54, 0.85);
+  backdrop-filter: blur(8px);
+}

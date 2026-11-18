@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="theme-color" content="#080f1e" />
+  <title>Quantum Lab 2027 | Electron Diffraction &amp; Wave–Particle Duality</title>
+  <link rel="stylesheet" href="./styles.css" />
+  <link rel="stylesheet" href="../shared/ct_physics_suite.css" />
+  <script type="importmap">
+    {"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.1/examples/jsm/"}}
+  </script>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-icon">λ</div>
+        <div><strong>QUANTUM<span>LAB</span></strong><small>MODERN PHYSICS 2027</small></div>
+      </div>
+      <div class="side-label">LAB 02 • SIMULATION MODULES</div>
+      <nav id="moduleNav" aria-label="หัวข้อการจำลอง">
+        <button class="nav-item active" data-module="teltron"><span class="nav-num">01</span><span>หลอดเลี้ยวเบนอิเล็กตรอน<small>3D Teltron Tube &amp; Rings</small></span></button>
+        <button class="nav-item" data-module="debroglie"><span class="nav-num">02</span><span>คลื่นสสารเดอบรอยล์<small>de Broglie Matter Wave</small></span></button>
+        <button class="nav-item" data-module="crystal"><span class="nav-num">03</span><span>ผลึกแกรไฟต์และกฎแบรกก์<small>Bragg Lattice Diffraction</small></span></button>
+        <button class="nav-item" data-module="doubleslit"><span class="nav-num">04</span><span>ช่องแคบคู่ทีละอิเล็กตรอน<small>Single-Electron Double Slit</small></span></button>
+        <button class="nav-item" data-module="assessment"><span class="nav-num">05</span><span>บันทึกผลและประเมินนักศึกษา<small>POE Lab Table &amp; Quiz</small></span></button>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="live-indicator"><span></span> QUANTUM ENGINE ACTIVE</div>
+        <p>Interactive Wave–Particle Lab<br>SI units • 3D • Assessment</p>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <div class="breadcrumbs">PHYSICS <span>/</span> LAB 02: WAVE–PARTICLE DUALITY <span>/</span> <b id="breadcrumbName">TELTRON TUBE</b></div>
+        <div class="top-right"><span class="tiny-dot"></span> ELECTRON DIFFRACTION <span class="version">v1.0</span></div>
+      </header>
+
+      <section class="intro">
+        <div class="eyebrow">VIRTUAL EXPERIMENT • DE BROGLIE 1924 / DAVISSON–GERMER / THOMSON</div>
+        <h1 id="moduleTitle">การเลี้ยวเบนของอิเล็กตรอนผ่านผลึกแกรไฟต์</h1>
+        <p id="moduleDescription">สังเกตวงแหวนเลี้ยวเบนเดอบาย–แชร์เรอร์บนฉากเรืองแสงสีเขียว และวิเคราะห์ความสัมพันธ์ระหว่างรัศมีวงแหวนกับความต่างศักย์เร่ง</p>
+      </section>
+
+      <section class="metric-strip" aria-label="ค่าตรวจวัดสด">
+        <div class="metric">
+          <div class="metric-name">ACCELERATING VOLTAGE</div>
+          <strong id="metricVa">3.50 <span>kV</span></strong>
+          <div class="metric-note" id="metricVaNote">Vₐ = 3,500 V</div>
+        </div>
+        <div class="metric">
+          <div class="metric-name">DE BROGLIE WAVELENGTH</div>
+          <strong id="metricLambda">20.73 <span>pm</span></strong>
+          <div class="metric-note" id="metricLambdaNote">λ = h / √(2mₑeVₐ)</div>
+        </div>
+        <div class="metric">
+          <div class="metric-name">INNER RING RADIUS R₁</div>
+          <strong id="metricR1">1.31 <span>cm</span></strong>
+          <div class="metric-note">d₁₀ = 0.213 nm</div>
+        </div>
+        <div class="metric">
+          <div class="metric-name">OUTER RING RADIUS R₂</div>
+          <strong id="metricR2">2.28 <span>cm</span></strong>
+          <div class="metric-note">d₁₁ = 0.123 nm</div>
+        </div>
+      </section>
+
+      <section class="workbench">
+        <div class="visual-column">
+          <div class="panel viewport-panel">
+            <div class="panel-head">
+              <div><span class="panel-kicker">EXPERIMENTAL CHAMBER</span><h2 id="sceneHeading">3D Teltron Electron Diffraction Tube</h2></div>
+              <div class="status-chip"><span></span> LIVE 3D</div>
+            </div>
+            <div id="sceneHost" role="img" aria-label="ฉากจำลองสามมิติของการเลี้ยวเบนอิเล็กตรอนและทวิภาวะคลื่นและอนุภาค">
+              <div id="sceneLoading">กำลังเตรียมฉากสามมิติ…</div>
+            </div>
+            <div id="viewportTags" class="viewport-overlay top">
+              <span class="frame-tag">ELECTRON BEAM</span>
+              <span class="frame-tag green">PHOSPHOR RINGS R₁, R₂</span>
+            </div>
+            <div class="viewport-overlay bottom">
+              <span>DRAG TO ORBIT · SCROLL TO ZOOM</span>
+              <button id="resetCamera" class="ghost-btn">↻ รีเซ็ตมุมมอง</button>
+            </div>
+          </div>
+
+          <div class="transport">
+            <button id="playPause" class="primary-btn">Ⅱ หยุดการจำลอง</button>
+            <button id="resetSimulation" class="secondary-btn">↺ เริ่มใหม่</button>
+            <button id="recordPoint" class="accent-btn">＋ บันทึกค่าลงตาราง</button>
+            <div class="transport-slider">
+              <label for="timeScale">ความเร็วการจำลอง <output id="timeScaleOutput">1.0×</output></label>
+              <input id="timeScale" type="range" min="0.1" max="3" step="0.1" value="1">
+            </div>
+            <div class="sim-clock" id="simClockWrap">SIM T <strong id="transportClock">00.00 s</strong></div>
+          </div>
+
+          <div class="panel graph-panel">
+            <div class="panel-head">
+              <div><span class="panel-kicker">LIVE ANALYTICS</span><h2 id="chartTitle">ความสัมพันธ์เชิงเส้น R เทียบกับ 1/√Vₐ</h2></div>
+              <div class="chart-legend" id="chartLegend"></div>
+            </div>
+            <canvas id="physicsChart" aria-label="กราฟฟิสิกส์ที่เปลี่ยนตามค่าตัวแปร" role="img"></canvas>
+          </div>
+        </div>
+
+        <div class="control-column">
+          <div class="panel control-panel">
+            <div class="panel-head">
+              <div><span class="panel-kicker">EXPERIMENT CONTROL</span><h2>แผงควบคุมตัวแปร</h2></div>
+              <span class="micro-icon">⚙</span>
+            </div>
+            <div class="control-group">
+              <div class="control-title">
+                <label for="voltage">ความต่างศักย์เร่งอนุภาค (Vₐ)</label>
+                <output id="voltageValue">3.50 kV</output>
+              </div>
+              <input id="voltage" type="range" min="1.5" max="6.0" step="0.1" value="3.5">
+              <div class="range-ends"><span>1.5 kV</span><span>3.75 kV</span><span>6.0 kV</span></div>
+              <div class="voltage-presets">
+                <button data-va="2.0">2.0 kV</button>
+                <button data-va="3.0">3.0 kV</button>
+                <button data-va="4.0">4.0 kV</button>
+                <button data-va="5.0">5.0 kV</button>
+              </div>
+            </div>
+            <div id="dynamicControls"></div>
+          </div>
+
+          <div class="panel readings-panel">
+            <div class="panel-head">
+              <div><span class="panel-kicker">MEASUREMENT OUTPUT</span><h2>ผลการวัดแบบเรียลไทม์</h2></div>
+              <span class="readings-flash"></span>
+            </div>
+            <div id="readings"></div>
+          </div>
+
+          <div class="panel theory-panel">
+            <div class="panel-head">
+              <div><span class="panel-kicker">THEORETICAL MODEL</span><h2>หลักฟิสิกส์และสมการ</h2></div>
+            </div>
+            <div id="theory"></div>
+          </div>
+
+          <div class="panel activity-panel" id="labAssessmentPanel">
+            <div class="panel-head">
+              <div><span class="panel-kicker">ACTIVE LEARNING &amp; ASSESSMENT</span><h2>ภารกิจบันทึกผลและประเมินความเข้าใจ</h2></div>
+              <span class="score-badge" id="quizScore">คะแนน 0/5</span>
+            </div>
+            <p id="activityText"></p>
+            <div class="activity-actions">
+              <button id="addCurrentBtn" class="accent-btn">＋ บันทึกค่า Vₐ นี้</button>
+              <button id="clearRecords" class="secondary-btn">ล้างตาราง</button>
+              <button id="randomize" class="secondary-btn">สุ่มค่า Vₐ</button>
+              <button id="exportCSV" class="secondary-btn">↓ บันทึก CSV</button>
+            </div>
+            <div id="labTableWrap"></div>
+            <div id="regressionSummary"></div>
+            <div id="quizWrap"></div>
+          </div>
+        </div>
+      </section>
+
+      <footer>QUANTUM LAB 2027 <span>•</span> Lab 02: Electron Diffraction &amp; Wave–Particle Duality <span>•</span> © Educational simulation <span>•</span> h = 6.626×10⁻³⁴ J·s</footer>
+    </main>
+  </div>
+  <script defer src="./app.js"></script>
+  <script defer src="../shared/ct_physics_suite.js" data-ct-module="electron_diffraction"></script>
+</body>
+</html>

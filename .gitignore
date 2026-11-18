@@ -1,0 +1,14 @@
+# Database & Student PII (Do not publish to public GitHub Pages)
+data/
+database.sql
+
+# PHP Backend & Credentials (GitHub Pages is static-only)
+api/
+
+# OS / Editor / Build Artifacts
+.DS_Store
+.vscode/
+__pycache__/
+*.pyc
+node_modules/
+.env

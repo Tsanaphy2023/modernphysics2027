@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="theme-color" content="#080f1e" />
+  <title>Relativity Lab 2027 | Special Relativity 3D Simulator</title>
+  <link rel="stylesheet" href="./styles.css" />
+  <link rel="stylesheet" href="../shared/ct_physics_suite.css" />
+  <script type="importmap">
+    {"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.1/examples/jsm/"}}
+  </script>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand"><div class="brand-icon">✧</div><div><strong>RELATIVITY<span>LAB</span></strong><small>MODERN PHYSICS 2027</small></div></div>
+      <div class="side-label">SIMULATION MODULES</div>
+      <nav id="moduleNav" aria-label="หัวข้อการจำลอง">
+        <button class="nav-item active" data-module="postulates"><span class="nav-num">01</span><span>สมมติฐานไอน์สไตน์<small>Einstein's Postulates</small></span></button>
+        <button class="nav-item" data-module="transforms"><span class="nav-num">02</span><span>การแปลงกาล–อวกาศ<small>Galilean vs Lorentz</small></span></button>
+        <button class="nav-item" data-module="dilation"><span class="nav-num">03</span><span>เวลาและความยาว<small>Time & Length</small></span></button>
+        <button class="nav-item" data-module="doppler"><span class="nav-num">04</span><span>ดอปเพลอร์สัมพัทธภาพ<small>Relativistic Doppler</small></span></button>
+        <button class="nav-item" data-module="momentum"><span class="nav-num">05</span><span>โมเมนตัมและพลังงาน<small>Relativistic Dynamics</small></span></button>
+        <button class="nav-item" data-module="equivalence"><span class="nav-num">06</span><span>มวล–พลังงาน<small>Mass–Energy Equivalence</small></span></button>
+      </nav>
+      <div class="sidebar-bottom"><div class="live-indicator"><span></span> PHYSICS ENGINE ACTIVE</div><p>Interactive scientific visualization<br>SI units • 3D • Real-time</p></div>
+    </aside>
+    <main class="main-content">
+      <header class="topbar"><div class="breadcrumbs">PHYSICS <span>/</span> SPECIAL RELATIVITY <span>/</span> <b id="breadcrumbName">POSTULATES</b></div><div class="top-right"><span class="tiny-dot"></span> INTERACTIVE LAB <span class="version">v1.0</span></div></header>
+      <section class="intro"><div class="eyebrow">VIRTUAL EXPERIMENT • EINSTEIN 1905</div><h1 id="moduleTitle">สมมติฐานของไอน์สไตน์</h1><p id="moduleDescription">ทดลองหลักสัมพัทธภาพและความคงตัวของอัตราเร็วแสงด้วยห้องทดลองเสมือนจริงที่ปรับค่าตัวแปรได้</p></section>
+      <section class="metric-strip" aria-label="ค่าตรวจวัดสด">
+        <div class="metric"><div class="metric-name">RELATIVE VELOCITY</div><strong id="metricBeta">0.60 <span>c</span></strong><div class="metric-note">β = v / c</div></div>
+        <div class="metric"><div class="metric-name">LORENTZ FACTOR</div><strong id="metricGamma">1.2500 <span>γ</span></strong><div class="metric-note">1 / √(1 − β²)</div></div>
+        <div class="metric"><div class="metric-name">LABORATORY TIME</div><strong id="metricTime">0.00 <span>s</span></strong><div class="metric-note">Reference frame S</div></div>
+        <div class="metric"><div class="metric-name">PROPER TIME ON SHIP</div><strong id="metricProper">0.00 <span>s</span></strong><div class="metric-note">Clock in frame S′</div></div>
+      </section>
+      <section class="workbench">
+        <div class="visual-column">
+          <div class="panel viewport-panel">
+            <div class="panel-head"><div><span class="panel-kicker">EXPERIMENTAL CHAMBER</span><h2 id="sceneHeading">Light Clock & Inertial Frames</h2></div><div class="status-chip"><span></span> LIVE 3D</div></div>
+            <div id="sceneHost" role="img" aria-label="ฉากจำลองสามมิติของยานอวกาศและห้องทดลองสัมพัทธภาพ"><div id="sceneLoading">กำลังเตรียมฉากสามมิติ…</div></div>
+            <div id="viewportTags" class="viewport-overlay top"><span class="frame-tag">FRAME S: LAB</span><span class="frame-tag highlight">FRAME S′: SHIP</span></div>
+            <div class="viewport-overlay bottom"><span>DRAG TO ORBIT · SCROLL TO ZOOM</span><button id="resetCamera" class="ghost-btn">↻ รีเซ็ตมุมมอง</button></div>
+          </div>
+          <div class="transport"><button id="playPause" class="primary-btn">Ⅱ หยุดการจำลอง</button><button id="resetSimulation" class="secondary-btn">↺ เริ่มใหม่</button><div class="transport-slider"><label for="timeScale">ความเร็วการจำลอง <output id="timeScaleOutput">1.0×</output></label><input id="timeScale" type="range" min="0.1" max="3" step="0.1" value="1"></div><div class="sim-clock">SIM T <strong id="transportClock">00.00 s</strong></div></div>
+          <div class="panel graph-panel"><div class="panel-head"><div><span class="panel-kicker">LIVE ANALYTICS</span><h2 id="chartTitle">ระยะทางที่แสงเดินทางเทียบกับเวลา</h2></div><div class="chart-legend" id="chartLegend"></div></div><canvas id="physicsChart" aria-label="กราฟฟิสิกส์ที่เปลี่ยนตามค่าตัวแปร" role="img"></canvas></div>
+        </div>
+        <div class="control-column">
+          <div class="panel control-panel"><div class="panel-head"><div><span class="panel-kicker">EXPERIMENT CONTROL</span><h2>แผงควบคุมตัวแปร</h2></div><span class="micro-icon">⚙</span></div>
+            <div class="control-group"><div class="control-title"><label for="beta">ความเร็วสัมพัทธ์ (Relative speed)</label><output id="betaValue">0.600 c</output></div><input id="beta" type="range" min="-0.95" max="0.95" step="0.01" value="0.6"><div class="range-ends"><span>−0.95 c</span><span>0</span><span>+0.95 c</span></div><div class="speed-presets"><button data-beta="0">0 c</button><button data-beta="0.3">0.3 c</button><button data-beta="0.6" class="selected">0.6 c</button><button data-beta="0.9">0.9 c</button></div></div>
+            <div id="dynamicControls"></div>
+          </div>
+          <div class="panel readings-panel"><div class="panel-head"><div><span class="panel-kicker">MEASUREMENT OUTPUT</span><h2>ผลการวัดแบบเรียลไทม์</h2></div><span class="readings-flash"></span></div><div id="readings"></div></div>
+          <div class="panel theory-panel"><div class="panel-head"><div><span class="panel-kicker">THEORETICAL MODEL</span><h2>หลักฟิสิกส์และสมการ</h2></div></div><div id="theory"></div></div>
+          <div class="panel activity-panel"><div class="panel-head"><div><span class="panel-kicker">ACTIVE LEARNING</span><h2>ภารกิจทดลอง</h2></div></div><p id="activityText"></p><div class="activity-actions"><button id="randomize" class="secondary-btn">สุ่มค่าทดลอง</button><button id="exportCSV" class="secondary-btn">↓ บันทึกข้อมูล CSV</button></div></div>
+        </div>
+      </section>
+      <footer>RELATIVITY LAB 2027 <span>•</span> Special Relativity Theory <span>•</span> © Educational simulation <span>•</span> c = 299,792,458 m/s</footer>
+    </main>
+  </div>
+  <script defer src="./app.js"></script>
+  <script defer src="../shared/ct_physics_suite.js" data-ct-module="relativity"></script>
+</body>
+</html>
