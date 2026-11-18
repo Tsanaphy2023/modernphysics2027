@@ -425,19 +425,136 @@
     } else if (activeMod === 'particle_physics') {
       const cx = W * 0.5, cy = H * 0.54;
       g.fillStyle = fg; g.font = '700 13px system-ui, sans-serif';
-      g.fillText(`2D Particle Physics (${(subMod || 'forces').toUpperCase()})`, 14, 22);
       if (subMod === 'forces') {
-        const d = numVal('#distance', 3) * 18;
-        g.fillStyle = '#38bdf8'; g.beginPath(); g.arc(cx - 50 - d, cy, 16, 0, Math.PI * 2); g.fill();
-        g.fillStyle = '#f43f5e'; g.beginPath(); g.arc(cx + 50 + d, cy, 16, 0, Math.PI * 2); g.fill();
-        const bx = (cx - 50 - d) + ((t * 1.3) % 1) * (100 + 2 * d);
-        g.fillStyle = '#fbbf24'; g.beginPath(); g.arc(bx, cy - Math.sin(((t * 1.3) % 1) * Math.PI) * 28, 7, 0, Math.PI * 2); g.fill();
-      } else {
-        g.fillStyle = '#8b5cf6'; g.beginPath(); g.arc(cx, cy, 26, 0, Math.PI * 2); g.fill();
-        for (let i = 0; i < 3; i++) {
-          const a = t * 2 + (i * Math.PI * 2) / 3;
-          g.fillStyle = '#34d399'; g.beginPath(); g.arc(cx + Math.cos(a) * 65, cy + Math.sin(a) * 32, 7, 0, Math.PI * 2); g.fill();
+        const fType = (document.querySelector('#forceSelect')?.value || 'em').toLowerCase();
+        const d = numVal('#distance', 1) * 18;
+        const labels = {
+          em: '2D แรงแม่เหล็กไฟฟ้า (EM) • ตัวกลาง: โฟตอน (γ) • พิสัย ∞',
+          strong: '2D แรงเข้ม (Strong) • Color Confinement • ตัวกลาง: กลูออน (g)',
+          weak: '2D แรงอ่อน (Weak) • เบตาดีเคย์ d → u + W⁻ → e⁻ + ν̄ₑ',
+          gravity: '2D แรงโน้มถ่วง (Gravity) • ความโค้งกาล–อวกาศ (GR)',
+        };
+        g.fillText(labels[fType] || labels.em, 14, 22);
+        if (fType === 'strong') {
+          const r = 42 + d * 0.35;
+          const qCols = ['#f43f5e', '#22c55e', '#38bdf8'];
+          const qPts = [0, 1, 2].map((i) => {
+            const a = -Math.PI / 2 + (i * Math.PI * 2) / 3 + Math.sin(t * 1.4) * 0.08;
+            return [cx + Math.cos(a) * r, cy + Math.sin(a) * r];
+          });
+          g.strokeStyle = 'rgba(192,132,252,0.75)'; g.lineWidth = 3;
+          g.beginPath(); g.moveTo(qPts[0][0], qPts[0][1]); g.lineTo(qPts[1][0], qPts[1][1]); g.lineTo(qPts[2][0], qPts[2][1]); g.closePath(); g.stroke();
+          qPts.forEach((pt, i) => {
+            g.fillStyle = qCols[i]; g.beginPath(); g.arc(pt[0], pt[1], 14, 0, Math.PI * 2); g.fill();
+            g.fillStyle = '#fff'; g.font = '700 10px sans-serif'; g.fillText(['R', 'G', 'B'][i], pt[0] - 4, pt[1] + 4);
+          });
+        } else if (fType === 'weak') {
+          g.strokeStyle = '#a987ff'; g.lineWidth = 2.5;
+          g.beginPath(); g.moveTo(cx - 120, cy - 45); g.lineTo(cx - 20, cy); g.lineTo(cx - 120, cy + 45); g.stroke();
+          g.strokeStyle = '#34d399'; g.setLineDash([5, 4]);
+          g.beginPath(); g.moveTo(cx - 20, cy); g.lineTo(cx + 50, cy); g.stroke(); g.setLineDash([]);
+          g.strokeStyle = '#3ee7ce';
+          g.beginPath(); g.moveTo(cx + 50, cy); g.lineTo(cx + 135, cy - 48); g.stroke();
+          g.beginPath(); g.moveTo(cx + 50, cy); g.lineTo(cx + 135, cy + 48); g.stroke();
+          const wx = cx - 20 + ((t * 0.9) % 1) * 70;
+          g.fillStyle = '#34d399'; g.beginPath(); g.arc(wx, cy, 8, 0, Math.PI * 2); g.fill();
+          g.fillStyle = fg; g.font = '700 11px sans-serif';
+          g.fillText('d', cx - 135, cy - 42); g.fillText('u', cx - 135, cy + 48);
+          g.fillText('W⁻ (80.38 GeV)', cx - 15, cy - 14);
+          g.fillText('e⁻', cx + 142, cy - 44); g.fillText('ν̄ₑ', cx + 142, cy + 50);
+        } else if (fType === 'gravity') {
+          g.strokeStyle = 'rgba(251,191,36,0.45)'; g.lineWidth = 1.2;
+          for (let row = -3; row <= 3; row++) {
+            g.beginPath();
+            for (let x = 24; x <= W - 24; x += 8) {
+              const dx = (x - cx) / 70;
+              const dip = 32 * Math.exp(-dx * dx * 1.4);
+              const y = cy + row * 18 + dip;
+              if (x === 24) g.moveTo(x, y); else g.lineTo(x, y);
+            }
+            g.stroke();
+          }
+          g.fillStyle = '#fbbf24'; g.beginPath(); g.arc(cx, cy + 16, 18, 0, Math.PI * 2); g.fill();
+          const ox = cx + Math.cos(t * 1.8) * (70 + d), oy = cy + Math.sin(t * 1.8) * 28;
+          g.fillStyle = '#38bdf8'; g.beginPath(); g.arc(ox, oy, 8, 0, Math.PI * 2); g.fill();
+        } else {
+          g.fillStyle = '#38bdf8'; g.beginPath(); g.arc(cx - 50 - d, cy, 16, 0, Math.PI * 2); g.fill();
+          g.fillStyle = '#f43f5e'; g.beginPath(); g.arc(cx + 50 + d, cy, 16, 0, Math.PI * 2); g.fill();
+          g.fillStyle = '#fff'; g.font = '700 12px sans-serif';
+          g.fillText('+', cx - 54 - d, cy + 4); g.fillText('−', cx + 46 + d, cy + 4);
+          const bx = (cx - 50 - d) + ((t * 1.3) % 1) * (100 + 2 * d);
+          g.fillStyle = '#fbbf24'; g.beginPath(); g.arc(bx, cy - Math.sin(((t * 1.3) % 1) * Math.PI) * 26, 7, 0, Math.PI * 2); g.fill();
+          g.fillText('γ', bx - 3, cy - 34);
         }
+      } else if (subMod === 'particles') {
+        const pid = document.querySelector('#particleSelect')?.value || 'e';
+        const pMode = document.querySelector('#particleMode')?.value || 'free';
+        const DB = {
+          u: ['u', 'Up quark', 'Quark (Gen 1)', '+2/3 e', '1/2', '2.16 MeV/c²', 2.16, '#a987ff'],
+          d: ['d', 'Down quark', 'Quark (Gen 1)', '−1/3 e', '1/2', '4.67 MeV/c²', 4.67, '#a987ff'],
+          c: ['c', 'Charm quark', 'Quark (Gen 2)', '+2/3 e', '1/2', '1.27 GeV/c²', 1270, '#a987ff'],
+          s: ['s', 'Strange quark', 'Quark (Gen 2)', '−1/3 e', '1/2', '93 MeV/c²', 93, '#a987ff'],
+          t: ['t', 'Top quark', 'Quark (Gen 3)', '+2/3 e', '1/2', '172.76 GeV/c²', 172760, '#a987ff'],
+          b: ['b', 'Bottom quark', 'Quark (Gen 3)', '−1/3 e', '1/2', '4.18 GeV/c²', 4180, '#a987ff'],
+          e: ['e⁻', 'Electron', 'Lepton (Gen 1)', '−1 e', '1/2', '0.511 MeV/c²', 0.511, '#3ee7ce'],
+          ve: ['νₑ', 'e-Neutrino', 'Lepton (Gen 1)', '0', '1/2', '< 0.8 eV/c²', 0.001, '#3ee7ce'],
+          mu: ['μ⁻', 'Muon', 'Lepton (Gen 2)', '−1 e', '1/2', '105.66 MeV/c²', 105.66, '#3ee7ce'],
+          vmu: ['νμ', 'μ-Neutrino', 'Lepton (Gen 2)', '0', '1/2', 'เล็กมาก', 0.001, '#3ee7ce'],
+          tau: ['τ⁻', 'Tau', 'Lepton (Gen 3)', '−1 e', '1/2', '1.777 GeV/c²', 1776.86, '#3ee7ce'],
+          vtau: ['ντ', 'τ-Neutrino', 'Lepton (Gen 3)', '0', '1/2', 'เล็กมาก', 0.001, '#3ee7ce'],
+          photon: ['γ', 'Photon', 'Gauge Boson', '0', '1', '0', 0, '#f6c86c'],
+          gluon: ['g', 'Gluon (8 colors)', 'Gauge Boson', '0', '1', '0', 0, '#f6c86c'],
+          w: ['W±', 'W Boson', 'Gauge Boson', '±1 e', '1', '80.38 GeV/c²', 80380, '#f6c86c'],
+          z: ['Z⁰', 'Z Boson', 'Gauge Boson', '0', '1', '91.19 GeV/c²', 91190, '#f6c86c'],
+          h: ['H⁰', 'Higgs Boson', 'Scalar Boson', '0', '0', '125.25 GeV/c²', 125250, '#fb8ed7'],
+        };
+        const info = DB[pid] || DB.e;
+        const [sym, pName, cat, chg, sp, massStr, mev, col] = info;
+        g.fillText(`2D อนุภาคมูลฐาน: ${sym} (${pName}) · ${cat}`, 14, 22);
+        const r = mev === 0 ? 22 : Math.max(14, Math.min(46, 18 + (Math.log10(Math.max(0.001, mev)) + 3) * 3.4));
+        const px = pMode === 'pair' ? cx - 60 : cx;
+        g.strokeStyle = col; g.lineWidth = 2;
+        g.beginPath(); g.ellipse(px, cy, r + 24, r + 8, t * 0.7, 0, Math.PI * 2); g.stroke();
+        if (mev === 0) {
+          g.strokeStyle = col; g.lineWidth = 3.5;
+          g.beginPath(); g.arc(px, cy, r, 0, Math.PI * 2); g.stroke();
+        } else {
+          g.fillStyle = col; g.beginPath(); g.arc(px, cy, r, 0, Math.PI * 2); g.fill();
+        }
+        if (sp !== '0') {
+          g.strokeStyle = '#fde047'; g.lineWidth = 2.5;
+          g.beginPath(); g.moveTo(px, cy + r + 14); g.lineTo(px, cy - r - 18); g.stroke();
+          g.fillStyle = '#fde047'; g.font = '700 10px sans-serif'; g.fillText(`s=${sp}`, px + 6, cy - r - 12);
+        }
+        g.fillStyle = '#0f172a'; g.font = '700 14px sans-serif'; g.fillText(sym, px - 9, cy + 5);
+        if (pMode === 'pair') {
+          g.fillStyle = '#fb923c'; g.beginPath(); g.arc(cx + 65, cy, r * 0.9, 0, Math.PI * 2); g.fill();
+          g.fillStyle = '#0f172a'; g.fillText(`Anti-${sym}`, cx + 44, cy + 5);
+        }
+        g.fillStyle = muted; g.font = '600 11px sans-serif';
+        g.fillText(`มวล: ${massStr}  |  ประจุ: ${chg}  |  สปิน: ${sp}  (ขนาดแสดงตามสเกล log m)`, 14, H - 14);
+      } else {
+        // Tab 03: 17-Particle Standard Model Periodic Table in 2D
+        const selId = document.querySelector('#particleSelect')?.value || 'e';
+        g.fillText('2D แบบจำลองมาตรฐาน 17 อนุภาค (Quarks · Leptons · Gauge Bosons · Higgs)', 14, 22);
+        const cells = [
+          ['u', 'u', '2.16 MeV', '#a987ff', 0, 0], ['c', 'c', '1.27 GeV', '#a987ff', 1, 0], ['t', 't', '172.8 GeV', '#a987ff', 2, 0], ['photon', 'γ', '0', '#f6c86c', 3, 0], ['h', 'H⁰', '125.3 GeV', '#fb8ed7', 4, 1],
+          ['d', 'd', '4.67 MeV', '#a987ff', 0, 1], ['s', 's', '93 MeV', '#a987ff', 1, 1], ['b', 'b', '4.18 GeV', '#a987ff', 2, 1], ['gluon', 'g', '0', '#f6c86c', 3, 1],
+          ['e', 'e⁻', '0.511 MeV', '#3ee7ce', 0, 2], ['mu', 'μ⁻', '105.7 MeV', '#3ee7ce', 1, 2], ['tau', 'τ⁻', '1.78 GeV', '#3ee7ce', 2, 2], ['w', 'W±', '80.38 GeV', '#f6c86c', 3, 2],
+          ['ve', 'νₑ', '~0', '#3ee7ce', 0, 3], ['vmu', 'νμ', '~0', '#3ee7ce', 1, 3], ['vtau', 'ντ', '~0', '#3ee7ce', 2, 3], ['z', 'Z⁰', '91.19 GeV', '#f6c86c', 3, 3],
+        ];
+        const cw = Math.min(82, (W - 44) / 5), ch = Math.min(46, (H - 52) / 4);
+        const sx = (W - cw * 5) / 2, sy = 36;
+        cells.forEach(([id, sym, m, col, gx, gy]) => {
+          const x = sx + gx * cw + 2, y = sy + gy * ch + 2, bw = cw - 4, bh = ch - 4;
+          const isSel = id === selId;
+          g.fillStyle = isSel ? 'rgba(56,189,248,0.28)' : 'rgba(15,23,42,0.75)';
+          g.strokeStyle = isSel ? '#ffffff' : col;
+          g.lineWidth = isSel ? 2.2 : 1.2;
+          g.fillRect(x, y, bw, bh); g.strokeRect(x, y, bw, bh);
+          g.fillStyle = col; g.font = '700 13px sans-serif'; g.fillText(sym, x + 6, y + 18);
+          g.fillStyle = muted; g.font = '500 9.5px sans-serif'; g.fillText(m, x + 6, y + 33);
+        });
       }
 
     // ===== 8. MATTER WAVES & QUANTUM MECHANICS =====
