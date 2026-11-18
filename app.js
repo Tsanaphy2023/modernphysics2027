@@ -624,6 +624,17 @@
     $('#ipo-res-proc').textContent = `γ = ${gamma.toFixed(3)} → ยืดเวลา & หดสั้น`;
     $('#ipo-res-out').textContent = `Δt = ${dt.toFixed(2)} s, L = ${len.toFixed(2)} m`;
 
+    const setClock = (prefix, sec) => {
+      const sDeg = (sec % 60) * 6;
+      const mDeg = ((sec / 60) % 60) * 6;
+      $(`#ipo-${prefix}-sec`)?.setAttribute('transform', `rotate(${sDeg} 40 40)`);
+      $(`#ipo-${prefix}-min`)?.setAttribute('transform', `rotate(${mDeg} 40 40)`);
+    };
+    setClock('ship', dtau);
+    setClock('lab', dt);
+    if ($('#ipo-clock-ship-val')) $('#ipo-clock-ship-val').textContent = `${dtau.toFixed(2)} s`;
+    if ($('#ipo-clock-lab-val')) $('#ipo-clock-lab-val').textContent = `${dt.toFixed(2)} s`;
+
     state.snapshot.ipo_checked = true;
     saveState();
   }

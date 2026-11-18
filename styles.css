@@ -1832,3 +1832,30 @@ body.mode-conceptual .lecture-deep-block {
   width: 22px;
   background: #38bdf8;
 }
+
+/* ===== CLASSIC ANALOG CLOCKS IN MODULE 01 IPO ===== */
+.ipo-clocks-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 14px;
+}
+.ipo-clock-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-radius: 12px;
+  padding: 10px 14px;
+}
+.ipo-analog-svg {
+  width: 68px;
+  height: 68px;
+  flex: 0 0 68px;
+  filter: drop-shadow(0 2px 6px rgba(15, 23, 42, 0.12));
+}
+.ipo-analog-svg line { transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1); }
+.ipo-clock-label { font-size: 12.5px; font-weight: 700; color: #334155; }
+.ipo-clock-val { font-size: 18px; font-weight: 800; color: #0f172a; font-family: ui-monospace, monospace; margin-top: 2px; }
+@media (max-width: 640px) { .ipo-clocks-row { grid-template-columns: 1fr; } }

@@ -507,8 +507,17 @@ function dynamicFields(){const m=S.module;const fields=[];
 }
 function switchModule(m){S.module=m;S.t=0;const d=modules[m];setText('moduleTitle',d.title);setText('breadcrumbName',d.crumb);setText('sceneHeading',d.scene);setText('chartTitle',d.chart);setText('moduleDescription',d.description);setText('activityText',d.activity);$('moduleNav').querySelectorAll('button').forEach(b=>b.classList.toggle('active',b.dataset.module===m));$('theory').innerHTML=`<div class="formula">${d.formula}</div><p>${d.explain}</p><p class="theory-hint">หมายเหตุ: ใช้กรอบเฉื่อยที่มีการเคลื่อนที่สัมพัทธ์ตามแกน x และละเลยแรงโน้มถ่วง</p>`;dynamicFields();updateViewportTags();updateMeasurements();}
 function addReading(label,value,unit='',tone=''){return `<div class="reading"><div><span class="reading-label">${label}</span>${unit?`<span class="reading-unit">${unit}</span>`:''}</div><span class="reading-value ${tone}">${value}</span></div>`;}
+function setAnalogHands(prefix,secVal){
+ const s=Math.max(0,secVal);
+ const secDeg=(s%60)*6,minDeg=((s/60)%60)*6,hrDeg=((s/3600)%12)*30;
+ const elS=$(prefix+'Sec'),elM=$(prefix+'Min'),elH=$(prefix+'Hour');
+ if(elS)elS.setAttribute('transform',`rotate(${secDeg} 32 32)`);
+ if(elM)elM.setAttribute('transform',`rotate(${minDeg} 32 32)`);
+ if(elH)elH.setAttribute('transform',`rotate(${hrDeg} 32 32)`);
+}
 function updateMeasurements(){const b=S.beta,g=gamma(),t=S.t,proper=t/g;
  setText('metricBeta',`${fmt(b,2)} c`);setText('metricGamma',`${fmt(g,4)} γ`);setText('metricTime',`${fmt(t,2)} s`);setText('metricProper',`${fmt(proper,2)} s`);setText('betaValue',`${b>=0?'+':''}${fmt(b,3)} c`);setText('transportClock',`${fmt(t,2)} s`);
+ setAnalogHands('analogLab',t);setAnalogHands('analogShip',proper);
  document.querySelectorAll('.speed-presets button').forEach(el=>el.classList.toggle('selected',Math.abs(+el.dataset.beta-b)<.001));
  let r='';const add=(...args)=>{r+=addReading(...args);};
  if(S.module==='postulates'){add('อัตราเร็วแสงในกรอบ S',`${fmt(C,0)} m/s`,'ค่าคงที่ในสุญญากาศ');add('อัตราเร็วแสงในกรอบ S′',`${fmt(C,0)} m/s`,'ค่าคงที่ในสุญญากาศ','purple');add('ระยะทางแนวดิ่งของแสงใน S′',`${fmt(2*S.H,2)} ls`,'ต่อการสะท้อนครบหนึ่งรอบ');add('เวลาต่อรอบใน S′',`${fmt(2*S.H,3)} s`,'proper light-clock period');add('เวลาต่อรอบที่เห็นจาก S',`${fmt(2*S.H*g,3)} s`,'time dilation','amber');}
