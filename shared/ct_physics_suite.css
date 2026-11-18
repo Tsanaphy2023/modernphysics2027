@@ -447,8 +447,10 @@ body.mode-conceptual .lecture-deep-block { display: none; }
   top: 12px;
   left: 12px;
   z-index: 25;
-  min-width: 195px;
-  max-width: 265px;
+  min-width: 220px;
+  max-width: min(360px, 88vw);
+  box-sizing: border-box;
+  overflow: hidden;
   background: rgba(6, 15, 30, 0.78);
   border: 1px solid rgba(56, 189, 248, 0.48);
   border-radius: 10px;
@@ -498,13 +500,15 @@ body.mode-conceptual .lecture-deep-block { display: none; }
   font-size: 11px;
 }
 .ct-hud-row span {
+  flex: 1;
+  min-width: 0;
   color: #94a3b8;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 135px;
 }
 .ct-hud-row strong {
+  flex-shrink: 0;
   color: #f8fafc;
   font-family: ui-monospace, SFMono-Regular, monospace;
   font-size: 11.5px;
