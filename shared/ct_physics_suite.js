@@ -383,56 +383,18 @@
 
   async function launchArXrView() {
     trackTelemetry('ar_xr_toggle', { modKey });
-    const stageEl = document.querySelector('#scene, #stage, #viewport');
-    let xrStatus = 'Desktop 3D Spatial AR Simulation';
-    if (navigator.xr && navigator.xr.isSessionSupported) {
-      try {
-        const arOk = await navigator.xr.isSessionSupported('immersive-ar');
-        const vrOk = await navigator.xr.isSessionSupported('immersive-vr');
-        if (arOk) xrStatus = 'WebXR Immersive-AR Ready';
-        else if (vrOk) xrStatus = 'WebXR Immersive-VR Ready';
-      } catch (_) {}
+    if (!window.MP27ArXr) {
+      await new Promise((resolve) => {
+        const s = document.createElement('script');
+        s.src = '../shared/ar_xr_controller.js';
+        s.onload = resolve;
+        s.onerror = resolve;
+        document.head.appendChild(s);
+      });
     }
-
-    if (stageEl && stageEl.requestFullscreen && xrStatus.indexOf('Desktop') === -1) {
-      try { await stageEl.requestFullscreen(); } catch (_) {}
+    if (window.MP27ArXr && typeof window.MP27ArXr.toggle === 'function') {
+      window.MP27ArXr.toggle(cfg);
     }
-
-    const hud = document.createElement('div');
-    hud.className = 'ct-xr-hud';
-    hud.innerHTML = `
-      <video id="ct-xr-cam" autoplay playsinline muted></video>
-      <div class="ct-xr-reticle">
-        <div style="font-size:11px;font-weight:800;color:#38bdf8;letter-spacing:0.08em;">AR:XR SPATIAL SIMULATOR MODE</div>
-        <h3 style="margin:6px 0;">${esc(cfg.title)}</h3>
-        <p style="font-size:13px;color:#cbd5e1;margin:0 0 12px;">สถานะอุปกรณ์: <strong>${esc(xrStatus)}</strong> — โหมดนี้เปิดกล้อง AR Passthrough (หากอนุญาต) หรือโหมด Spatial Fullscreen เพื่อสังเกตอุปกรณ์ 3D</p>
-        <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
-          <button type="button" id="ct-xr-fs" class="ct-suite-btn primary">⛶ ขยายฉาก 3D เต็มจอ</button>
-          <button type="button" id="ct-xr-close" class="ct-suite-btn">✕ ออกจากโหมด AR:XR</button>
-        </div>
-      </div>
-    `;
-    document.body.appendChild(hud);
-
-    let stream = null;
-    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-      navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
-        .then((s) => {
-          stream = s;
-          const v = hud.querySelector('#ct-xr-cam');
-          if (v) v.srcObject = s;
-        }).catch(() => {});
-    }
-
-    const cleanup = () => {
-      if (stream) stream.getTracks().forEach((t) => t.stop());
-      hud.remove();
-    };
-    hud.querySelector('#ct-xr-close').addEventListener('click', cleanup);
-    hud.querySelector('#ct-xr-fs').addEventListener('click', () => {
-      cleanup();
-      if (stageEl && stageEl.requestFullscreen) stageEl.requestFullscreen().catch(() => {});
-    });
   }
 
   async function initSuite() {
