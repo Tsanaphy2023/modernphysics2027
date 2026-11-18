@@ -154,8 +154,10 @@
   function setSpeakingUi(speaking) {
     const orb = document.getElementById('qbot-fab');
     const wave = document.getElementById('qbot-wave');
+    const panel = document.getElementById('qbot-panel');
     if (orb) orb.classList.toggle('speaking', speaking);
     if (wave) wave.classList.toggle('active', speaking);
+    if (panel) panel.classList.toggle('speaking', speaking);
   }
 
   function stopSpeaking() {
@@ -408,18 +410,106 @@
         outline: none;
       }
       #qbot-input:focus { border-color: #38bdf8; }
+      .qbot-fab-avatar {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid #38bdf8;
+        box-shadow: 0 0 12px rgba(56, 189, 248, 0.75);
+        animation: qbotIdleFloat 3.6s ease-in-out infinite;
+      }
+      #qbot-fab.speaking .qbot-fab-avatar {
+        animation: qbotSpeakBounce 0.45s ease-in-out infinite alternate;
+        border-color: #22d3ee;
+        box-shadow: 0 0 18px #22d3ee;
+      }
+      .qbot-avatar-stage {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 10px 14px;
+        background: radial-gradient(circle at 22% 50%, rgba(14, 116, 144, 0.35), rgba(15, 23, 42, 0.92));
+        border-bottom: 1px solid rgba(56, 189, 248, 0.25);
+      }
+      .qbot-holo-wrap {
+        position: relative;
+        width: 66px;
+        height: 66px;
+        flex: 0 0 66px;
+        display: grid;
+        place-items: center;
+      }
+      .qbot-holo-ring {
+        position: absolute;
+        inset: 0;
+        border-radius: 50%;
+        border: 1.5px dashed rgba(56, 189, 248, 0.8);
+        animation: qbotSpin 12s linear infinite;
+      }
+      .qbot-holo-ring.inner {
+        inset: 4px;
+        border-style: solid;
+        border-color: rgba(34, 211, 238, 0.45) transparent;
+        animation: qbotSpinRev 7s linear infinite;
+      }
+      .qbot-holo-img {
+        width: 54px;
+        height: 54px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid #38bdf8;
+        animation: qbotIdleFloat 3.4s ease-in-out infinite;
+      }
+      #qbot-panel.speaking .qbot-holo-img {
+        animation: qbotSpeakBounce 0.42s ease-in-out infinite alternate;
+        box-shadow: 0 0 20px rgba(34, 211, 238, 0.85);
+      }
+      #qbot-panel.speaking .qbot-holo-ring {
+        border-color: #22d3ee;
+        animation-duration: 3s;
+      }
+      .qbot-prof-name { font-size: 13px; font-weight: 800; color: #f8fafc; }
+      .qbot-prof-role { font-size: 11px; color: #93c5fd; margin-top: 2px; }
+      .qbot-prof-status {
+        display: inline-block;
+        margin-top: 4px;
+        font-size: 10.5px;
+        font-weight: 700;
+        color: #6ee7b7;
+        background: rgba(16, 185, 129, 0.14);
+        border: 1px solid rgba(52, 211, 153, 0.4);
+        padding: 1px 8px;
+        border-radius: 999px;
+      }
+      @keyframes qbotIdleFloat {
+        0%, 100% { transform: translateY(0) scale(1) rotate(0deg); }
+        50% { transform: translateY(-2px) scale(1.03) rotate(1.2deg); }
+      }
+      @keyframes qbotSpeakBounce {
+        from { transform: scale(1) rotate(-1deg); }
+        to { transform: scale(1.07) rotate(1.5deg); }
+      }
+      @keyframes qbotSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+      @keyframes qbotSpinRev { from { transform: rotate(360deg); } to { transform: rotate(0deg); } }
     `;
     document.head.appendChild(st);
+  }
+
+  function getAvatarUrl() {
+    const isSubLab = Boolean(document.querySelector('script[data-ct-module]'));
+    return isSubLab ? '../shared/dr_chewa_avatar.jpg' : './shared/dr_chewa_avatar.jpg';
   }
 
   function initQBot() {
     if (!document.body || document.getElementById('qbot-fab')) return;
     injectStyles();
+    const avatarUrl = getAvatarUrl();
 
     const fab = document.createElement('button');
     fab.id = 'qbot-fab';
     fab.type = 'button';
-    fab.innerHTML = `<span class="qbot-orb"></span><span>Q_bot AI</span>`;
+    fab.innerHTML = `<img class="qbot-fab-avatar" src="${avatarUrl}" alt="ผศ.ดร.ชีวะ ทัศนา"/><span>Q_bot · ผศ.ดร.ชีวะ</span>`;
     document.body.appendChild(fab);
 
     const panel = document.createElement('div');
@@ -438,6 +528,18 @@
           <select id="qbot-lang" title="เลือกภาษา Q_bot">${langOpts}</select>
           <button type="button" id="qbot-tts-btn" class="qbot-icon-btn" title="เปิด/ปิดเสียงพูด">🔊</button>
           <button type="button" id="qbot-close-btn" class="qbot-icon-btn" title="ปิด">✕</button>
+        </div>
+      </div>
+      <div class="qbot-avatar-stage">
+        <div class="qbot-holo-wrap">
+          <span class="qbot-holo-ring"></span>
+          <span class="qbot-holo-ring inner"></span>
+          <img class="qbot-holo-img" src="${avatarUrl}" alt="ผศ.ดร.ชีวะ ทัศนา 3D Pixar Avatar"/>
+        </div>
+        <div>
+          <div class="qbot-prof-name">ผศ.ดร.ชีวะ ทัศนา</div>
+          <div class="qbot-prof-role">อาจารย์ผู้สอน · ฟิสิกส์ยุคใหม่ มรภ.รำไพพรรณี</div>
+          <span class="qbot-prof-status">● AI Hologram Ready</span>
         </div>
       </div>
       <div id="qbot-msgs" class="qbot-msgs"></div>
