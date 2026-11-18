@@ -41,7 +41,9 @@
           <line x1="58" y1="68" x2="130" y2="68" stroke="#1e293b" stroke-width="4"/>
           <line x1="58" y1="158" x2="130" y2="158" stroke="#1e293b" stroke-width="4"/>
           <line x1="94" y1="72" x2="94" y2="154" stroke="#f59e0b" stroke-width="2.5" stroke-dasharray="5 3"/>
-          <circle cx="94" cy="113" r="6" fill="#f59e0b"/>
+          <circle cx="94" cy="113" r="6" fill="#f59e0b">
+            <animate attributeName="cy" values="74;152;74" dur="1.4s" repeatCount="indefinite"/>
+          </circle>
           <text x="94" y="192" text-anchor="middle" font-size="11" fill="#334155">กรอบยาน (v = 0): ระยะ 2d = cΔτ</text>
           <rect x="190" y="54" width="300" height="120" rx="8" fill="#ffffff" stroke="#94a3b8"/>
           <line x1="215" y1="68" x2="265" y2="68" stroke="#1e293b" stroke-width="4"/>
@@ -51,6 +53,9 @@
           <line x1="315" y1="158" x2="365" y2="158" stroke="#1e293b" stroke-width="4"/>
           <line x1="415" y1="158" x2="465" y2="158" stroke="#1e293b" stroke-width="4"/>
           <polyline points="240,154 340,72 440,154" fill="none" stroke="#2563eb" stroke-width="2.8"/>
+          <circle r="6" fill="#2563eb">
+            <animateMotion path="M 240,154 L 340,72 L 440,154" dur="2.33s" repeatCount="indefinite"/>
+          </circle>
           <line x1="240" y1="113" x2="440" y2="113" stroke="#10b981" stroke-width="2" stroke-dasharray="4 3"/>
           <text x="340" y="106" text-anchor="middle" font-size="11" font-weight="700" fill="#059669">vΔt →</text>
           <text x="275" y="104" font-size="11" font-weight="700" fill="#2563eb">cΔt/2</text>
@@ -100,7 +105,12 @@
           <text x="24" y="54" font-size="11" font-weight="700" fill="#334155">K_max (eV)</text>
           <line x1="70" y1="190" x2="360" y2="52" stroke="#2563eb" stroke-width="2.5" stroke-dasharray="4 3"/>
           <line x1="154" y1="150" x2="360" y2="52" stroke="#2563eb" stroke-width="3"/>
-          <circle cx="154" cy="150" r="5" fill="#dc2626"/>
+          <circle r="5.5" fill="#f59e0b">
+            <animateMotion path="M 154,150 L 360,52" dur="2.2s" repeatCount="indefinite"/>
+          </circle>
+          <circle cx="154" cy="150" r="5" fill="#dc2626">
+            <animate attributeName="r" values="4.5;7.5;4.5" dur="1.6s" repeatCount="indefinite"/>
+          </circle>
           <text x="154" y="168" text-anchor="middle" font-size="11" font-weight="700" fill="#dc2626">f₀ (ขีดเริ่ม)</text>
           <line x1="250" y1="150" x2="445" y2="58" stroke="#059669" stroke-width="3"/>
           <circle cx="250" cy="150" r="5" fill="#059669"/>
@@ -147,17 +157,28 @@
           <rect x="8" y="8" width="504" height="204" rx="12" fill="#f8fafc" stroke="#cbd5e1"/>
           <text x="24" y="30" font-size="13" font-weight="700" fill="#0f172a">ทวิภาวะคลื่น–อนุภาค: คลื่นสสารเดอบรอยล์ &amp; การกระเจิงคอมป์ตัน</text>
           <circle cx="130" cy="118" r="56" fill="none" stroke="#cbd5e1" stroke-width="2" stroke-dasharray="4 3"/>
-          <path d="M 130,54 Q 160,64 176,82 T 192,118 T 176,154 T 130,182 T 84,154 T 68,118 T 84,82 Z" fill="none" stroke="#2563eb" stroke-width="2.5"/>
+          <path d="M 130,54 Q 160,64 176,82 T 192,118 T 176,154 T 130,182 T 84,154 T 68,118 T 84,82 Z" fill="none" stroke="#2563eb" stroke-width="2.5">
+            <animateTransform attributeName="transform" type="rotate" from="0 130 118" to="360 130 118" dur="8s" repeatCount="indefinite"/>
+          </path>
           <circle cx="130" cy="118" r="7" fill="#dc2626"/>
           <text x="130" y="200" text-anchor="middle" font-size="11" fill="#334155">วงโคจรคลื่นนิ่ง: 2πr = nλ</text>
           <line x1="255" y1="125" x2="345" y2="125" stroke="#f59e0b" stroke-width="3"/>
+          <circle r="5" fill="#f59e0b">
+            <animateMotion path="M 255,125 L 355,125" dur="1.4s" repeatCount="indefinite"/>
+          </circle>
           <polygon points="345,125 335,120 335,130" fill="#f59e0b"/>
           <text x="295" y="114" text-anchor="middle" font-size="11" font-weight="700" fill="#b45309">โฟตอน λ</text>
           <circle cx="355" cy="125" r="8" fill="#0f172a"/>
           <text x="355" y="147" text-anchor="middle" font-size="10" fill="#334155">e⁻ นิ่ง</text>
           <line x1="362" y1="120" x2="455" y2="75" stroke="#2563eb" stroke-width="2.8"/>
+          <circle r="4.5" fill="#2563eb">
+            <animateMotion path="M 362,120 L 455,75" dur="1.4s" begin="0.7s" repeatCount="indefinite"/>
+          </circle>
           <text x="435" y="68" font-size="11" font-weight="700" fill="#2563eb">λ′ &gt; λ (มุม θ)</text>
           <line x1="362" y1="130" x2="455" y2="165" stroke="#059669" stroke-width="2.5"/>
+          <circle r="5" fill="#059669">
+            <animateMotion path="M 362,130 L 455,165" dur="1.4s" begin="0.7s" repeatCount="indefinite"/>
+          </circle>
           <text x="430" y="182" font-size="11" font-weight="700" fill="#059669">e⁻ กระเด็น</text>
         </svg>`,
     },
@@ -203,6 +224,12 @@
           <rect x="165" y="84" width="10" height="60" fill="#0f172a"/>
           <text x="170" y="76" text-anchor="middle" font-size="11" font-weight="700" fill="#0f172a">แกรไฟต์ (d₁, d₂)</text>
           <line x1="105" y1="114" x2="165" y2="114" stroke="#38bdf8" stroke-width="3"/>
+          <circle r="4" fill="#38bdf8">
+            <animateMotion path="M 105,114 L 170,114 L 345,62" dur="1.8s" repeatCount="indefinite"/>
+          </circle>
+          <circle r="4" fill="#38bdf8">
+            <animateMotion path="M 105,114 L 170,114 L 345,166" dur="1.8s" begin="0.4s" repeatCount="indefinite"/>
+          </circle>
           <line x1="175" y1="114" x2="345" y2="114" stroke="#38bdf8" stroke-width="2" stroke-dasharray="4 3"/>
           <line x1="175" y1="114" x2="345" y2="62" stroke="#10b981" stroke-width="2.5"/>
           <line x1="175" y1="114" x2="345" y2="166" stroke="#10b981" stroke-width="2.5"/>
@@ -210,8 +237,12 @@
           <text x="255" y="78" font-size="11" font-weight="700" fill="#059669">มุม 2θ</text>
           <ellipse cx="350" cy="114" rx="12" ry="68" fill="#064e3b" stroke="#10b981" stroke-width="2"/>
           <circle cx="445" cy="114" r="56" fill="#022c22" stroke="#10b981" stroke-width="2"/>
-          <circle cx="445" cy="114" r="40" fill="none" stroke="#34d399" stroke-width="3"/>
-          <circle cx="445" cy="114" r="22" fill="none" stroke="#6ee7b7" stroke-width="3"/>
+          <circle cx="445" cy="114" r="40" fill="none" stroke="#34d399" stroke-width="3">
+            <animate attributeName="stroke-opacity" values="0.45;1;0.45" dur="2s" repeatCount="indefinite"/>
+          </circle>
+          <circle cx="445" cy="114" r="22" fill="none" stroke="#6ee7b7" stroke-width="3">
+            <animate attributeName="stroke-opacity" values="1;0.45;1" dur="2s" repeatCount="indefinite"/>
+          </circle>
           <circle cx="445" cy="114" r="4" fill="#a7f3d0"/>
           <text x="445" y="188" text-anchor="middle" font-size="11" font-weight="700" fill="#065f46">วงแหวน d₁ (ใน) &amp; d₂ (นอก)</text>
         </svg>`,
@@ -264,9 +295,15 @@
           <line x1="70" y1="194" x2="300" y2="194" stroke="#0f172a" stroke-width="3"/>
           <text x="310" y="198" font-size="11" font-weight="700" fill="#0f172a">n = 1 (−13.60 eV) Ground</text>
           <line x1="120" y1="98" x2="120" y2="136" stroke="#dc2626" stroke-width="3"/>
+          <circle r="4.5" fill="#dc2626">
+            <animateMotion path="M 120,98 L 120,136" dur="1.5s" repeatCount="indefinite"/>
+          </circle>
           <polygon points="120,138 115,129 125,129" fill="#dc2626"/>
           <text x="120" y="122" text-anchor="end" dx="-6" font-size="10" font-weight="700" fill="#dc2626">656 nm</text>
           <line x1="180" y1="74" x2="180" y2="136" stroke="#0891b2" stroke-width="3"/>
+          <circle r="4.5" fill="#0891b2">
+            <animateMotion path="M 180,74 L 180,136" dur="1.8s" begin="0.4s" repeatCount="indefinite"/>
+          </circle>
           <polygon points="180,138 175,129 185,129" fill="#0891b2"/>
           <text x="180" y="114" text-anchor="start" dx="6" font-size="10" font-weight="700" fill="#0891b2">486 nm</text>
           <line x1="250" y1="138" x2="250" y2="191" stroke="#7c3aed" stroke-width="2.5"/>
@@ -317,6 +354,9 @@
           <line x1="35" y1="120" x2="480" y2="120" stroke="#64748b" stroke-width="1.5" stroke-dasharray="5 4"/>
           <text x="48" y="114" font-size="11" font-weight="700" fill="#475569">E &lt; V₀</text>
           <path d="M 40,120 Q 60,72 80,120 T 120,120 T 160,120 T 200,120 L 210,104 C 235,112 265,126 300,132 Q 320,118 340,126 T 380,126 T 420,126 T 460,126" fill="none" stroke="#2563eb" stroke-width="3"/>
+          <circle r="5" fill="#2563eb">
+            <animateMotion path="M 40,120 L 210,104 L 300,132 L 460,126" dur="2.6s" repeatCount="indefinite"/>
+          </circle>
           <text x="120" y="198" text-anchor="middle" font-size="11" fill="#1e40af">คลื่นตกกระทบ + สะท้อน</text>
           <text x="255" y="198" text-anchor="middle" font-size="11" fill="#b91c1c">ลดทอน e^(−κx)</text>
           <text x="400" y="198" text-anchor="middle" font-size="11" fill="#059669">คลื่นทะลุผ่าน (T &gt; 0)</text>
@@ -367,6 +407,9 @@
           <line x1="260" y1="100" x2="260" y2="128" stroke="#dc2626" stroke-width="2" stroke-dasharray="3 2"/>
           <text x="260" y="118" text-anchor="middle" font-size="10" font-weight="700" fill="#dc2626">E_g ≈ 1.1 eV</text>
           <rect x="205" y="128" width="110" height="45" rx="4" fill="#2563eb" stroke="#1d4ed8"/>
+          <circle cx="240" cy="140" r="4.5" fill="#facc15">
+            <animate attributeName="cy" values="140;82;140" dur="2.4s" repeatCount="indefinite"/>
+          </circle>
           <text x="260" y="155" text-anchor="middle" font-size="10" fill="#ffffff">Valence Band</text>
           <text x="260" y="192" text-anchor="middle" font-size="11" font-weight="700" fill="#0f172a">สารกึ่งตัวนำ (Si)</text>
           <rect x="372" y="46" width="110" height="32" rx="4" fill="#e0f2fe" stroke="#0284c7"/>
@@ -417,6 +460,9 @@
           <text x="475" y="184" font-size="11" font-weight="700" fill="#334155">t</text>
           <text x="28" y="55" font-size="11" font-weight="700" fill="#334155">N(t)</text>
           <path d="M 65,55 Q 140,120 185,117 T 305,149 T 445,172" fill="none" stroke="#2563eb" stroke-width="3"/>
+          <circle r="5" fill="#f59e0b">
+            <animateMotion path="M 65,55 Q 140,120 185,117 T 305,149 T 445,172" dur="3.0s" repeatCount="indefinite"/>
+          </circle>
           <circle cx="65" cy="55" r="4.5" fill="#dc2626"/>
           <text x="42" y="59" font-size="10" font-weight="700" fill="#0f172a">N₀</text>
           <line x1="65" y1="117" x2="185" y2="117" stroke="#94a3b8" stroke-dasharray="4 3"/>
@@ -483,7 +529,12 @@
           <text x="307" y="116" text-anchor="middle" font-size="10" fill="#7f1d1d">• Photon (γ) → EM</text>
           <text x="307" y="140" text-anchor="middle" font-size="10" fill="#7f1d1d">• W±, Z⁰ → Weak</text>
           <text x="307" y="164" text-anchor="middle" font-size="10" fill="#7f1d1d">(Spin = 1)</text>
-          <rect x="396" y="48" width="96" height="142" rx="8" fill="#fef3c7" stroke="#d97706"/>
+          <rect x="396" y="48" width="96" height="142" rx="8" fill="#fef3c7" stroke="#d97706">
+            <animate attributeName="stroke-width" values="1.5;3.5;1.5" dur="2.2s" repeatCount="indefinite"/>
+          </rect>
+          <circle cx="223" cy="119" r="5" fill="#7c3aed">
+            <animate attributeName="cx" values="214;232;214" dur="1.8s" repeatCount="indefinite"/>
+          </circle>
           <text x="444" y="88" text-anchor="middle" font-size="13" font-weight="700" fill="#92400e">Higgs (H⁰)</text>
           <text x="444" y="114" text-anchor="middle" font-size="10" fill="#78350f">Spin = 0</text>
           <text x="444" y="136" text-anchor="middle" font-size="10" fill="#78350f">กลไกให้มวล</text>
