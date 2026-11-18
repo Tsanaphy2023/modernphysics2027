@@ -666,12 +666,79 @@
     });
   }
 
-  window.MP27Lecture = { LECTURE_DATA, openPresentation, renderMathInContainer };
+  const LAB_URLS = {
+    relativity: './special_relativity_theory/index.html',
+    quantum_light: './quantum_theory_of_light/index.html',
+    matter_waves: './wave_properties_of_particles/index.html',
+    electron_diffraction: './electron_diffraction_lab/index.html',
+    atomic_models: './atomic_structure_models/index.html',
+    quantum_mechanics: './introductory_quantum_mechanics_1/index.html',
+    solid_state: './molecular_solid_state_physics/index.html',
+    nuclear_physics: './nuclear_structure_radioactivity/index.html',
+    particle_physics: './elementary_particle_physics/index.html',
+  };
+
+  function initHeroCarousel() {
+    const root = document.getElementById('hero-lab-carousel');
+    if (!root) return;
+    let idx = 0;
+    let timer = null;
+    const badgeEl = document.getElementById('hc-badge');
+    const counterEl = document.getElementById('hc-counter');
+    const visualEl = document.getElementById('hc-visual');
+    const titleEl = document.getElementById('hc-title');
+    const eqEl = document.getElementById('hc-eq');
+    const labLink = document.getElementById('hc-lab-link');
+    const theoryBtn = document.getElementById('hc-theory-btn');
+    const dotsEl = document.getElementById('hc-dots');
+
+    dotsEl.innerHTML = MODULE_ORDER.map(
+      (id, i) => `<button type="button" class="hc-dot${i === 0 ? ' active' : ''}" data-idx="${i}" aria-label="สไลด์ ${i + 1}"></button>`
+    ).join('');
+
+    function showSlide(nextIdx) {
+      idx = (nextIdx + MODULE_ORDER.length) % MODULE_ORDER.length;
+      const key = MODULE_ORDER[idx];
+      const data = LECTURE_DATA[key];
+      badgeEl.textContent = data.badge;
+      counterEl.textContent = `${idx + 1} / ${MODULE_ORDER.length}`;
+      visualEl.innerHTML = data.svg;
+      titleEl.textContent = data.title;
+      eqEl.innerHTML = `$$${data.equations[0].latex}$$`;
+      labLink.href = LAB_URLS[key] || '#';
+      renderMathInContainer(eqEl);
+      dotsEl.querySelectorAll('.hc-dot').forEach((d, i) => d.classList.toggle('active', i === idx));
+    }
+
+    function startAuto() {
+      stopAuto();
+      timer = setInterval(() => showSlide(idx + 1), 5000);
+    }
+    function stopAuto() {
+      if (timer) { clearInterval(timer); timer = null; }
+    }
+
+    document.getElementById('hc-prev')?.addEventListener('click', () => { showSlide(idx - 1); startAuto(); });
+    document.getElementById('hc-next')?.addEventListener('click', () => { showSlide(idx + 1); startAuto(); });
+    dotsEl.addEventListener('click', (e) => {
+      const btn = e.target.closest('.hc-dot');
+      if (btn) { showSlide(parseInt(btn.dataset.idx, 10)); startAuto(); }
+    });
+    theoryBtn?.addEventListener('click', () => openPresentation(MODULE_ORDER[idx]));
+    root.addEventListener('mouseenter', stopAuto);
+    root.addEventListener('mouseleave', startAuto);
+
+    showSlide(0);
+    startAuto();
+  }
+
+  window.MP27Lecture = { LECTURE_DATA, LAB_URLS, openPresentation, renderMathInContainer };
   document.addEventListener('DOMContentLoaded', () => {
     injectLectureDecks();
+    initHeroCarousel();
     // Retry once after deferred KaTeX auto-render loads
     setTimeout(() => {
-      document.querySelectorAll('.lecture-deck').forEach(renderMathInContainer);
+      document.querySelectorAll('.lecture-deck, #hero-lab-carousel').forEach(renderMathInContainer);
     }, 300);
   });
 })();

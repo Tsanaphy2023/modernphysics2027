@@ -1723,3 +1723,112 @@ body.mode-conceptual .lecture-deep-block {
 @media (max-width: 900px) {
   .lecture-grid { grid-template-columns: 1fr; }
 }
+
+/* ===== HERO INTERACTIVE 9-LAB CAROUSEL ===== */
+.hero-carousel {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 16px;
+  padding: 14px;
+  backdrop-filter: blur(10px);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-shadow: 0 12px 32px rgba(2, 6, 23, 0.28);
+}
+.hc-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.hc-badge {
+  background: rgba(56, 189, 248, 0.22);
+  border: 1px solid rgba(125, 211, 252, 0.45);
+  color: #e0f2fe;
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 999px;
+}
+.hc-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.hc-counter {
+  font-size: 12px;
+  font-weight: 700;
+  color: #cbd5e1;
+  min-width: 34px;
+  text-align: center;
+}
+.hc-nav-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(15, 23, 42, 0.45);
+  color: #ffffff;
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+}
+.hc-nav-btn:hover { background: rgba(56, 189, 248, 0.35); }
+.hc-visual {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 4px;
+  overflow: hidden;
+  transition: opacity 0.22s ease;
+}
+.hc-visual svg { display: block; width: 100%; height: auto; max-height: 185px; }
+.hc-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.hc-title {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #ffffff;
+}
+.hc-eq {
+  font-size: 13px;
+  color: #bae6fd;
+  background: rgba(15, 23, 42, 0.45);
+  border-radius: 8px;
+  padding: 4px 10px;
+  overflow-x: auto;
+}
+.hc-eq .katex-display { margin: 2px 0; }
+.hc-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.hc-actions .btn-outline {
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.35);
+}
+.hc-dots {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  padding-top: 2px;
+}
+.hc-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  border: none;
+  background: rgba(255, 255, 255, 0.32);
+  cursor: pointer;
+  padding: 0;
+  transition: width 0.2s, background 0.2s;
+}
+.hc-dot.active {
+  width: 22px;
+  background: #38bdf8;
+}
