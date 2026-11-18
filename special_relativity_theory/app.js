@@ -185,33 +185,37 @@ window.addEventListener('mp27:labels',()=>{if(scene&&window.MP27Labels)window.MP
  const laserRail2=new THREE.Mesh(new THREE.BoxGeometry(16,.02,.02),new THREE.MeshBasicMaterial({color:colorAmber,transparent:true,opacity:.28}));laserRail2.position.set(1,.2,-2.2);
  postulatesGroup.add(refLabPhoton,refShipPhoton,labGate,gatePost,laserRail1,laserRail2);
 
- // 02 Transforms Group: Dual S & S' Axes, Event Beacon, Galilean vs Lorentz Bars, Light Cone
+ // 02 Transforms Group: Dual S & S' Axes (Separated in Z), Event Beacon, Galilean vs Lorentz Bars, Light Cone
  transformsGroup=new THREE.Group();scene.add(transformsGroup);
- transformsGroup.add(buildAxesSet(colorCyan,0x67d8ff,0x3596b8,5.2));
- sPrimeAxes=buildAxesSet(colorPurple,0xc5bfff,0x796fd3,3.8);transformsGroup.add(sPrimeAxes);
+ const sAxes=buildAxesSet(colorCyan,0x67d8ff,0x3596b8,5.4);sAxes.position.set(0,0,-2.2);transformsGroup.add(sAxes);
+ sPrimeAxes=buildAxesSet(colorPurple,0xc5bfff,0x796fd3,4.2);sPrimeAxes.position.set(0,.05,1.8);transformsGroup.add(sPrimeAxes);
  if(window.MP27Labels){
-  transformsGroup.add(
-   window.MP27Labels.makeSprite(THREE,'แกน x (กรอบ S)',5.45,.35,0,'#45ddf3'),
-   window.MP27Labels.makeSprite(THREE,'แกน ct (กรอบ S)',0,5.55,0,'#45ddf3'),
-   window.MP27Labels.makeSprite(THREE,'แกน z (กรอบ S)',0,.35,5.35,'#45ddf3'),
-   window.MP27Labels.makeSprite(THREE,'กรวยแสง (x = ±ct)',4.25,4.45,0,'#67d8ff')
+  sAxes.add(
+   window.MP27Labels.makeSprite(THREE,'แกน x (กรอบ S)',5.6,.4,0,'#45ddf3'),
+   window.MP27Labels.makeSprite(THREE,'แกน ct (กรอบ S)',0,5.7,0,'#45ddf3'),
+   window.MP27Labels.makeSprite(THREE,'แกน z (กรอบ S)',0,.4,3.8,'#45ddf3')
   );
   sPrimeAxes.add(
-   window.MP27Labels.makeSprite(THREE,'แกน x′ (กรอบ S′)',4.15,.35,0,'#a59bff'),
-   window.MP27Labels.makeSprite(THREE,'แกน ct′ (กรอบ S′)',0,4.25,0,'#a59bff')
+   window.MP27Labels.makeSprite(THREE,'แกน x′ (กรอบ S′)',4.45,.4,0,'#a59bff'),
+   window.MP27Labels.makeSprite(THREE,'แกน ct′ (กรอบ S′)',0,4.55,0,'#a59bff')
   );
  }
  eventBeacon=new THREE.Group();
- const bCore=new THREE.Mesh(new THREE.SphereGeometry(.2,20,16),new THREE.MeshStandardMaterial({color:0xffffff,emissive:colorAmber,emissiveIntensity:1.4}));
- const bRing=new THREE.Mesh(new THREE.TorusGeometry(.38,.025,10,32),new THREE.MeshBasicMaterial({color:colorAmber,transparent:true,opacity:.75}));bRing.rotation.x=Math.PI/2;
- const bStem=new THREE.Mesh(new THREE.CylinderGeometry(.02,.02,4,8),new THREE.MeshBasicMaterial({color:colorAmber,transparent:true,opacity:.45}));bStem.position.y=-2;
+ const bCore=new THREE.Mesh(new THREE.SphereGeometry(.22,20,16),new THREE.MeshStandardMaterial({color:0xffffff,emissive:colorAmber,emissiveIntensity:1.4}));
+ const bRing=new THREE.Mesh(new THREE.TorusGeometry(.42,.028,10,32),new THREE.MeshBasicMaterial({color:colorAmber,transparent:true,opacity:.8}));bRing.rotation.x=Math.PI/2;
+ const bStem=new THREE.Mesh(new THREE.CylinderGeometry(.022,.022,4,8),new THREE.MeshBasicMaterial({color:colorAmber,transparent:true,opacity:.45}));bStem.position.y=-2;
  eventBeacon.add(bCore,bRing,bStem);transformsGroup.add(eventBeacon);
  if(window.MP27Labels){
-  eventBeacon.add(window.MP27Labels.makeSprite(THREE,'เหตุการณ์ E(x, ct)',0,.65,0,'#ffcb72'));
+  eventBeacon.add(window.MP27Labels.makeSprite(THREE,'เหตุการณ์ E(x, ct)',0,.75,0,'#ffcb72'));
  }
  galBar=buildBarSegment(colorAmber);lorBar=buildBarSegment(colorGreen);transformsGroup.add(galBar,lorBar);
- coneLines=new THREE.Group();
- for(const dir of [-1,1]){const ray=cylinderBetween(new THREE.Vector3(0,0,0),new THREE.Vector3(dir*4.2,4.2,0),.022,colorCyan);ray.material.transparent=true;ray.material.opacity=.4;coneLines.add(ray);}
+ if(window.MP27Labels){
+  galBar.add(window.MP27Labels.makeSprite(THREE,'ระยะ x′ (กาลิเลียน)',0,.38,0,'#ffcb72'));
+  lorBar.add(window.MP27Labels.makeSprite(THREE,'ระยะ x′ (ลอเรนตซ์)',0,.42,0,'#58e8b1'));
+ }
+ coneLines=new THREE.Group();coneLines.position.set(0,0,-2.2);
+ for(const dir of [-1,1]){const ray=cylinderBetween(new THREE.Vector3(0,0,0),new THREE.Vector3(dir*4.4,4.4,0),.024,colorCyan);ray.material.transparent=true;ray.material.opacity=.45;coneLines.add(ray);}
+ if(window.MP27Labels)coneLines.add(window.MP27Labels.makeSprite(THREE,'กรวยแสง (x = ±ct)',4.5,4.6,0,'#67d8ff'));
  transformsGroup.add(coneLines);
 
  // 03 Dilation Group: Stationary Lab Clock + Ghost L0 Reference Hull + Calipers
@@ -468,12 +472,12 @@ function update3D(){
   refLabPhoton.position.set(-5+2.6*phase,.2,-1.6);
   refShipPhoton.position.set(emitX+2.0+2.6*phase,.2,-2.2);
  }else if(m==='transforms'){
-  const sPrimeX=Math.max(-4.5,Math.min(4.5,b*S.tEvent*.5)),ex=Math.max(-5.5,Math.min(5.5,S.x*.5)),ey=Math.max(.35,Math.min(3.5,1.6+S.tEvent*.12));
-  ship.scale.set(.68,.68,.68);ship.position.set(sPrimeX,ship.position.y,-1.7);
-  sPrimeAxes.position.set(sPrimeX,.05,0);
+  const sPrimeX=Math.max(-4.5,Math.min(4.5,b*S.tEvent*.5)),ex=Math.max(-5.5,Math.min(5.5,S.x*.5)),ey=Math.max(.45,Math.min(3.8,1.8+S.tEvent*.12));
+  ship.scale.set(.62,.62,.62);ship.position.set(sPrimeX,ship.position.y,3.2);
+  sPrimeAxes.position.set(sPrimeX,.05,1.8);
   eventBeacon.position.set(ex,ey,0);
-  setBarSpan(galBar,sPrimeX,ex,.55,0);
-  setBarSpan(lorBar,sPrimeX,sPrimeX+g*(ex-sPrimeX),1.05,0);
+  setBarSpan(galBar,sPrimeX,ex,.65,-.7);
+  setBarSpan(lorBar,sPrimeX,sPrimeX+g*(ex-sPrimeX),1.45,.7);
  }else if(m==='dilation'){
   const baseScale=Math.max(.5,Math.min(1.85,S.L0/4)),sx=3.2*Math.sin(S.t*.4*b);
   ship.scale.set(baseScale/g,1,1);ship.position.set(sx,ship.position.y,0);
