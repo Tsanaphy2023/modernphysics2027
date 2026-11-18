@@ -1,0 +1,1052 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Special Relativity — 3D Spacetime Observatory | Modern Physics 2027</title>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..700;1,400..600&family=Noto+Sans+Thai:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../shared/ct_physics_suite.css">
+  <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+  <script src="https://unpkg.com/lucide@1.43.0/dist/umd/lucide.min.js"></script>
+  <style>
+    :root {
+      color-scheme: dark;
+      --background: #0a101d;
+      --surface-container-low: #0e1626;
+      --surface-container: #111b2e;
+      --surface-container-high: #17243c;
+      --on-surface: #f2ece1;
+      --on-surface-variant: #9ba8bf;
+      --outline: #384d73;
+      --outline-variant: #21304d;
+      --primary: #dfaa5b;
+      --on-primary: #0a101d;
+      --primary-container: #2b261c;
+      --on-primary-container: #f5dcb0;
+      --secondary: #687a99;
+      --tertiary: #7cc4e8;
+      --error: #f27474;
+      --data-1: #dfaa5b;
+      --data-2: #7cc4e8;
+      --data-3: #52d19c;
+      --data-4: #e07a5f;
+      --data-context: #4a5d80;
+      --font-headline: 'EB Garamond', 'Noto Sans Thai', serif;
+      --font-body: 'Plus Jakarta Sans', 'Noto Sans Thai', sans-serif;
+      --font-label: 'JetBrains Mono', 'Noto Sans Thai', monospace;
+      --rounded: 0.25rem;
+      --rounded-lg: 0.375rem;
+      --rounded-full: 9999px;
+      --hairline: 1px solid var(--outline-variant);
+      --hairline-strong: 1px solid var(--outline);
+      --panel-highlight: inset 0 1px 0 rgba(242, 236, 225, 0.05);
+      --brass-glow: radial-gradient(circle at 88% 12%, rgba(223, 170, 91, 0.08), transparent 45%);
+      --heading-tracking: -0.015em;
+      --label-tracking: 0.06em;
+      --sky-tint: color-mix(in srgb, var(--tertiary) 12%, transparent);
+      --brass-tint: color-mix(in srgb, var(--primary) 14%, transparent);
+      --mint-tint: color-mix(in srgb, var(--data-3) 12%, transparent);
+      --coral-tint: color-mix(in srgb, var(--data-4) 12%, transparent);
+      --positive: #52d19c;
+      --warning: #e6b84c;
+      --focus: var(--primary);
+      --display-size: clamp(1.75rem, 1.4rem + 1.2vw, 2.35rem);
+      --headline-size: clamp(1.25rem, 1.1rem + 0.5vw, 1.5rem);
+      --subhead-size: clamp(1.0625rem, 1rem + 0.25vw, 1.1875rem);
+      --body-size: clamp(0.9375rem, 0.9rem + 0.15vw, 1rem);
+      --label-size: 0.75rem;
+      --space-xs: 0.25rem;
+      --space-sm: 0.5rem;
+      --space-md: 1rem;
+      --space-lg: 1.5rem;
+      --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+      --dur-micro: 120ms;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body {
+      overflow-x: clip;
+      margin: 0;
+      padding: 0;
+      background-color: var(--background);
+      color: var(--on-surface);
+      font-family: var(--font-body);
+      font-size: var(--body-size);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+    header { position: static !important; }
+    .page-grid {
+      display: grid;
+      gap: var(--space-lg);
+      padding: var(--space-lg);
+      max-width: 1360px;
+      margin: 0 auto;
+      overflow: hidden;
+    }
+    .page-grid * { min-width: 0; }
+    :focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+    h1, h2, h3 {
+      margin: 0;
+      font-family: var(--font-headline);
+      font-weight: 500;
+      letter-spacing: var(--heading-tracking);
+      color: var(--on-surface);
+    }
+    .title { font-size: var(--display-size); line-height: 1.12; }
+    .title em { font-style: italic; font-weight: 400; color: var(--primary); }
+    .section-heading { font-size: var(--headline-size); line-height: 1.15; }
+    .sub-heading { font-size: var(--subhead-size); line-height: 1.25; }
+    .deck-brass {
+      font-family: var(--font-label);
+      font-size: var(--label-size);
+      letter-spacing: var(--label-tracking);
+      text-transform: uppercase;
+      color: var(--primary);
+      margin-top: var(--space-xs);
+    }
+    .coord-label {
+      font-family: var(--font-label);
+      font-size: var(--label-size);
+      letter-spacing: var(--label-tracking);
+      text-transform: uppercase;
+      color: var(--tertiary);
+    }
+    .mono-label {
+      font-family: var(--font-label);
+      font-size: var(--label-size);
+      letter-spacing: var(--label-tracking);
+      text-transform: uppercase;
+      color: var(--on-surface-variant);
+    }
+    .tabular { font-variant-numeric: tabular-nums; }
+    .hero-header {
+      background-color: var(--background);
+      background-image: var(--brass-glow);
+      border-bottom: var(--hairline);
+      padding: var(--space-lg) var(--space-lg) var(--space-md);
+    }
+    .hero-inner {
+      max-width: 1360px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: var(--space-md);
+    }
+    .hero-copy { max-width: 68ch; }
+    .hero-lede {
+      margin: var(--space-sm) 0 0;
+      color: var(--on-surface-variant);
+      font-size: var(--body-size);
+      max-width: 65ch;
+    }
+    .hero-actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-sm); }
+    .panel {
+      background: var(--surface-container);
+      border: var(--hairline);
+      box-shadow: var(--panel-highlight);
+      border-radius: var(--rounded-lg);
+      padding: var(--space-lg);
+    }
+    .panel-compact { padding: var(--space-md); }
+    .observation-well {
+      background: var(--background);
+      border: var(--hairline);
+      border-radius: var(--rounded);
+      padding: var(--space-md);
+      font-family: var(--font-label);
+      color: var(--on-surface);
+    }
+    button, input, select { font-family: inherit; }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-xs);
+      min-height: 40px;
+      padding: var(--space-xs) var(--space-md);
+      border-radius: var(--rounded);
+      font-family: var(--font-label);
+      font-size: var(--label-size);
+      font-weight: 500;
+      letter-spacing: 0.03em;
+      cursor: pointer;
+      text-decoration: none;
+      border: var(--hairline-strong);
+      background: transparent;
+      color: var(--on-surface);
+      transition: all var(--dur-micro) var(--ease-out);
+    }
+    .btn:hover:not(:disabled) { background: var(--surface-container-high); border-color: var(--primary); }
+    .btn:disabled { opacity: 0.45; cursor: not-allowed; }
+    .btn-primary { background: var(--primary); color: var(--on-primary); border-color: var(--primary); font-weight: 600; }
+    .btn-primary:hover:not(:disabled) { background: var(--on-primary-container); border-color: var(--on-primary-container); }
+    .btn-sm { min-height: 34px; padding: var(--space-xs) var(--space-sm); }
+    .btn-pill-active { background: var(--brass-tint); border-color: var(--primary); color: var(--primary); }
+    .btn-sky-active { background: var(--sky-tint); border-color: var(--tertiary); color: var(--tertiary); }
+    .btn-armed { background: var(--coral-tint); border-color: var(--error); color: var(--error); }
+    .icon-sm { width: 15px; height: 15px; flex-shrink: 0; }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-xs);
+      background: var(--sky-tint);
+      color: var(--tertiary);
+      border: 1px solid color-mix(in srgb, var(--tertiary) 35%, transparent);
+      border-radius: var(--rounded);
+      padding: var(--space-xs) var(--space-sm);
+      font-family: var(--font-label);
+      font-size: var(--label-size);
+    }
+    .badge-brass { background: var(--brass-tint); color: var(--primary); border-color: color-mix(in srgb, var(--primary) 35%, transparent); }
+    .control-deck { display: grid; gap: var(--space-md); background: var(--surface-container-low); }
+    .deck-top-row { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1.2fr) minmax(0, 0.9fr); gap: var(--space-lg); align-items: end; }
+    .field-group { display: flex; flex-direction: column; gap: var(--space-xs); }
+    .field-label {
+      font-family: var(--font-label);
+      font-size: var(--label-size);
+      letter-spacing: var(--label-tracking);
+      text-transform: uppercase;
+      color: var(--on-surface-variant);
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: var(--space-sm);
+    }
+    .velocity-row { display: flex; align-items: center; gap: var(--space-sm); }
+    .velocity-row input[type="range"] { flex: 1; }
+    .input-box, .select-box {
+      background: var(--background);
+      color: var(--on-surface);
+      border: var(--hairline-strong);
+      border-radius: var(--rounded);
+      min-height: 40px;
+      padding: var(--space-xs) var(--space-sm);
+      font-family: var(--font-label);
+      font-size: var(--body-size);
+      font-variant-numeric: tabular-nums;
+    }
+    .input-box-compact { width: 96px; text-align: right; }
+    input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      height: 6px;
+      background: var(--surface-container-high);
+      border-radius: var(--rounded-full);
+      border: var(--hairline);
+      cursor: pointer;
+      min-height: 24px;
+      background-clip: content-box;
+      padding: 9px 0;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: var(--rounded-full);
+      background: var(--primary);
+      border: 2px solid var(--background);
+      box-shadow: 0 0 0 1px var(--primary);
+      cursor: grab;
+    }
+    .segmented-group { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--space-sm); }
+    .playback-row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-sm); }
+    .preset-strip { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-sm); padding-top: var(--space-sm); border-top: var(--hairline); }
+    .sim-workspace { display: grid; grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr); gap: var(--space-lg); align-items: start; }
+    .stage-column, .telemetry-column { display: grid; gap: var(--space-md); }
+    .mode-tabs { display: flex; flex-wrap: wrap; gap: var(--space-sm); }
+    .mode-tab {
+      flex: 1 1 130px;
+      min-height: 44px;
+      padding: var(--space-xs) var(--space-sm);
+      background: var(--surface-container);
+      border: var(--hairline);
+      border-radius: var(--rounded);
+      color: var(--on-surface-variant);
+      font-family: var(--font-label);
+      font-size: var(--label-size);
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 2px;
+    }
+    .mode-tab[aria-selected="true"] {
+      background: var(--surface-container-high);
+      border-color: var(--primary);
+      color: var(--on-surface);
+      box-shadow: inset 0 2px 0 var(--primary);
+    }
+    .mode-tab-ch { font-size: 0.6875rem; color: var(--primary); letter-spacing: var(--label-tracking); text-transform: uppercase; }
+    .stage-well {
+      position: relative;
+      padding: 0;
+      min-height: 510px;
+      height: 540px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      border: var(--hairline-strong);
+      border-radius: var(--rounded-lg);
+      background: var(--background);
+    }
+    #relativity-canvas { width: 100%; height: 100%; display: block; cursor: grab; touch-action: none; }
+    .stage-hud-top {
+      position: absolute; top: var(--space-sm); left: var(--space-sm); right: var(--space-sm);
+      display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: var(--space-sm); pointer-events: none;
+    }
+    .stage-hud-top > * { pointer-events: auto; }
+    .camera-toolbar {
+      display: flex; flex-wrap: wrap; gap: var(--space-xs);
+      background: color-mix(in srgb, var(--surface-container) 88%, transparent);
+      border: var(--hairline); border-radius: var(--rounded); padding: var(--space-xs);
+    }
+    .cam-btn {
+      min-height: 30px; padding: 2px var(--space-sm); font-family: var(--font-label); font-size: 0.6875rem;
+      background: transparent; color: var(--on-surface-variant); border: 1px solid transparent; border-radius: var(--rounded); cursor: pointer;
+    }
+    .cam-btn.active { color: var(--primary); border-color: color-mix(in srgb, var(--primary) 45%, transparent); background: var(--brass-tint); }
+    .stage-hud-bottom {
+      position: absolute; bottom: var(--space-sm); left: var(--space-sm); right: var(--space-sm);
+      display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: var(--space-sm); pointer-events: none;
+    }
+    .legend-pill {
+      display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-md);
+      background: color-mix(in srgb, var(--surface-container) 90%, transparent);
+      border: var(--hairline); border-radius: var(--rounded); padding: var(--space-xs) var(--space-sm);
+      font-family: var(--font-label); font-size: 0.6875rem; color: var(--on-surface-variant);
+    }
+    .legend-item { display: inline-flex; align-items: center; gap: 6px; }
+    .swatch { width: 10px; height: 10px; border-radius: 2px; display: inline-block; }
+    .swatch-brass { background: var(--data-1); }
+    .swatch-sky { background: var(--data-2); }
+    .swatch-mint { background: var(--data-3); }
+    .swatch-coral { background: var(--data-4); }
+    .insight-banner {
+      display: flex; align-items: flex-start; gap: var(--space-md); padding: var(--space-md);
+      background: var(--surface-container-low); border: var(--hairline); border-left: 3px solid var(--primary); border-radius: var(--rounded);
+    }
+    .insight-banner p { margin: 0; color: var(--on-surface); font-size: var(--body-size); }
+    .kpi-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-sm); }
+    .kpi-tile {
+      background: var(--surface-container); border: var(--hairline); box-shadow: var(--panel-highlight);
+      border-radius: var(--rounded-lg); padding: var(--space-md); display: flex; flex-direction: column; gap: 2px;
+    }
+    .kpi-value { font-family: var(--font-headline); font-weight: 500; font-size: clamp(1.5rem, 1.25rem + 0.8vw, 1.95rem); line-height: 1.1; font-variant-numeric: tabular-nums; }
+    .kpi-value-accent { color: var(--primary); }
+    .kpi-note { font-family: var(--font-label); font-size: 0.72rem; color: var(--tertiary); font-variant-numeric: tabular-nums; }
+    .inspector-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-sm); margin-top: var(--space-sm); }
+    .inspector-full { grid-column: 1 / -1; }
+    .math-well { margin-top: var(--space-md); display: grid; gap: var(--space-sm); }
+    .eq-row { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: var(--space-sm); padding-bottom: var(--space-xs); border-bottom: var(--hairline); }
+    .eq-row:last-child { border-bottom: none; padding-bottom: 0; }
+    .eq-formula { font-family: var(--font-label); font-size: 0.8125rem; color: var(--on-surface-variant); }
+    .eq-result { font-family: var(--font-label); font-size: 0.875rem; font-weight: 600; color: var(--primary); font-variant-numeric: tabular-nums; }
+    .eq-classical { font-family: var(--font-label); font-size: 0.75rem; color: var(--data-4); }
+    .curve-container { position: relative; min-height: 195px; height: 195px; width: 100%; margin-top: var(--space-sm); background: var(--background); border: var(--hairline); border-radius: var(--rounded); overflow: hidden; }
+    #curve-canvas { width: 100%; height: 100%; display: block; cursor: crosshair; touch-action: none; }
+    .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(270px, 100%), 1fr)); gap: var(--space-md); margin-top: var(--space-md); }
+    .scenario-card {
+      background: var(--surface-container-low); border: var(--hairline); border-radius: var(--rounded-lg); padding: var(--space-md);
+      text-align: left; cursor: pointer; display: flex; flex-direction: column; justify-content: space-between; gap: var(--space-sm);
+    }
+    .scenario-card:hover { background: var(--surface-container-high); border-color: var(--tertiary); }
+    .scenario-card.active { background: var(--surface-container-high); border-color: var(--primary); box-shadow: inset 0 2px 0 var(--primary); }
+    .scenario-title { font-family: var(--font-headline); font-size: var(--subhead-size); font-weight: 500; color: var(--on-surface); }
+    .scenario-desc { font-size: 0.875rem; color: var(--on-surface-variant); margin: 0; }
+    .scenario-meta { display: flex; justify-content: space-between; align-items: center; gap: var(--space-sm); font-family: var(--font-label); font-size: 0.72rem; color: var(--primary); }
+    details.panel summary { cursor: pointer; list-style: none; display: flex; align-items: center; justify-content: space-between; gap: var(--space-md); font-family: var(--font-headline); font-size: var(--headline-size); color: var(--on-surface); }
+    details.panel summary::-webkit-details-marker { display: none; }
+    .ref-table-wrap { overflow-x: auto; margin-top: var(--space-md); }
+    table.ref-table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+    table.ref-table th { text-align: left; font-family: var(--font-label); font-size: var(--label-size); text-transform: uppercase; letter-spacing: var(--label-tracking); color: var(--tertiary); padding: var(--space-sm); border-bottom: var(--hairline-strong); }
+    table.ref-table td { padding: var(--space-sm); border-bottom: var(--hairline); vertical-align: top; color: var(--on-surface-variant); }
+    table.ref-table td.eq-cell { font-family: var(--font-label); color: var(--on-surface); white-space: nowrap; }
+    .source-footer { margin-top: var(--space-md); padding-top: var(--space-md); border-top: var(--hairline); font-size: 0.875rem; color: var(--on-surface-variant); }
+    .status-toast { font-family: var(--font-label); font-size: var(--label-size); color: var(--positive); min-height: 1.2em; }
+    .error-inline { font-family: var(--font-label); font-size: var(--label-size); color: var(--error); min-height: 1.2em; }
+    @media (max-width: 1024px) { .deck-top-row, .sim-workspace { grid-template-columns: 1fr; } }
+    @media (max-width: 640px) { .page-grid { padding: var(--space-sm); gap: var(--space-md); } .stage-well { min-height: 380px; height: 400px; } .segmented-group { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+
+  <header class="hero-header">
+    <div class="hero-inner">
+      <div class="hero-copy">
+        <h1 class="title">Special Relativity: <em>3D Spacetime Observatory</em></h1>
+        <div class="deck-brass">หอสังเกตการณ์กาล–อวกาศ 3 มิติ (บทที่ 1–10) &middot; ตำรา ผศ.ดร.ชีวะ ทัศนา (มรภ.รำไพพรรณี)</div>
+        <p class="hero-lede">
+          ปรับความเร็วสัมพัทธ์ สลับกรอบอ้างอิงเฉื่อยระหว่างห้องทดลอง <em>O</em> และยานอวกาศ <em>O&prime;</em> พร้อมทดสอบโจทย์มาตรฐานจากตำราทั้ง 8 กรณี (Light Cone, แท่งเอียง, มิวออน, Twin Voyage, ทรงกลม $|v|=c$, และสามเหลี่ยมพลังงาน–โมเมนตัม)
+        </p>
+      </div>
+      <div class="hero-actions">
+        <span id="status-toast" class="status-toast" aria-live="polite"></span>
+        <a href="./index.html" class="btn btn-sm">🚀 กลับห้องปฏิบัติการ 01 หลัก</a>
+        <button type="button" class="btn btn-sm" onclick="exportTelemetryCsv()">
+          <i data-lucide="download" class="icon-sm" aria-hidden="true"></i>
+          Export CSV
+        </button>
+        <button type="button" id="reset-all-btn" class="btn btn-sm" onclick="handleResetDefaults(this)">
+          <i data-lucide="rotate-ccw" class="icon-sm" aria-hidden="true"></i>
+          Reset Defaults
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="page-grid">
+
+    <section class="panel control-deck" aria-label="Master Relativity Controls">
+      <div class="deck-top-row">
+        <div class="field-group">
+          <div class="field-label">
+            <label for="beta-slider">ความเร็วสัมพัทธ์ (&beta; = u / c)</label>
+            <span id="speed-ms-readout" class="coord-label tabular">u = +1.80 &times; 10&sup8; m/s</span>
+          </div>
+          <div class="velocity-row">
+            <input type="range" id="beta-slider" min="-0.995" max="0.995" step="0.001" value="0.600" oninput="syncBetaFromSlider(this.value)">
+            <input type="number" id="beta-number" class="input-box input-box-compact" min="-0.995" max="0.995" step="0.005" value="0.600" aria-label="Velocity beta numeric input" oninput="syncBetaFromNumber(this.value)">
+          </div>
+          <div id="beta-error" class="error-inline" role="alert"></div>
+        </div>
+
+        <div class="field-group">
+          <div class="field-label">
+            <span>กรอบอ้างอิงผู้สังเกต (Observer Frame)</span>
+            <span id="frame-badge" class="badge">Rest in O (Lab)</span>
+          </div>
+          <div class="segmented-group" role="group" aria-label="Observer Frame Selection">
+            <button type="button" id="frame-btn-O" class="btn btn-sky-active" onclick="setObserverFrame('O')">
+              กรอบ O (ห้องทดลอง)
+            </button>
+            <button type="button" id="frame-btn-Op" class="btn" onclick="setObserverFrame('Oprime')">
+              กรอบ O&prime; (บนยานอวกาศ)
+            </button>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <div class="field-label">
+            <span>การไหลของเวลาพิกัด</span>
+            <span id="sim-clock-readout" class="coord-label tabular">ct = 0.00 m</span>
+          </div>
+          <div class="playback-row">
+            <button type="button" id="play-toggle-btn" class="btn btn-primary" onclick="togglePlayback()">
+              <i data-lucide="pause" class="icon-sm" aria-hidden="true"></i>
+              <span id="play-label">Pause</span>
+            </button>
+            <button type="button" class="btn" onclick="resetSimTime()">t = 0</button>
+            <select id="time-scale-select" class="select-box" aria-label="Simulation speed multiplier" onchange="setTimeScale(this.value)">
+              <option value="0.25">0.25&times;</option>
+              <option value="1" selected>1.0&times;</option>
+              <option value="2">2.0&times;</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="preset-strip" role="group" aria-label="Quick Velocity Presets">
+        <span class="mono-label">ค่ามาตรฐานตำรา:</span>
+        <button type="button" class="btn btn-sm" onclick="applyQuickBeta(0.010, 'O')">Galilean (0.01c)</button>
+        <button type="button" class="btn btn-sm" onclick="applyQuickBeta(0.500, 'O')">Simultaneity (0.50c)</button>
+        <button type="button" class="btn btn-sm" onclick="applyQuickBeta(0.600, 'O')">Lorentz Boost (0.60c)</button>
+        <button type="button" class="btn btn-sm" onclick="applyQuickBeta(0.800, 'O')">Twin Voyage (0.80c)</button>
+        <button type="button" class="btn btn-sm" onclick="applyQuickBeta(0.950, 'O')">Cube Contraction (0.95c)</button>
+        <button type="button" class="btn btn-sm" onclick="applyQuickBeta(0.995, 'O')">Muon Descent (0.995c)</button>
+      </div>
+    </section>
+
+    <div class="sim-workspace">
+      <div class="stage-column">
+        <div class="mode-tabs" role="tablist" aria-label="Relativistic Phenomenon Modes">
+          <button type="button" role="tab" id="tab-lorentz" class="mode-tab" aria-selected="true" onclick="setMode('lorentz')">
+            <span class="mode-tab-ch">บทที่ 3 &amp; 7</span>
+            <span>Lorentz &amp; Spacetime</span>
+          </button>
+          <button type="button" role="tab" id="tab-contraction" class="mode-tab" aria-selected="false" onclick="setMode('contraction')">
+            <span class="mode-tab-ch">บทที่ 5</span>
+            <span>Length Contraction</span>
+          </button>
+          <button type="button" role="tab" id="tab-dilation" class="mode-tab" aria-selected="false" onclick="setMode('dilation')">
+            <span class="mode-tab-ch">บทที่ 6</span>
+            <span>Time Dilation</span>
+          </button>
+          <button type="button" role="tab" id="tab-velocity" class="mode-tab" aria-selected="false" onclick="setMode('velocity')">
+            <span class="mode-tab-ch">บทที่ 4 &amp; 8</span>
+            <span>Velocity &amp; Doppler</span>
+          </button>
+          <button type="button" role="tab" id="tab-mechanics" class="mode-tab" aria-selected="false" onclick="setMode('mechanics')">
+            <span class="mode-tab-ch">บทที่ 9 &amp; 10</span>
+            <span>Mass &amp; Energy</span>
+          </button>
+        </div>
+
+        <div class="stage-well" id="stage-well">
+          <canvas id="relativity-canvas" aria-label="Interactive 3D Special Relativity Visualization"></canvas>
+          <div class="stage-hud-top">
+            <div class="badge badge-brass" id="hud-mode-badge">FRAME O &middot; 3D MINKOWSKI SPACETIME</div>
+            <div class="camera-toolbar" role="group" aria-label="3D Camera Presets">
+              <button type="button" class="cam-btn active" id="cam-iso" onclick="setCameraView('iso')">Isometric</button>
+              <button type="button" class="cam-btn" id="cam-top" onclick="setCameraView('top')">Top</button>
+              <button type="button" class="cam-btn" id="cam-side" onclick="setCameraView('side')">Side</button>
+              <button type="button" class="cam-btn" onclick="resetCamera()">Reset</button>
+            </div>
+          </div>
+          <div class="stage-hud-bottom">
+            <div class="legend-pill" id="stage-legend">
+              <span class="legend-item"><span class="swatch swatch-sky"></span><span id="leg-1">O Frame / Light Cone</span></span>
+              <span class="legend-item"><span class="swatch swatch-brass"></span><span id="leg-2">O&prime; Moving Axes</span></span>
+              <span class="legend-item"><span class="swatch swatch-mint"></span><span id="leg-3">Invariant / Proper</span></span>
+              <span class="legend-item"><span class="swatch swatch-coral"></span><span id="leg-4">Classical / Event B</span></span>
+            </div>
+            <span class="badge">ลากหมุน 3D &middot; เลื่อนซูม</span>
+          </div>
+        </div>
+
+        <div class="insight-banner" role="status" aria-live="polite">
+          <i data-lucide="compass" class="icon-sm" style="color: var(--primary); margin-top: 3px;" aria-hidden="true"></i>
+          <p id="scene-insight-text">
+            ในกรอบ O แกนของกรอบที่เคลื่อนที่ O&prime; จะเอียงเข้าหากรวยแสงเป็นมุม &theta; = arctan(&beta;) และระนาบความพร้อมกันจะแยกออกจากกัน
+          </p>
+        </div>
+      </div>
+
+      <aside class="telemetry-column card-wrapper" aria-label="Relativistic Telemetry and Equations">
+        <div class="kpi-grid">
+          <div class="kpi-tile">
+            <span class="mono-label">Lorentz Factor (&gamma;)</span>
+            <span class="kpi-value kpi-value-accent" id="kpi-gamma">1.2500</span>
+            <span class="kpi-note">1 / &radic;(1 &minus; &beta;&sup2;)</span>
+          </div>
+          <div class="kpi-tile">
+            <span class="mono-label">Contraction (L / L&#x2080;)</span>
+            <span class="kpi-value" id="kpi-contract">0.8000</span>
+            <span class="kpi-note" id="kpi-contract-note">&minus;20.0% along motion</span>
+          </div>
+          <div class="kpi-tile">
+            <span class="mono-label">Time Dilation (&Delta;t / &Delta;&tau;)</span>
+            <span class="kpi-value" id="kpi-dilate">1.2500&times;</span>
+            <span class="kpi-note" id="kpi-dilate-note">Moving clock ticks slower</span>
+          </div>
+          <div class="kpi-tile">
+            <span class="mono-label">Observer Velocity (u)</span>
+            <span class="kpi-value" id="kpi-beta">+0.600c</span>
+            <span class="kpi-note" id="kpi-speed-ms">1.800 &times; 10&sup8; m/s</span>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div style="display:flex; justify-content:space-between; align-items:baseline; gap:var(--space-sm);">
+            <h2 class="section-heading" id="inspector-title">Lorentz Coordinates &amp; Simultaneity</h2>
+            <span class="coord-label" id="inspector-chapter">Ch. 3 &amp; 7</span>
+          </div>
+          <div id="mode-controls-mount" class="inspector-grid"></div>
+          <div class="observation-well math-well" id="live-equations-mount"></div>
+        </div>
+
+        <div class="panel panel-compact">
+          <div style="display:flex; justify-content:space-between; align-items:baseline; gap:var(--space-sm);">
+            <h3 class="sub-heading">Relativistic Scaling Curve</h3>
+            <span class="coord-label">คลิกหรือลากบนกราฟเพื่อปรับ &beta;</span>
+          </div>
+          <div class="curve-container">
+            <canvas id="curve-canvas" aria-label="Relativistic scaling curves"></canvas>
+          </div>
+          <div class="legend-pill" style="margin-top:var(--space-sm); justify-content:space-between; width:100%;">
+            <span class="legend-item"><span class="swatch swatch-brass"></span>&gamma; (Time / Mass)</span>
+            <span class="legend-item"><span class="swatch swatch-sky"></span>L/L&#x2080; (Length)</span>
+            <span class="legend-item"><span class="swatch swatch-mint"></span>p/(m&#x2080;c)</span>
+            <span class="legend-item"><span class="swatch swatch-coral"></span>Newtonian p</span>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <section class="panel" aria-label="Textbook Benchmark Scenarios">
+      <div style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:baseline; gap:var(--space-sm);">
+        <div>
+          <h2 class="section-heading">8 โจทย์มาตรฐานจากตำรา (Textbook Benchmark Scenarios)</h2>
+          <div class="deck-brass">คลิกการ์ดเพื่อโหลดค่า &beta;, โหมด และตัวแปรของตัวอย่าง Ex. 3.2 – 10.3 เข้าฉาก 3 มิติทันที</div>
+        </div>
+      </div>
+      <div class="card-grid" id="scenario-grid"></div>
+    </section>
+
+    <details class="panel">
+      <summary>
+        <span>ตารางสรุปสมการสัมพัทธภาพพิเศษ (Ch. 1 – 10 Reference)</span>
+        <span class="coord-label">เปิด/พับตารางสูตร</span>
+      </summary>
+      <div class="ref-table-wrap">
+        <table class="ref-table">
+          <thead>
+            <tr><th>บทเรียนและปรากฏการณ์</th><th>สมการหลัก</th><th>ความหมายทางฟิสิกส์</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Ch. 1 &amp; 2 &middot; Galilean &amp; Postulates</td><td class="eq-cell">x&prime; = x &minus; ut, &nbsp; c = 3.00 &times; 10&sup8; m/s</td><td>กรณีความเร็วต่ำ (&beta; &rarr; 0) และความคงที่ของอัตราเร็วแสงในทุกกรอบเฉื่อย</td></tr>
+            <tr><td>Ch. 3 &middot; Lorentz Transformation</td><td class="eq-cell">x&prime; = &gamma;(x &minus; &beta;ct), &nbsp; t&prime; = &gamma;(t &minus; &beta;x/c)</td><td>เชื่อมโยงอวกาศและเวลาเข้าด้วยกันระหว่างกรอบเฉื่อย</td></tr>
+            <tr><td>Ch. 4 &middot; Velocity Addition</td><td class="eq-cell">v<sub>x</sub>&prime; = (v<sub>x</sub> &minus; u) / (1 &minus; uv<sub>x</sub>/c&sup2;)</td><td>รับประกันว่าความเร็วลัพธ์ไม่มีทางเกิน c</td></tr>
+            <tr><td>Ch. 5 &middot; Length Contraction</td><td class="eq-cell">L = L&#x2080;&radic;(1 &minus; &beta;&sup2;) = L&#x2080; / &gamma;</td><td>หดสั้นเฉพาะแนวขนานกับการเคลื่อนที่ ด้านตั้งฉากคงเดิม</td></tr>
+            <tr><td>Ch. 6 &middot; Time Dilation</td><td class="eq-cell">&Delta;t = &gamma;&Delta;t&prime;</td><td>เวลาแท้ &Delta;t&prime; ณ จุดเดียวใน O&prime; สั้นกว่าเวลาพิกัด &Delta;t ใน O เสมอ</td></tr>
+            <tr><td>Ch. 7 &middot; Simultaneity</td><td class="eq-cell">&Delta;t&prime; = &gamma;[&Delta;t &minus; (u/c&sup2;)&Delta;x]</td><td>เหตุการณ์พร้อมกันที่ต่างตำแหน่งใน O จะไม่พร้อมกันใน O&prime;</td></tr>
+            <tr><td>Ch. 8 &middot; Relativistic Doppler</td><td class="eq-cell">f<sub>ob</sub> = f<sub>so</sub>&radic;(1 &minus; &beta;&sup2;) / (1 &minus; &beta;cos&theta;)</td><td>ครอบคลุม Transverse Redshift ที่มุม 90&deg;</td></tr>
+            <tr><td>Ch. 9 &amp; 10 &middot; Mass, Momentum &amp; Energy</td><td class="eq-cell">p = &gamma;m&#x2080;v, &nbsp; E&sup2; = (pc)&sup2; + (m&#x2080;c&sup2;)&sup2;</td><td>มวลสัมพัทธ์ m = &gamma;m&#x2080; และพลังงานจลน์ K = (&gamma; &minus; 1)m&#x2080;c&sup2; พุ่งสู่อนันต์เมื่อ v &rarr; c</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="source-footer">
+        อ้างอิงวิชาการ: สมการและโจทย์ตัวอย่างปรับใช้จากตำรา <em>สัมพัทธภาพพิเศษ (Special Relativity)</em> โดย ผศ.ดร.ชีวะ ทัศนา คณะวิทยาศาสตร์และเทคโนโลยี มหาวิทยาลัยราชภัฏรำไพพรรณี (2557)
+      </p>
+    </details>
+  </main>
+
+  <script>
+    const C_SPEED = 3.00e8;
+    const DEFAULT_STATE = {
+      mode: 'lorentz', frame: 'O', beta: 0.600, playing: true, timeScale: 1.0, simTime: 0.0, camPreset: 'iso', activeScenarioId: 'ex3_2',
+      lorentz: { xA: 20, ctA: 6, xB: 60, ctB: 9 },
+      contraction: { shape: 'cube', L0: 5.0, angleDeg: 45 },
+      dilation: { scenario: 'clock', tau0: 2.20, distanceLy: 4.20 },
+      velocity: { vxPrime: 0.60, vyPrime: 0.00, lambda0: 475, obsAngleDeg: 0 },
+      mechanics: { particle: 'proton', forceAngleDeg: 45 }
+    };
+    const SCENARIOS = [
+      { id: 'ex3_2', chapter: 'Ch. 3 & 7 · Ex. 3.2', title: "Lorentz Event Pair in O & O'", desc: 'เหตุการณ์ A(20 m, 20 ns) และ B(60 m, 30 ns) ที่ความเร็ว 0.60c (γ = 1.25)', mode: 'lorentz', frame: 'O', beta: 0.600, patch: { lorentz: { xA: 20, ctA: 6, xB: 60, ctB: 9 } } },
+      { id: 'ex7_2', chapter: 'Ch. 7 · Ex. 7.2', title: 'Simultaneity Restorer (0.50c)', desc: 'เหตุการณ์ (24 m, 40 ns) และ (48 m, 80 ns) กลับมาพร้อมกัน (Δt′ = 0) ที่ 0.50c', mode: 'lorentz', frame: 'Oprime', beta: 0.500, patch: { lorentz: { xA: 24, ctA: 12, xB: 48, ctB: 24 } } },
+      { id: 'ex5_3', chapter: 'Ch. 5 · Ex. 5.3', title: '5 m Cube Contraction (0.95c)', desc: 'ลูกบาศก์ 5.00 m เคลื่อนที่ 0.950c หดสั้นตามแนวแกนเคลื่อนที่เหลือ 1.56 m', mode: 'contraction', frame: 'O', beta: 0.950, patch: { contraction: { shape: 'cube', L0: 5.0, angleDeg: 45 } } },
+      { id: 'ex5_4', chapter: 'Ch. 5 · Ex. 5.4', title: 'Angled Rod Rotation (0.30c)', desc: 'แท่งยาว 1.00 m เอียง 45° ใน O′ หดเหลือ 0.977 m และดูตั้งชันเป็น 46.4° ใน O', mode: 'contraction', frame: 'O', beta: 0.300, patch: { contraction: { shape: 'rod', L0: 1.0, angleDeg: 45 } } },
+      { id: 'ex6_2', chapter: 'Ch. 6 · Ex. 6.2', title: 'Atmospheric Muon (0.995c)', desc: 'อายุขัยแท้ τ₀ = 2.20 μs ยืดออกในกรอบโลกจนมิวออนพุ่งลงมาถึงพื้นดินได้', mode: 'dilation', frame: 'O', beta: 0.995, patch: { dilation: { scenario: 'muon', tau0: 2.20, distanceLy: 4.20 } } },
+      { id: 'exer8', chapter: 'Ch. 10 · Exer. 8', title: 'Twin Voyage to Navi (0.80c)', desc: 'ลีโอเดินทาง 4.20 ly ด้วย 0.800c เวลาบนโลกผ่าน 5.25 ปี บนยานผ่านเพียง 3.15 ปี', mode: 'dilation', frame: 'O', beta: 0.800, patch: { dilation: { scenario: 'twins', tau0: 3.15, distanceLy: 4.20 } } },
+      { id: 'ex4_5', chapter: 'Ch. 4 · Ex. 4.5', title: 'Perpendicular Velocity Addition', desc: 'Alpha (+0.75c) และ Beta (−0.90c แกน y) รวมความเร็วสัมพัทธ์ได้ 0.96c < c', mode: 'velocity', frame: 'O', beta: 0.750, patch: { velocity: { vxPrime: 0.00, vyPrime: -0.90, lambda0: 475, obsAngleDeg: 90 } } },
+      { id: 'ex10_3', chapter: 'Ch. 10 · Ex. 10.3', title: 'Relativistic Proton (0.86c)', desc: 'โปรตอน (E₀ = 938 MeV) ที่ 0.860c มี pc = 1,580 MeV และ E = 1,840 MeV', mode: 'mechanics', frame: 'O', beta: 0.860, patch: { mechanics: { particle: 'proton', forceAngleDeg: 45 } } }
+    ];
+
+    let appState = JSON.parse(JSON.stringify(DEFAULT_STATE));
+    let renderer = null, scene = null, camera = null, sceneRootGroup = null, useWebGL = true, animFrameId = null, lastTimestamp = 0;
+    let camSpherical = { theta: 0.72, phi: 1.08, radius: 17.5 }, camTargetSpherical = { theta: 0.72, phi: 1.08, radius: 17.5 };
+    let isOrbitDragging = false, lastPointer = { x: 0, y: 0 }, isCurveDragging = false, dynamicRefs = {};
+    const THEME = {};
+
+    const deepClone = (o) => JSON.parse(JSON.stringify(o));
+    const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+    const getGamma = (b) => 1 / Math.sqrt(1 - Math.pow(clamp(b, -0.9999, 0.9999), 2));
+    const getEffectiveBeta = () => (appState.frame === 'O' ? appState.beta : -appState.beta);
+    const prefersReducedMotion = () => window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    function mergeDeep(target, source) {
+      for (const k of Object.keys(source)) {
+        if (source[k] && typeof source[k] === 'object' && !Array.isArray(source[k])) {
+          if (!target[k] || typeof target[k] !== 'object') target[k] = {};
+          mergeDeep(target[k], source[k]);
+        } else if (source[k] !== undefined) target[k] = source[k];
+      }
+      return target;
+    }
+    function readCssPalette() {
+      const cs = getComputedStyle(document.documentElement);
+      THEME.bg = cs.getPropertyValue('--background').trim() || '#0a101d';
+      THEME.text = cs.getPropertyValue('--on-surface').trim() || '#f2ece1';
+      THEME.textMuted = cs.getPropertyValue('--on-surface-variant').trim() || '#9ba8bf';
+      THEME.outline = cs.getPropertyValue('--outline').trim() || '#384d73';
+      THEME.outlineVariant = cs.getPropertyValue('--outline-variant').trim() || '#21304d';
+      THEME.brass = cs.getPropertyValue('--data-1').trim() || '#dfaa5b';
+      THEME.sky = cs.getPropertyValue('--data-2').trim() || '#7cc4e8';
+      THEME.mint = cs.getPropertyValue('--data-3').trim() || '#52d19c';
+      THEME.coral = cs.getPropertyValue('--data-4').trim() || '#e07a5f';
+    }
+    function syncBetaFromSlider(val) {
+      const p = parseFloat(val); if (Number.isNaN(p)) return;
+      appState.beta = clamp(p, -0.995, 0.995); appState.activeScenarioId = '';
+      document.getElementById('beta-number').value = appState.beta.toFixed(3);
+      document.getElementById('beta-error').textContent = '';
+      onStateMutated();
+    }
+    function syncBetaFromNumber(val) {
+      const errEl = document.getElementById('beta-error'), p = parseFloat(val);
+      if (Number.isNaN(p)) { errEl.textContent = 'กรุณากรอกค่าตัวเลขระหว่าง -0.995 ถึง +0.995'; return; }
+      errEl.textContent = (p >= 1 || p <= -1) ? 'วัตถุมีมวลไม่สามารถเร็วเท่ากับหรือเกิน c (|β| < 1)' : '';
+      appState.beta = clamp(p, -0.995, 0.995); appState.activeScenarioId = '';
+      document.getElementById('beta-slider').value = appState.beta.toFixed(3);
+      onStateMutated();
+    }
+    function setObserverFrame(k) { appState.frame = k === 'Oprime' ? 'Oprime' : 'O'; onStateMutated(); }
+    function togglePlayback() { appState.playing = !appState.playing; updatePlaybackUI(); }
+    function resetSimTime() { appState.simTime = 0; updateClockReadout(); rebuild3DScene(); }
+    function setTimeScale(v) { const n = parseFloat(v); if (!Number.isNaN(n)) appState.timeScale = n; }
+    function applyQuickBeta(b, f) { appState.beta = clamp(b, -0.995, 0.995); if (f) appState.frame = f; appState.activeScenarioId = ''; syncBetaControls(); onStateMutated(); }
+    function setMode(m) { appState.mode = m; renderModeTabs(); renderModeInspector(); rebuild3DScene(); updateAllReadouts(); }
+    function setCameraView(preset) {
+      appState.camPreset = preset;
+      camTargetSpherical = preset === 'top' ? { theta: 0.01, phi: 0.14, radius: 19.0 } : preset === 'side' ? { theta: 0.0, phi: 1.48, radius: 18.0 } : { theta: 0.72, phi: 1.08, radius: 17.5 };
+      updateCameraPresetButtons();
+    }
+    function resetCamera() { setCameraView('iso'); }
+    function applyScenario(id) {
+      const sc = SCENARIOS.find((x) => x.id === id); if (!sc) return;
+      appState.mode = sc.mode; appState.frame = sc.frame; appState.beta = sc.beta; appState.activeScenarioId = sc.id; appState.simTime = 0;
+      if (sc.patch) appState = mergeDeep(appState, deepClone(sc.patch));
+      syncBetaControls(); renderModeTabs(); renderModeInspector(); renderScenarioCards(); rebuild3DScene(); updateAllReadouts(); drawCurvePlot();
+      showToast(`โหลดโจทย์: ${sc.title}`);
+    }
+    function updateLorentzParam(f, v) { const n = parseFloat(v); if (!Number.isNaN(n)) { appState.lorentz[f] = clamp(n, -80, 80); updateAllReadouts(); rebuild3DScene(); } }
+    function updateContractionShape(v) { appState.contraction.shape = v; appState.contraction.L0 = v === 'craft' ? 100 : v === 'cube' ? 5.0 : 1.0; renderModeInspector(); updateAllReadouts(); rebuild3DScene(); }
+    function updateContractionParam(f, v) { const n = parseFloat(v); if (!Number.isNaN(n)) { appState.contraction[f] = f === 'L0' ? clamp(n, 0.5, 500) : clamp(n, 0, 90); updateAllReadouts(); rebuild3DScene(); } }
+    function updateDilationScenario(v) { appState.dilation.scenario = v; if (v === 'muon') appState.dilation.tau0 = 2.20; if (v === 'twins') { appState.dilation.tau0 = 3.15; appState.dilation.distanceLy = 4.20; } if (v === 'clock') appState.dilation.tau0 = 2.00; renderModeInspector(); updateAllReadouts(); rebuild3DScene(); }
+    function updateDilationParam(f, v) { const n = parseFloat(v); if (!Number.isNaN(n)) { appState.dilation[f] = clamp(n, 0.2, 50); updateAllReadouts(); rebuild3DScene(); } }
+    function updateVelocityParam(f, v) { const n = parseFloat(v); if (!Number.isNaN(n)) { appState.velocity[f] = f === 'lambda0' ? clamp(n, 380, 750) : f === 'obsAngleDeg' ? clamp(n, 0, 180) : clamp(n, -0.99, 0.99); updateAllReadouts(); rebuild3DScene(); } }
+    function updateMechanicsParticle(v) { appState.mechanics.particle = v; updateAllReadouts(); rebuild3DScene(); }
+    function updateMechanicsAngle(v) { const n = parseFloat(v); if (!Number.isNaN(n)) { appState.mechanics.forceAngleDeg = clamp(n, 0, 90); updateAllReadouts(); rebuild3DScene(); } }
+    function handleResetDefaults() { appState = deepClone(DEFAULT_STATE); syncBetaControls(); renderModeTabs(); renderModeInspector(); renderScenarioCards(); setCameraView('iso'); rebuild3DScene(); onStateMutated(); showToast('รีเซ็ตค่าเริ่มต้นแล้ว'); }
+    function exportTelemetryCsv() {
+      const b = appState.beta, g = getGamma(b);
+      const rows = [['Parameter', 'Value', 'Units'], ['Mode', appState.mode, '-'], ['Frame', appState.frame, '-'], ['Beta', b.toFixed(4), 'c'], ['Gamma', g.toFixed(6), '-'], ['L/L0', (1 / g).toFixed(6), '-']];
+      const csv = '\ufeff' + rows.map((r) => r.join(',')).join('\n');
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+      const url = URL.createObjectURL(blob), a = document.createElement('a');
+      a.href = url; a.download = `relativity_observatory_beta_${b.toFixed(3)}.csv`; a.click();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+      showToast('ส่งออก CSV เรียบร้อยแล้ว');
+    }
+    function showToast(msg) { const el = document.getElementById('status-toast'); if (!el) return; el.textContent = msg; setTimeout(() => { if (el.textContent === msg) el.textContent = ''; }, 3000); }
+    function onStateMutated() { updateFrameButtons(); updatePlaybackUI(); updateAllReadouts(); renderScenarioCards(); rebuild3DScene(); drawCurvePlot(); }
+    function syncBetaControls() { document.getElementById('beta-slider').value = appState.beta.toFixed(3); document.getElementById('beta-number').value = appState.beta.toFixed(3); }
+    function updateFrameButtons() {
+      document.getElementById('frame-btn-O').classList.toggle('btn-sky-active', appState.frame === 'O');
+      document.getElementById('frame-btn-Op').classList.toggle('btn-pill-active', appState.frame !== 'O');
+      const badge = document.getElementById('frame-badge');
+      badge.className = appState.frame === 'O' ? 'badge' : 'badge badge-brass';
+      badge.textContent = appState.frame === 'O' ? 'กรอบ O (ห้องทดลอง)' : "กรอบ O' (ยานอวกาศ)";
+    }
+    function updatePlaybackUI() {
+      const btn = document.getElementById('play-toggle-btn');
+      btn.innerHTML = `<i data-lucide="${appState.playing ? 'pause' : 'play'}" class="icon-sm"></i><span>${appState.playing ? 'Pause' : 'Play'}</span>`;
+      if (window.lucide) window.lucide.createIcons();
+    }
+    function updateClockReadout() { document.getElementById('sim-clock-readout').textContent = `ct = ${appState.simTime.toFixed(2)} m`; }
+    function updateCameraPresetButtons() { ['iso', 'top', 'side'].forEach((k) => document.getElementById(`cam-${k}`)?.classList.toggle('active', appState.camPreset === k)); }
+    function renderModeTabs() { ['lorentz', 'contraction', 'dilation', 'velocity', 'mechanics'].forEach((m) => document.getElementById(`tab-${m}`)?.setAttribute('aria-selected', appState.mode === m ? 'true' : 'false')); }
+    function renderScenarioCards() {
+      document.getElementById('scenario-grid').innerHTML = SCENARIOS.map((sc) => `
+        <button type="button" class="scenario-card ${appState.activeScenarioId === sc.id ? 'active' : ''}" onclick="applyScenario('${sc.id}')">
+          <div><span class="coord-label">${sc.chapter}</span><div class="scenario-title">${sc.title}</div></div>
+          <p class="scenario-desc">${sc.desc}</p>
+          <div class="scenario-meta"><span>&beta; = ${sc.beta.toFixed(3)}c</span><span>โหลดเข้า 3D &rarr;</span></div>
+        </button>
+      `).join('');
+    }
+    function renderModeInspector() {
+      const titleEl = document.getElementById('inspector-title'), chapEl = document.getElementById('inspector-chapter'), mount = document.getElementById('mode-controls-mount');
+      if (appState.mode === 'lorentz') {
+        titleEl.textContent = 'Lorentz Coordinates & Simultaneity'; chapEl.textContent = 'Ch. 3 & 7'; const L = appState.lorentz;
+        mount.innerHTML = `<div class="field-group"><label class="field-label">Event A xA (m)</label><input type="number" class="input-box" step="2" value="${L.xA}" oninput="updateLorentzParam('xA',this.value)"></div>
+        <div class="field-group"><label class="field-label">Event A ctA (m)</label><input type="number" class="input-box" step="1" value="${L.ctA}" oninput="updateLorentzParam('ctA',this.value)"></div>
+        <div class="field-group"><label class="field-label">Event B xB (m)</label><input type="number" class="input-box" step="2" value="${L.xB}" oninput="updateLorentzParam('xB',this.value)"></div>
+        <div class="field-group"><label class="field-label">Event B ctB (m)</label><input type="number" class="input-box" step="1" value="${L.ctB}" oninput="updateLorentzParam('ctB',this.value)"></div>`;
+      } else if (appState.mode === 'contraction') {
+        titleEl.textContent = '3D Length Contraction Geometry'; chapEl.textContent = 'Ch. 5'; const C = appState.contraction;
+        mount.innerHTML = `<div class="field-group inspector-full"><label class="field-label">รูปทรงอ้างอิง 3 มิติ</label><select class="select-box" onchange="updateContractionShape(this.value)"><option value="cube" ${C.shape==='cube'?'selected':''}>ลูกบาศก์ 5 m (Ex. 5.3)</option><option value="craft" ${C.shape==='craft'?'selected':''}>ยานอวกาศ (Ex. 5.1)</option><option value="rod" ${C.shape==='rod'?'selected':''}>แท่งเอียงมุม θ′ (Ex. 5.4)</option></select></div>
+        <div class="field-group"><label class="field-label">Rest Length L0 (m)</label><input type="number" class="input-box" step="0.5" value="${C.L0}" oninput="updateContractionParam('L0',this.value)"></div>
+        <div class="field-group"><label class="field-label">Rest Angle θ′ (°)</label><input type="number" class="input-box" step="1" value="${C.angleDeg}" ${C.shape==='rod'?'':'disabled'} oninput="updateContractionParam('angleDeg',this.value)"></div>`;
+      } else if (appState.mode === 'dilation') {
+        titleEl.textContent = 'Photon Light Clock & Proper Time'; chapEl.textContent = 'Ch. 6 & Exer. 8'; const D = appState.dilation;
+        mount.innerHTML = `<div class="field-group inspector-full"><label class="field-label">การทดลองการยืดออกของเวลา</label><select class="select-box" onchange="updateDilationScenario(this.value)"><option value="clock" ${D.scenario==='clock'?'selected':''}>นาฬิกาแสง 3 มิติคู่</option><option value="muon" ${D.scenario==='muon'?'selected':''}>มิวออนในชั้นบรรยากาศ (Ex. 6.2)</option><option value="twins" ${D.scenario==='twins'?'selected':''}>Twin Voyage สู่ดาว Navi (Exer. 8)</option></select></div>
+        <div class="field-group inspector-full"><label class="field-label">${D.scenario==='twins'?'ระยะทาง (ปีแสง)':'เวลาแท้ τ0 (μs)'}</label><input type="number" class="input-box" step="0.1" value="${D.scenario==='twins'?D.distanceLy:D.tau0}" oninput="updateDilationParam('${D.scenario==='twins'?'distanceLy':'tau0'}',this.value)"></div>`;
+      } else if (appState.mode === 'velocity') {
+        titleEl.textContent = 'Velocity Addition & Light Doppler'; chapEl.textContent = 'Ch. 4 & 8'; const V = appState.velocity;
+        mount.innerHTML = `<div class="field-group"><label class="field-label">Probe vx′ (c)</label><input type="number" class="input-box" step="0.05" value="${V.vxPrime}" oninput="updateVelocityParam('vxPrime',this.value)"></div>
+        <div class="field-group"><label class="field-label">Probe vy′ (c)</label><input type="number" class="input-box" step="0.05" value="${V.vyPrime}" oninput="updateVelocityParam('vyPrime',this.value)"></div>
+        <div class="field-group"><label class="field-label">Emitted λ0 (nm)</label><input type="number" class="input-box" step="5" value="${V.lambda0}" oninput="updateVelocityParam('lambda0',this.value)"></div>
+        <div class="field-group"><label class="field-label">Wave Angle θ (°)</label><input type="number" class="input-box" step="5" value="${V.obsAngleDeg}" oninput="updateVelocityParam('obsAngleDeg',this.value)"></div>`;
+      } else {
+        titleEl.textContent = 'Relativistic Mass, Momentum & Energy'; chapEl.textContent = 'Ch. 9 & 10'; const M = appState.mechanics;
+        mount.innerHTML = `<div class="field-group"><label class="field-label">อนุภาคทดสอบ (E0)</label><select class="select-box" onchange="updateMechanicsParticle(this.value)"><option value="electron" ${M.particle==='electron'?'selected':''}>Electron (0.511 MeV)</option><option value="proton" ${M.particle==='proton'?'selected':''}>Proton (938 MeV)</option><option value="macro" ${M.particle==='macro'?'selected':''}>1.00 kg Probe</option></select></div>
+        <div class="field-group"><label class="field-label">มุมแรง F เทียบ v (°)</label><input type="number" class="input-box" step="5" value="${M.forceAngleDeg}" oninput="updateMechanicsAngle(this.value)"></div>`;
+      }
+    }
+    function updateAllReadouts() {
+      const b = appState.beta, absB = Math.abs(b), g = getGamma(b), uMs = b * C_SPEED, contractRatio = 1 / g;
+      document.getElementById('speed-ms-readout').textContent = `u = ${b >= 0 ? '+' : ''}${(uMs / 1e8).toFixed(3)} × 10⁸ m/s`;
+      document.getElementById('kpi-gamma').textContent = g.toFixed(4);
+      document.getElementById('kpi-contract').textContent = contractRatio.toFixed(4);
+      document.getElementById('kpi-contract-note').textContent = `−${((1 - contractRatio) * 100).toFixed(1)}% ตามแนวเคลื่อนที่`;
+      document.getElementById('kpi-dilate').textContent = `${g.toFixed(4)}×`;
+      document.getElementById('kpi-dilate-note').textContent = `นาฬิกาที่เคลื่อนที่เดิน ${(100 / g).toFixed(1)}%`;
+      document.getElementById('kpi-beta').textContent = `${b >= 0 ? '+' : ''}${b.toFixed(3)}c`;
+      document.getElementById('kpi-speed-ms').textContent = `${(Math.abs(uMs) / 1e8).toFixed(3)} × 10⁸ m/s`;
+
+      const eqMount = document.getElementById('live-equations-mount'), hudBadge = document.getElementById('hud-mode-badge'), insightEl = document.getElementById('scene-insight-text');
+      const frameTag = appState.frame === 'O' ? 'FRAME O (LAB)' : "FRAME O' (CRAFT)";
+      if (appState.mode === 'lorentz') {
+        hudBadge.textContent = `${frameTag} · 3D MINKOWSKI SPACETIME`;
+        const L = appState.lorentz, xAp = g * (L.xA - b * L.ctA), ctAp = g * (L.ctA - b * L.xA), xBp = g * (L.xB - b * L.ctB), ctBp = g * (L.ctB - b * L.xB);
+        const dCt = L.ctB - L.ctA, dX = L.xB - L.xA, dCtp = ctBp - ctAp, dXp = xBp - xAp, invSq = dCt * dCt - dX * dX;
+        insightEl.textContent = Math.abs(dCtp) < 0.08 && Math.abs(dX) > 0.1
+          ? `ความพร้อมกันถูกกู้คืนในกรอบ O'! ที่ β = ${b.toFixed(3)} เหตุการณ์ A และ B เกิดพร้อมกัน (Δt' = 0.00 ns) แม้ใน O จะห่างกัน ${(dCt / 0.3).toFixed(1)} ns`
+          : `แกน O' เอียงทำมุม ${(Math.atan(b) * 180 / Math.PI).toFixed(1)}° เข้าหากรวยแสง โดยช่วงกาล–อวกาศคงตัว s² = (cΔt)² − Δx² = ${invSq.toFixed(1)} m² เท่ากันทุกกรอบ`;
+        eqMount.innerHTML = `<div class="eq-row"><span class="eq-formula">Event A&prime;</span><span class="eq-result">(${xAp.toFixed(2)} m, ${(ctAp / 0.3).toFixed(2)} ns)</span></div>
+          <div class="eq-row"><span class="eq-formula">Event B&prime;</span><span class="eq-result">(${xBp.toFixed(2)} m, ${(ctBp / 0.3).toFixed(2)} ns)</span></div>
+          <div class="eq-row"><span class="eq-formula">&Delta;x&prime; = ${dXp.toFixed(2)} m · &Delta;t&prime; = ${(dCtp / 0.3).toFixed(2)} ns</span><span class="eq-classical">Galilean &Delta;t&prime; = ${(dCt / 0.3).toFixed(2)} ns</span></div>
+          <div class="eq-row"><span class="eq-formula">Invariant s&sup2; = (c&Delta;t)&sup2; &minus; &Delta;x&sup2;</span><span class="eq-result" style="color:var(--data-3);">${invSq.toFixed(2)} m&sup2;</span></div>`;
+      } else if (appState.mode === 'contraction') {
+        hudBadge.textContent = `${frameTag} · 3D LENGTH CONTRACTION`;
+        const C = appState.contraction, Lx = C.L0 / g;
+        if (C.shape === 'rod') {
+          const rad = C.angleDeg * Math.PI / 180, compX = C.L0 * Math.cos(rad) / g, compY = C.L0 * Math.sin(rad), Ltot = Math.hypot(compX, compY), thetaObs = Math.atan2(compY, compX) * 180 / Math.PI;
+          insightEl.textContent = `แท่งเอียงหดเฉพาะองค์ประกอบแนวนอน (${compX.toFixed(3)} m) ส่วนแนวตั้ง (${compY.toFixed(3)} m) คงเดิม ทำให้ความยาวรวมเหลือ ${Ltot.toFixed(3)} m และดูตั้งชันเป็น ${thetaObs.toFixed(1)}°`;
+          eqMount.innerHTML = `<div class="eq-row"><span class="eq-formula">L_x = L₀cosθ′/γ</span><span class="eq-result">${compX.toFixed(3)} m</span></div>
+            <div class="eq-row"><span class="eq-formula">L_y = L₀sinθ′</span><span class="eq-result" style="color:var(--data-3);">${compY.toFixed(3)} m</span></div>
+            <div class="eq-row"><span class="eq-formula">Contracted L / Apparent θ</span><span class="eq-result">${Ltot.toFixed(3)} m / ${thetaObs.toFixed(2)}°</span></div>`;
+        } else {
+          insightEl.textContent = `วัตถุหดสั้นเฉพาะแนวแกน X จาก ${C.L0.toFixed(2)} m เหลือ ${Lx.toFixed(2)} m ขณะที่ด้านตั้งฉาก Y, Z คงเดิม ${C.L0.toFixed(2)} m`;
+          eqMount.innerHTML = `<div class="eq-row"><span class="eq-formula">L∥ = L₀ / γ</span><span class="eq-result">${Lx.toFixed(3)} m</span></div>
+            <div class="eq-row"><span class="eq-formula">L⊥ (y & z)</span><span class="eq-result" style="color:var(--data-3);">${C.L0.toFixed(3)} m</span></div>
+            <div class="eq-row"><span class="eq-formula">Volume Ratio V/V₀</span><span class="eq-result">${(1 / g).toFixed(4)}</span></div>`;
+        }
+      } else if (appState.mode === 'dilation') {
+        hudBadge.textContent = `${frameTag} · 3D PHOTON LIGHT CLOCKS`;
+        const D = appState.dilation;
+        if (D.scenario === 'twins') {
+          const safeB = Math.max(0.05, absB), earthYr = D.distanceLy / safeB, leoYr = earthYr / g;
+          insightEl.textContent = `เดินทาง ${D.distanceLy.toFixed(2)} ปีแสง ที่ ${safeB.toFixed(3)}c เวลาบนโลกผ่านไป ${earthYr.toFixed(2)} ปี แต่เวลาแท้บนยานผ่านเพียง ${leoYr.toFixed(2)} ปี`;
+          eqMount.innerHTML = `<div class="eq-row"><span class="eq-formula">Earth Time Δt = d/u</span><span class="eq-result">${earthYr.toFixed(3)} yr</span></div>
+            <div class="eq-row"><span class="eq-formula">Proper Time Δτ = Δt/γ</span><span class="eq-result" style="color:var(--data-3);">${leoYr.toFixed(3)} yr</span></div>
+            <div class="eq-row"><span class="eq-formula">Age Divergence</span><span class="eq-result">${(earthYr - leoYr).toFixed(3)} yr</span></div>`;
+        } else {
+          const dt = g * D.tau0, distKm = absB * C_SPEED * (dt * 1e-6) / 1000;
+          insightEl.textContent = `เพราะแสงมีอัตราเร็ว c คงที่ แสงในนาฬิกาที่เคลื่อนที่ต้องวิ่งเป็นเส้นทแยงยาวขึ้น ทำให้เวลายืดออก γ = ${g.toFixed(3)}× (Δt = ${dt.toFixed(2)} μs, ระยะ ${distKm.toFixed(2)} km)`;
+          eqMount.innerHTML = `<div class="eq-row"><span class="eq-formula">Proper τ₀</span><span class="eq-result" style="color:var(--data-3);">${D.tau0.toFixed(3)} μs</span></div>
+            <div class="eq-row"><span class="eq-formula">Dilated Δt = γτ₀</span><span class="eq-result">${dt.toFixed(3)} μs</span></div>
+            <div class="eq-row"><span class="eq-formula">Distance d = uΔt</span><span class="eq-result">${distKm.toFixed(3)} km</span></div>`;
+        }
+      } else if (appState.mode === 'velocity') {
+        hudBadge.textContent = `${frameTag} · 3D VELOCITY SPHERE & DOPPLER`;
+        const V = appState.velocity, u = getEffectiveBeta(), denom = 1 + u * V.vxPrime;
+        const vx = (V.vxPrime + u) / denom, vy = (V.vyPrime * Math.sqrt(1 - u * u)) / denom, vMag = Math.hypot(vx, vy), vGal = Math.hypot(V.vxPrime + u, V.vyPrime);
+        const doppFactor = Math.sqrt(1 - b * b) / (1 - b * Math.cos(V.obsAngleDeg * Math.PI / 180)), lambdaObs = V.lambda0 / doppFactor;
+        insightEl.textContent = `ความเร็วลัพธ์สัมพัทธภาพ |v| = ${vMag.toFixed(4)}c อยู่ภายในทรงกลม |v|=c เสมอ (กาลิเลียนได้ ${vGal.toFixed(4)}c) และ Doppler ที่ ${V.obsAngleDeg}° เลื่อน λ₀ = ${V.lambda0} nm เป็น ${lambdaObs.toFixed(1)} nm`;
+        eqMount.innerHTML = `<div class="eq-row"><span class="eq-formula">vx / vy</span><span class="eq-result">${vx.toFixed(4)}c / ${vy.toFixed(4)}c</span></div>
+          <div class="eq-row"><span class="eq-formula">Total |v| vs Galilean</span><span class="eq-result" style="color:var(--data-3);">${vMag.toFixed(4)}c <span class="eq-classical">(Gal: ${vGal.toFixed(4)}c)</span></span></div>
+          <div class="eq-row"><span class="eq-formula">Doppler λ_obs</span><span class="eq-result">${lambdaObs.toFixed(1)} nm</span></div>`;
+      } else {
+        hudBadge.textContent = `${frameTag} · 3D ENERGY-MOMENTUM TRIANGLE`;
+        const M = appState.mechanics;
+        let E0 = M.particle === 'electron' ? 0.511 : M.particle === 'macro' ? 9.00e16 : 938.27;
+        let unit = M.particle === 'macro' ? 'J' : 'MeV';
+        const E = g * E0, K = (g - 1) * E0, pc = g * absB * E0;
+        const fRad = M.forceAngleDeg * Math.PI / 180, aAngleDeg = Math.atan2(Math.sin(fRad) / g, Math.cos(fRad) / (g * g * g)) * 180 / Math.PI;
+        const fmtV = (v) => (M.particle === 'macro' ? v.toExponential(2) : v.toFixed(2));
+        insightEl.textContent = `E₀, pc และ E ประกอบเป็นสามเหลี่ยมมุมฉาก E² = (pc)² + E₀² และเมื่อออกแรงทำมุม ${M.forceAngleDeg}° ความเร่งจะเบนไปที่ ${aAngleDeg.toFixed(1)}° (ต่างกัน ${Math.abs(aAngleDeg - M.forceAngleDeg).toFixed(1)}°)`;
+        eqMount.innerHTML = `<div class="eq-row"><span class="eq-formula">Relativistic Mass m = γm₀</span><span class="eq-result">${g.toFixed(3)} m₀</span></div>
+          <div class="eq-row"><span class="eq-formula">Momentum pc</span><span class="eq-result" style="color:var(--data-3);">${fmtV(pc)} ${unit}</span></div>
+          <div class="eq-row"><span class="eq-formula">Total E / Kinetic K</span><span class="eq-result">${fmtV(E)} / ${fmtV(K)} ${unit}</span></div>`;
+      }
+    }
+
+    function drawCurvePlot() {
+      const canvas = document.getElementById('curve-canvas'); if (!canvas) return;
+      const rect = canvas.parentElement.getBoundingClientRect(), dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const w = Math.max(240, Math.floor(rect.width)), h = Math.max(180, Math.floor(rect.height));
+      if (canvas.width !== w * dpr || canvas.height !== h * dpr) { canvas.width = w * dpr; canvas.height = h * dpr; }
+      const ctx = canvas.getContext('2d'); if (!ctx) return;
+      ctx.save(); ctx.scale(dpr, dpr); ctx.fillStyle = THEME.bg; ctx.fillRect(0, 0, w, h);
+      const pad = { l: 36, r: 14, t: 14, b: 26 }, pw = w - pad.l - pad.r, ph = h - pad.t - pad.b, yMax = 5.0;
+      ctx.strokeStyle = THEME.outlineVariant; ctx.lineWidth = 1;
+      for (let yv = 1; yv <= 5; yv++) {
+        const py = pad.t + ph - (yv / yMax) * ph;
+        ctx.beginPath(); ctx.moveTo(pad.l, py); ctx.lineTo(w - pad.r, py); ctx.stroke();
+        ctx.fillStyle = THEME.textMuted; ctx.font = '10px "JetBrains Mono", monospace'; ctx.fillText(String(yv), 10, py + 3);
+      }
+      function plot(fn, col, dashed) {
+        ctx.save(); ctx.strokeStyle = col; ctx.lineWidth = 2; if (dashed) ctx.setLineDash([4, 4]);
+        ctx.beginPath(); let st = false;
+        for (let i = 0; i <= 140; i++) {
+          const b = (i / 140) * 0.99, val = fn(b); if (val > yMax * 1.15) continue;
+          const px = pad.l + b * pw, py = pad.t + ph - Math.min(val, yMax) / yMax * ph;
+          if (!st) { ctx.moveTo(px, py); st = true; } else ctx.lineTo(px, py);
+        }
+        ctx.stroke(); ctx.restore();
+      }
+      plot((b) => b, THEME.coral, true);
+      plot((b) => Math.sqrt(1 - b * b), THEME.sky, false);
+      plot((b) => b / Math.sqrt(1 - b * b), THEME.mint, false);
+      plot((b) => 1 / Math.sqrt(1 - b * b), THEME.brass, false);
+      const absB = Math.abs(appState.beta), cx = pad.l + absB * pw, g = getGamma(absB), cy = pad.t + ph - Math.min(g, yMax) / yMax * ph;
+      ctx.strokeStyle = THEME.brass; ctx.setLineDash([3, 3]); ctx.beginPath(); ctx.moveTo(cx, pad.t); ctx.lineTo(cx, h - pad.b); ctx.stroke(); ctx.setLineDash([]);
+      ctx.fillStyle = THEME.brass; ctx.beginPath(); ctx.arc(cx, cy, 4.5, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = THEME.text; ctx.fillText(`|β|=${absB.toFixed(2)} γ=${g.toFixed(2)}`, cx > w - 105 ? cx - 98 : cx + 8, Math.max(pad.t + 12, cy - 8));
+      ctx.restore();
+    }
+
+    function initCurveScrubber() {
+      const canvas = document.getElementById('curve-canvas'); if (!canvas) return;
+      const scrub = (e) => {
+        const rect = canvas.getBoundingClientRect(), raw = (e.clientX - rect.left - 36) / (rect.width - 50);
+        appState.beta = Number((clamp(raw, 0, 0.995) * (appState.beta < 0 ? -1 : 1)).toFixed(3));
+        appState.activeScenarioId = ''; syncBetaControls(); onStateMutated();
+      };
+      canvas.addEventListener('pointerdown', (e) => { isCurveDragging = true; canvas.setPointerCapture(e.pointerId); scrub(e); });
+      canvas.addEventListener('pointermove', (e) => { if (isCurveDragging) scrub(e); });
+      canvas.addEventListener('pointerup', () => { isCurveDragging = false; });
+    }
+
+    function initThreeEngine() {
+      const canvas = document.getElementById('relativity-canvas'), well = document.getElementById('stage-well');
+      if (!canvas || !well || typeof THREE === 'undefined') { useWebGL = false; return; }
+      try {
+        renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, preserveDrawingBuffer: true });
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+        renderer.setClearColor(new THREE.Color(THEME.bg), 1);
+        scene = new THREE.Scene(); scene.fog = new THREE.FogExp2(THEME.bg, 0.016);
+        const rect = well.getBoundingClientRect();
+        camera = new THREE.PerspectiveCamera(44, Math.max(300, rect.width) / Math.max(380, rect.height), 0.1, 200);
+        renderer.setSize(Math.max(300, rect.width), Math.max(380, rect.height), false);
+        window.MP27RegisterXR?.(renderer, scene, camera, THREE);
+        scene.add(new THREE.AmbientLight(0xdce6f7, 0.72));
+        const keyLight = new THREE.DirectionalLight(0xf5dcb0, 1.15); keyLight.position.set(12, 18, 10); scene.add(keyLight);
+        const rimLight = new THREE.DirectionalLight(0x7cc4e8, 0.65); rimLight.position.set(-14, 8, -12); scene.add(rimLight);
+        sceneRootGroup = new THREE.Group(); scene.add(sceneRootGroup);
+        applyCameraTransform();
+        canvas.addEventListener('pointerdown', (e) => { isOrbitDragging = true; lastPointer = { x: e.clientX, y: e.clientY }; canvas.setPointerCapture(e.pointerId); });
+        canvas.addEventListener('pointermove', (e) => { if (!isOrbitDragging) return; camTargetSpherical.theta -= (e.clientX - lastPointer.x) * 0.008; camTargetSpherical.phi = clamp(camTargetSpherical.phi - (e.clientY - lastPointer.y) * 0.008, 0.12, Math.PI * 0.48); lastPointer = { x: e.clientX, y: e.clientY }; });
+        canvas.addEventListener('pointerup', () => { isOrbitDragging = false; });
+        canvas.addEventListener('wheel', (e) => { e.preventDefault(); camTargetSpherical.radius = clamp(camTargetSpherical.radius + e.deltaY * 0.015, 7.5, 34); }, { passive: false });
+        if (typeof ResizeObserver !== 'undefined') new ResizeObserver(() => { const r = well.getBoundingClientRect(); camera.aspect = Math.max(300, r.width) / Math.max(380, r.height); camera.updateProjectionMatrix(); renderer.setSize(Math.max(300, r.width), Math.max(380, r.height), false); drawCurvePlot(); }).observe(well);
+      } catch (err) { useWebGL = false; }
+    }
+    function applyCameraTransform() {
+      if (!camera) return;
+      const r = camSpherical.radius, sp = Math.sin(camSpherical.phi);
+      camera.position.set(r * sp * Math.sin(camSpherical.theta), r * Math.cos(camSpherical.phi), r * sp * Math.cos(camSpherical.theta));
+      camera.lookAt(0, 0.5, 0);
+    }
+    function clearGroup(g) { while (g.children.length) { const c = g.children[0]; g.remove(c); c.geometry?.dispose(); if (Array.isArray(c.material)) c.material.forEach((m) => m.dispose()); else c.material?.dispose(); } }
+    function makeLine(pts, col, op, dashed) {
+      const geo = new THREE.BufferGeometry().setFromPoints(pts);
+      const mat = dashed ? new THREE.LineDashedMaterial({ color: col, dashSize: 0.35, gapSize: 0.2, transparent: op < 1, opacity: op }) : new THREE.LineBasicMaterial({ color: col, transparent: op < 1, opacity: op });
+      const l = new THREE.Line(geo, mat); if (dashed) l.computeLineDistances(); return l;
+    }
+    function makeTextSprite(text, col, s = 2.6) {
+      const c = document.createElement('canvas'); c.width = 256; c.height = 64;
+      const ctx = c.getContext('2d'); ctx.font = 'bold 26px "JetBrains Mono", monospace'; ctx.fillStyle = col; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(text, 128, 32);
+      const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(c), transparent: true, depthTest: false }));
+      sp.scale.set(s, s * 0.25, 1); return sp;
+    }
+    function rebuild3DScene() {
+      if (!useWebGL || !sceneRootGroup) return;
+      clearGroup(sceneRootGroup); dynamicRefs = {};
+      const bEff = getEffectiveBeta(), g = getGamma(bEff);
+      const floorGrid = new THREE.GridHelper(22, 22, THEME.outline, THEME.outlineVariant); floorGrid.position.y = -3.8; sceneRootGroup.add(floorGrid);
+      if (appState.mode === 'lorentz') {
+        const oy = -0.5, coneH = 5.2;
+        const coneMat = new THREE.MeshBasicMaterial({ color: THEME.sky, wireframe: true, transparent: true, opacity: 0.22 });
+        const fc = new THREE.Mesh(new THREE.ConeGeometry(coneH, coneH, 28, 6, true), coneMat); fc.position.y = oy + coneH / 2; fc.rotation.x = Math.PI; sceneRootGroup.add(fc);
+        const pc = new THREE.Mesh(new THREE.ConeGeometry(coneH * 0.65, coneH * 0.65, 28, 4, true), coneMat); pc.position.y = oy - (coneH * 0.65) / 2; sceneRootGroup.add(pc);
+        sceneRootGroup.add(makeLine([new THREE.Vector3(-7, oy, 0), new THREE.Vector3(7, oy, 0)], THEME.sky, 0.9, false));
+        sceneRootGroup.add(makeLine([new THREE.Vector3(0, oy - 3.2, 0), new THREE.Vector3(0, oy + 5.6, 0)], THEME.sky, 0.9, false));
+        const len = 5.5;
+        sceneRootGroup.add(makeLine([new THREE.Vector3(-bEff * len * 0.55, oy - len * 0.55, 0), new THREE.Vector3(bEff * len, oy + len, 0)], THEME.brass, 1, false));
+        sceneRootGroup.add(makeLine([new THREE.Vector3(-len * 1.15, oy - bEff * len * 1.15, 0), new THREE.Vector3(len * 1.15, oy + bEff * len * 1.15, 0)], THEME.brass, 1, false));
+        const hyp = []; for (let i = -30; i <= 30; i++) { const s = i * 0.14; hyp.push(new THREE.Vector3(s, oy + Math.sqrt(4 + s * s), 0)); }
+        sceneRootGroup.add(makeLine(hyp, THEME.mint, 0.75, false));
+        const boost = (x, ct) => (appState.frame === 'O' ? { x, ct } : { x: g * (x - appState.beta * ct), ct: g * (ct - appState.beta * x) });
+        const L = appState.lorentz, pA = boost(L.xA, L.ctA), pB = boost(L.xB, L.ctB);
+        const sA = new THREE.Mesh(new THREE.SphereGeometry(0.26, 20, 20), new THREE.MeshStandardMaterial({ color: THEME.brass, emissive: THEME.brass, emissiveIntensity: 0.4 })); sA.position.set(pA.x * 0.085, oy + pA.ct * 0.187, 0.25); sceneRootGroup.add(sA);
+        const sB = new THREE.Mesh(new THREE.SphereGeometry(0.26, 20, 20), new THREE.MeshStandardMaterial({ color: THEME.coral, emissive: THEME.coral, emissiveIntensity: 0.4 })); sB.position.set(pB.x * 0.085, oy + pB.ct * 0.187, -0.25); sceneRootGroup.add(sB);
+        sceneRootGroup.add(makeLine([sA.position, sB.position], THEME.text, 0.7, true));
+        const simPlane = new THREE.Mesh(new THREE.PlaneGeometry(12, 6), new THREE.MeshBasicMaterial({ color: THEME.brass, transparent: true, opacity: 0.16, side: THREE.DoubleSide }));
+        simPlane.rotation.x = Math.PI / 2; simPlane.position.y = oy; sceneRootGroup.add(simPlane);
+        dynamicRefs.simPlane = simPlane; dynamicRefs.originY = oy;
+      } else if (appState.mode === 'contraction') {
+        const C = appState.contraction, ratio = 1 / g, bg = new THREE.Group(); sceneRootGroup.add(bg); dynamicRefs.movingBody = bg; dynamicRefs.bEff = bEff;
+        if (C.shape === 'rod') {
+          const rad = C.angleDeg * Math.PI / 180, x0 = 4.6 * Math.cos(rad), y0 = 4.6 * Math.sin(rad), xc = x0 * ratio;
+          sceneRootGroup.add(makeLine([new THREE.Vector3(-x0 / 2, -y0 / 2, 0), new THREE.Vector3(x0 / 2, y0 / 2, 0)], THEME.sky, 0.75, true));
+          const rod = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.14, Math.hypot(xc, y0), 16), new THREE.MeshStandardMaterial({ color: THEME.brass, metalness: 0.35, roughness: 0.3 }));
+          rod.rotation.z = Math.atan2(y0, xc) - Math.PI / 2; bg.add(rod);
+        } else {
+          const sz = 3.2;
+          bg.add(new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(sz, sz, sz)), new THREE.LineBasicMaterial({ color: THEME.sky, transparent: true, opacity: 0.6 })));
+          const sg = new THREE.BoxGeometry(sz * ratio, sz, sz);
+          bg.add(new THREE.Mesh(sg, new THREE.MeshStandardMaterial({ color: THEME.brass, transparent: true, opacity: 0.55, roughness: 0.3 })));
+          bg.add(new THREE.LineSegments(new THREE.EdgesGeometry(sg), new THREE.LineBasicMaterial({ color: THEME.brass })));
+        }
+      } else if (appState.mode === 'dilation') {
+        const mh = 4.2, mSky = new THREE.MeshStandardMaterial({ color: THEME.sky, metalness: 0.5, roughness: 0.25 }), mBr = new THREE.MeshStandardMaterial({ color: THEME.brass, metalness: 0.5, roughness: 0.25 });
+        const t1 = new THREE.Mesh(new THREE.BoxGeometry(2.2, 0.16, 1.2), mSky); t1.position.set(-3, mh / 2, -2);
+        const b1 = new THREE.Mesh(new THREE.BoxGeometry(2.2, 0.16, 1.2), mSky); b1.position.set(-3, -mh / 2, -2);
+        const p1 = new THREE.Mesh(new THREE.SphereGeometry(0.22, 16, 16), new THREE.MeshStandardMaterial({ color: THEME.sky, emissive: THEME.sky, emissiveIntensity: 0.7 })); p1.position.set(-3, 0, -2);
+        sceneRootGroup.add(t1, b1, p1);
+        const mg = new THREE.Group();
+        const t2 = new THREE.Mesh(new THREE.BoxGeometry(2.2, 0.16, 1.2), mBr); t2.position.set(0, mh / 2, 1.4);
+        const b2 = new THREE.Mesh(new THREE.BoxGeometry(2.2, 0.16, 1.2), mBr); b2.position.set(0, -mh / 2, 1.4);
+        mg.add(t2, b2); sceneRootGroup.add(mg);
+        const p2 = new THREE.Mesh(new THREE.SphereGeometry(0.22, 16, 16), new THREE.MeshStandardMaterial({ color: THEME.brass, emissive: THEME.brass, emissiveIntensity: 0.8 })); p2.position.set(0, 0, 1.4); sceneRootGroup.add(p2);
+        dynamicRefs.dilation = { mirrorH: mh, movZ: 1.4, photon1: p1, photon2: p2, movGroup: mg, bEff, g };
+      } else if (appState.mode === 'velocity') {
+        const R = 4.6, V = appState.velocity, denom = 1 + bEff * V.vxPrime, vx = (V.vxPrime + bEff) / denom, vy = (V.vyPrime * Math.sqrt(1 - bEff * bEff)) / denom;
+        sceneRootGroup.add(new THREE.Mesh(new THREE.SphereGeometry(R, 28, 20), new THREE.MeshBasicMaterial({ color: THEME.sky, wireframe: true, transparent: true, opacity: 0.16 })));
+        sceneRootGroup.add(makeLine([new THREE.Vector3(0, 0, 0), new THREE.Vector3(bEff * R, 0, 0)], THEME.brass, 1, false));
+        sceneRootGroup.add(makeLine([new THREE.Vector3(0, 0, 0), new THREE.Vector3(vx * R, vy * R, 0)], THEME.mint, 1, false));
+        sceneRootGroup.add(makeLine([new THREE.Vector3(0, 0, 0), new THREE.Vector3((V.vxPrime + bEff) * R, V.vyPrime * R, 0)], THEME.coral, 0.9, true));
+        const waveRings = [];
+        for (let i = 0; i < 6; i++) {
+          const ring = new THREE.Mesh(new THREE.RingGeometry(0.96, 1.02, 48), new THREE.MeshBasicMaterial({ color: THEME.sky, side: THREE.DoubleSide, transparent: true, opacity: 0.65 }));
+          ring.rotation.x = Math.PI / 2; ring.position.y = -2.2; sceneRootGroup.add(ring); waveRings.push({ mesh: ring, phaseOffset: i / 6 });
+        }
+        const emitter = new THREE.Mesh(new THREE.SphereGeometry(0.22, 16, 16), new THREE.MeshStandardMaterial({ color: THEME.brass, emissive: THEME.brass, emissiveIntensity: 0.6 })); emitter.position.set(0, -2.2, 0); sceneRootGroup.add(emitter);
+        dynamicRefs.doppler = { waveRings, emitter, bEff };
+      } else {
+        const absB = Math.abs(bEff), sf = Math.min(2.6, 5.5 / g), bLen = 2.5 * sf, pcLen = 2.5 * g * absB * sf;
+        const p0 = new THREE.Vector3(-bLen / 2, -2, 0), p1 = new THREE.Vector3(bLen / 2, -2, 0), p2 = new THREE.Vector3(bLen / 2, -2 + pcLen, 0);
+        sceneRootGroup.add(makeLine([p0, p1], THEME.sky, 1, false), makeLine([p1, p2], THEME.mint, 1, false), makeLine([p0, p2], THEME.brass, 1, false));
+        const ms = new THREE.Mesh(new THREE.SphereGeometry(0.65 * Math.cbrt(g), 28, 22), new THREE.MeshStandardMaterial({ color: THEME.brass, metalness: 0.45, roughness: 0.25, transparent: true, opacity: 0.85 }));
+        ms.position.set(-4.2, 0.5, 1.2); sceneRootGroup.add(ms);
+        const fRad = appState.mechanics.forceAngleDeg * Math.PI / 180;
+        sceneRootGroup.add(makeLine([ms.position, new THREE.Vector3(Math.cos(fRad) * 2.4, Math.sin(fRad) * 2.4, 0).add(ms.position)], THEME.coral, 1, false));
+        const aPar = Math.cos(fRad) / (g * g * g), aPerp = Math.sin(fRad) / g, aN = Math.hypot(aPar, aPerp) || 1;
+        sceneRootGroup.add(makeLine([ms.position, new THREE.Vector3((aPar / aN) * 2.4, (aPerp / aN) * 2.4, 0).add(ms.position)], THEME.mint, 1, false));
+        dynamicRefs.massSphere = ms;
+      }
+    }
+    function startAnimationLoop() {
+      const tick = (ts) => {
+        const dt = lastTimestamp ? Math.min(0.05, (ts - lastTimestamp) / 1000) : 0.016; lastTimestamp = ts;
+        if (!prefersReducedMotion()) {
+          camSpherical.theta += (camTargetSpherical.theta - camSpherical.theta) * 0.14;
+          camSpherical.phi += (camTargetSpherical.phi - camSpherical.phi) * 0.14;
+          camSpherical.radius += (camTargetSpherical.radius - camSpherical.radius) * 0.14;
+          applyCameraTransform();
+        }
+        if (appState.playing) { appState.simTime += dt * 1.6 * appState.timeScale; updateClockReadout(); }
+        const t = appState.simTime;
+        if (appState.mode === 'lorentz' && dynamicRefs.simPlane) dynamicRefs.simPlane.position.y = dynamicRefs.originY + ((t * 0.65) % 5.2) - 0.5;
+        else if (appState.mode === 'contraction' && dynamicRefs.movingBody) dynamicRefs.movingBody.position.x = Math.abs(dynamicRefs.bEff) > 0.005 ? ((((t * dynamicRefs.bEff * 3.5 + 6) % 12) + 12) % 12 - 6) : 0;
+        else if (appState.mode === 'dilation' && dynamicRefs.dilation) {
+          const d = dynamicRefs.dilation, h2 = d.mirrorH / 2, ph1 = (t * 0.8) % 2, ph2 = ((t * 0.8) / d.g) % 2;
+          d.photon1.position.y = ((ph1 < 1 ? ph1 : 2 - ph1) * 2 - 1) * h2;
+          const xm = Math.abs(d.bEff) > 0.01 ? ((((t * d.bEff * 2.2 + 5.5) % 11) + 11) % 11 - 5.5) : 2.5;
+          d.movGroup.position.x = xm; d.photon2.position.set(xm, ((ph2 < 1 ? ph2 : 2 - ph2) * 2 - 1) * h2, d.movZ);
+        } else if (appState.mode === 'velocity' && dynamicRefs.doppler) {
+          const dp = dynamicRefs.doppler, spd = dp.bEff * 1.4;
+          dp.emitter.position.x = ((((t * spd + 4) % 8) + 8) % 8) - 4;
+          dp.waveRings.forEach((wr) => { const age = (t * 0.35 + wr.phaseOffset) % 1; wr.mesh.scale.set(Math.max(0.08, age * 4.5), Math.max(0.08, age * 4.5), 1); wr.mesh.position.x = ((((t - age / 0.35) * spd + 4) % 8 + 8) % 8) - 4; wr.mesh.material.opacity = (1 - age) * 0.65; });
+        } else if (appState.mode === 'mechanics' && dynamicRefs.massSphere) dynamicRefs.massSphere.rotation.y = t * 0.6;
+        if (useWebGL && renderer && scene && camera) renderer.render(scene, camera);
+        animFrameId = requestAnimationFrame(tick);
+      };
+      animFrameId = requestAnimationFrame(tick);
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      readCssPalette(); syncBetaControls(); updateFrameButtons(); updatePlaybackUI(); renderModeTabs(); renderModeInspector(); renderScenarioCards(); updateCameraPresetButtons(); updateAllReadouts();
+      initThreeEngine(); initCurveScrubber(); rebuild3DScene(); drawCurvePlot();
+      if (window.lucide) window.lucide.createIcons();
+      startAnimationLoop();
+    });
+  </script>
+  <script defer src="../shared/ct_physics_suite.js" data-ct-module="relativity"></script>
+</body>
+</html>

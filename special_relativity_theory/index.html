@@ -27,7 +27,7 @@
       <div class="sidebar-bottom"><div class="live-indicator"><span></span> PHYSICS ENGINE ACTIVE</div><p>Interactive scientific visualization<br>SI units • 3D • Real-time</p></div>
     </aside>
     <main class="main-content">
-      <header class="topbar"><div class="breadcrumbs">PHYSICS <span>/</span> SPECIAL RELATIVITY <span>/</span> <b id="breadcrumbName">POSTULATES</b></div><div class="top-right"><span class="tiny-dot"></span> INTERACTIVE LAB <span class="version">v1.0</span></div></header>
+      <header class="topbar"><div class="breadcrumbs">PHYSICS <span>/</span> SPECIAL RELATIVITY <span>/</span> <b id="breadcrumbName">POSTULATES</b></div><div class="top-right" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;"><a href="./observatory.html" style="padding:5px 10px;border-radius:8px;border:1px solid #dfaa5b;background:rgba(223,170,91,0.14);color:#f5dcb0;text-decoration:none;font-size:12px;font-weight:700;">🔭 3D Spacetime Observatory (Ch. 1–10) ↗</a><span><span class="tiny-dot"></span> INTERACTIVE LAB <span class="version">v2.0</span></span></div></header>
       <section class="intro"><div class="eyebrow">VIRTUAL EXPERIMENT • EINSTEIN 1905</div><h1 id="moduleTitle">สมมติฐานของไอน์สไตน์</h1><p id="moduleDescription">ทดลองหลักสัมพัทธภาพและความคงตัวของอัตราเร็วแสงด้วยห้องทดลองเสมือนจริงที่ปรับค่าตัวแปรได้</p></section>
       <section class="metric-strip" aria-label="ค่าตรวจวัดสด">
         <div class="metric"><div class="metric-name">RELATIVE VELOCITY</div><strong id="metricBeta">0.60 <span>c</span></strong><div class="metric-note">β = v / c</div></div>
@@ -48,7 +48,20 @@
         </div>
         <div class="control-column">
           <div class="panel control-panel"><div class="panel-head"><div><span class="panel-kicker">EXPERIMENT CONTROL</span><h2>แผงควบคุมตัวแปร</h2></div><span class="micro-icon">⚙</span></div>
-            <div class="control-group"><div class="control-title"><label for="beta">ความเร็วสัมพัทธ์ (Relative speed)</label><output id="betaValue">0.600 c</output></div><input id="beta" type="range" min="-0.95" max="0.95" step="0.01" value="0.6"><div class="range-ends"><span>−0.95 c</span><span>0</span><span>+0.95 c</span></div><div class="speed-presets"><button data-beta="0">0 c</button><button data-beta="0.3">0.3 c</button><button data-beta="0.6" class="selected">0.6 c</button><button data-beta="0.9">0.9 c</button></div></div>
+            <div class="control-group"><div class="control-title"><label for="beta">ความเร็วสัมพัทธ์ (Relative speed)</label><output id="betaValue">0.600 c</output></div><input id="beta" type="range" min="-0.95" max="0.95" step="0.01" value="0.6"><div class="range-ends"><span>−0.95 c</span><span>0</span><span>+0.95 c</span></div><div class="speed-presets"><button data-beta="0">0 c</button><button data-beta="0.3">0.3 c</button><button data-beta="0.6" class="selected">0.6 c</button><button data-beta="0.9">0.9 c</button><button type="button" id="frameSwapBtn" title="สลับกรอบอ้างอิง O ↔ O′ (กลับเครื่องหมาย β)">🔄 สลับกรอบ O ↔ O′</button></div></div>
+            <div class="control-group" style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(148,163,184,0.18);">
+              <div class="control-title"><label>📚 8 โจทย์มาตรฐานตำรา (ผศ.ดร.ชีวะ ทัศนา)</label></div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+                <button type="button" class="secondary-btn sr-bench-btn" style="font-size:11px;padding:6px;" data-mod="transforms" data-beta="0.60">Ex 3.2 Lorentz (0.60c)</button>
+                <button type="button" class="secondary-btn sr-bench-btn" style="font-size:11px;padding:6px;" data-mod="transforms" data-beta="0.50">Ex 7.2 Simultaneity (0.50c)</button>
+                <button type="button" class="secondary-btn sr-bench-btn" style="font-size:11px;padding:6px;" data-mod="dilation" data-beta="0.95">Ex 5.3 Cube 5m (0.95c)</button>
+                <button type="button" class="secondary-btn sr-bench-btn" style="font-size:11px;padding:6px;" data-mod="dilation" data-beta="0.30">Ex 5.4 Rod 45° (0.30c)</button>
+                <button type="button" class="secondary-btn sr-bench-btn" style="font-size:11px;padding:6px;" data-mod="dilation" data-beta="0.95">Ex 6.2 Muon (0.95c)</button>
+                <button type="button" class="secondary-btn sr-bench-btn" style="font-size:11px;padding:6px;" data-mod="dilation" data-beta="0.80">Exer 8 Twin Navi (0.80c)</button>
+                <button type="button" class="secondary-btn sr-bench-btn" style="font-size:11px;padding:6px;" data-mod="doppler" data-beta="0.75">Ex 4.5 / Ch.8 (0.75c)</button>
+                <button type="button" class="secondary-btn sr-bench-btn" style="font-size:11px;padding:6px;" data-mod="momentum" data-beta="0.86">Ex 10.3 Proton (0.86c)</button>
+              </div>
+            </div>
             <div id="dynamicControls"></div>
           </div>
           <div class="panel readings-panel"><div class="panel-head"><div><span class="panel-kicker">MEASUREMENT OUTPUT</span><h2>ผลการวัดแบบเรียลไทม์</h2></div><span class="readings-flash"></span></div><div id="readings"></div></div>

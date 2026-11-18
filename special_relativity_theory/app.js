@@ -588,6 +588,29 @@ $('playPause').addEventListener('click',()=>{S.running=!S.running;setText('playP
 $('resetSimulation').addEventListener('click',()=>{S.t=0;updateMeasurements();});
 $('randomize').addEventListener('click',()=>{S.beta=Math.round((Math.random()*1.8-.9)*100)/100;$('beta').value=S.beta;updateMeasurements();});
 $('exportCSV').addEventListener('click',downloadCSV);
+const frameSwapBtn=$('frameSwapBtn');
+if(frameSwapBtn){
+ frameSwapBtn.addEventListener('click',()=>{
+  S.beta=Number((-S.beta).toFixed(2));
+  $('beta').value=S.beta;
+  const tags=$('viewportTags');
+  if(tags){
+   const isOp=S.beta<0;
+   tags.innerHTML=isOp?'<span class="frame-tag highlight">FRAME S′ (O′): REST</span><span class="frame-tag">FRAME S (O): MOVING</span>':'<span class="frame-tag">FRAME S (O): LAB</span><span class="frame-tag highlight">FRAME S′ (O′): SHIP</span>';
+  }
+  updateMeasurements();
+ });
+}
+document.querySelectorAll('.sr-bench-btn').forEach(btn=>{
+ btn.addEventListener('click',()=>{
+  const mod=btn.dataset.mod||'postulates';
+  const b=parseFloat(btn.dataset.beta||'0.6');
+  S.beta=b;
+  $('beta').value=b;
+  switchModule(mod);
+  updateMeasurements();
+ });
+});
 let last=performance.now();function frame(now){const dt=Math.min(.05,(now-last)/1000);last=now;if(S.running){S.t+=dt*S.timeScale;updateMeasurements();}else update3D();requestAnimationFrame(frame);}
 async function bootstrap(){
  switchModule('postulates');
