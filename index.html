@@ -865,6 +865,35 @@
             <div id="ps-feedback" class="feedback"></div>
           </div>
 
+          <div class="panel">
+            <div class="panel-top">
+              <div>
+                <div class="eyebrow">COMPLETE QUANTUM LIGHT COVERAGE</div>
+                <h3>2.2 วิเคราะห์ครบ 4 หัวข้อย่อย: Blackbody, X-Ray, Compton &amp; Pair Production</h3>
+              </div>
+              <button id="ql-sub-btn" class="btn btn-primary btn-small">▶ คำนวณทั้ง 4 ปรากฏการณ์</button>
+            </div>
+            <div class="field-grid">
+              <div class="field">
+                <label for="ql-T">อุณหภูมิวัตถุดำ T (K)</label>
+                <input id="ql-T" type="number" min="300" max="20000" step="100" value="5800" />
+              </div>
+              <div class="field">
+                <label for="ql-V">แรงดันหลอด X-Ray V (kV)</label>
+                <input id="ql-V" type="number" min="5" max="150" step="5" value="40" />
+              </div>
+              <div class="field">
+                <label for="ql-theta">มุมกระเจิงคอมป์ตัน θ (°)</label>
+                <input id="ql-theta" type="number" min="0" max="180" step="5" value="90" />
+              </div>
+              <div class="field">
+                <label for="ql-egam">พลังงานโฟตอนคู่ Eγ (MeV)</label>
+                <input id="ql-egam" type="number" min="0.2" max="10" step="0.1" value="1.5" />
+              </div>
+            </div>
+            <div id="ql-sub-out" class="watch-card"></div>
+          </div>
+
           <div class="semi-target" data-semi-module="quantum_light"></div>
         </section>
 

@@ -896,6 +896,36 @@
         }
       }, 450);
     });
+
+    const runQlSub = () => {
+      const T = Math.max(100, parseFloat($('#ql-T')?.value) || 5800);
+      const V = Math.max(1, parseFloat($('#ql-V')?.value) || 40);
+      const theta = Math.max(0, Math.min(180, parseFloat($('#ql-theta')?.value) || 90));
+      const eGam = Math.max(0.1, parseFloat($('#ql-egam')?.value) || 1.5);
+      const lamMax = (2.89777e-3 / T) * 1e9;
+      const lamMinX = 1.23984 / V; // nm
+      const dLamC = 2.4263 * (1 - Math.cos((theta * Math.PI) / 180)); // pm
+      const canPair = eGam >= 1.022;
+      const kePair = canPair ? eGam - 1.022 : 0;
+      const out = $('#ql-sub-out');
+      if (out) {
+        out.innerHTML = `
+          <div class="watch-row"><span>1) Blackbody (Wien): $\\lambda_{\\max} = \\frac{b}{T}$</span><span class="watch-val">${lamMax.toFixed(1)} nm ($E_{\\text{peak}} = ${(1239.84 / lamMax).toFixed(2)}$ eV)</span></div>
+          <div class="watch-row"><span>2) X-Ray Tube: $\\lambda_{\\min} = \\frac{hc}{eV}$</span><span class="watch-val">${lamMinX.toFixed(4)} nm ($${(lamMinX * 1000).toFixed(1)}$ pm)</span></div>
+          <div class="watch-row"><span>3) Compton Shift: $\\Delta\\lambda = \\lambda_C(1 - \\cos\\theta)$</span><span class="watch-val">${dLamC.toFixed(3)} pm ($\\theta = ${theta}^\\circ$)</span></div>
+          <div class="watch-row"><span>4) Pair Production ($E_\\gamma \\ge 2m_e c^2 = 1.022\\text{ MeV}$)</span><span class="watch-val">${canPair ? `เกิดคู่ $e^- + e^+$ ($K_{\\text{total}} = ${kePair.toFixed(3)}$ MeV)` : 'ไม่เกิดคู่ ($E_\\gamma < 1.022$ MeV)'}</span></div>
+        `;
+        if (typeof window.renderMathInElement === 'function') {
+          window.renderMathInElement(out, {
+            delimiters: [{ left: '$$', right: '$$', display: true }, { left: '$', right: '$', display: false }],
+            throwOnError: false,
+          });
+        }
+      }
+    };
+    $('#ql-sub-btn')?.addEventListener('click', runQlSub);
+    ['#ql-T', '#ql-V', '#ql-theta', '#ql-egam'].forEach((id) => $(id)?.addEventListener('input', runQlSub));
+    runQlSub();
   }
 
   // ===== MODULE 03: MATTER WAVES ISO 5807 DRAGGABLE SVG + MULTI-BRANCH =====
