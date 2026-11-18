@@ -476,7 +476,7 @@
 
     if (!window.MP27QBot && !document.querySelector('script[src*="q_bot.js"]')) {
       const qb = document.createElement('script');
-      qb.src = '../shared/q_bot.js';
+      qb.src = '../shared/q_bot.js?v=20261118c';
       document.head.appendChild(qb);
     }
 

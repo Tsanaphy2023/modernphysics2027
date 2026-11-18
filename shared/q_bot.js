@@ -305,8 +305,9 @@
 
       #qbot-panel {
         position: fixed;
-        right: 18px;
-        bottom: 82px;
+        left: auto !important;
+        right: 18px !important;
+        bottom: 82px !important;
         width: min(380px, 92vw);
         max-height: 74vh;
         z-index: 99995;
@@ -509,7 +510,7 @@
     const fab = document.createElement('button');
     fab.id = 'qbot-fab';
     fab.type = 'button';
-    fab.innerHTML = `<img class="qbot-fab-avatar" src="${avatarUrl}" alt="ผศ.ดร.ชีวะ ทัศนา"/><span>Q_bot · ผศ.ดร.ชีวะ</span>`;
+    fab.innerHTML = `<img class="qbot-fab-avatar" src="${avatarUrl}" alt="Q-xAI 3D Avatar"/><span>Q-xAI</span>`;
     document.body.appendChild(fab);
 
     const panel = document.createElement('div');
@@ -521,11 +522,11 @@
     panel.innerHTML = `
       <div class="qbot-head">
         <div class="qbot-head-title">
-          <span>🤖 Q_bot Copilot</span>
+          <span>🤖 Q-xAI Copilot</span>
           <span id="qbot-wave" class="qbot-wave"><i></i><i></i><i></i></span>
         </div>
         <div class="qbot-head-ctrl">
-          <select id="qbot-lang" title="เลือกภาษา Q_bot">${langOpts}</select>
+          <select id="qbot-lang" title="เลือกภาษา Q-xAI">${langOpts}</select>
           <button type="button" id="qbot-tts-btn" class="qbot-icon-btn" title="เปิด/ปิดเสียงพูด">🔊</button>
           <button type="button" id="qbot-close-btn" class="qbot-icon-btn" title="ปิด">✕</button>
         </div>
@@ -534,11 +535,11 @@
         <div class="qbot-holo-wrap">
           <span class="qbot-holo-ring"></span>
           <span class="qbot-holo-ring inner"></span>
-          <img class="qbot-holo-img" src="${avatarUrl}" alt="ผศ.ดร.ชีวะ ทัศนา 3D Pixar Avatar"/>
+          <img class="qbot-holo-img" src="${avatarUrl}" alt="Q-xAI 3D Pixar Avatar"/>
         </div>
         <div>
-          <div class="qbot-prof-name">ผศ.ดร.ชีวะ ทัศนา</div>
-          <div class="qbot-prof-role">อาจารย์ผู้สอน · ฟิสิกส์ยุคใหม่ มรภ.รำไพพรรณี</div>
+          <div class="qbot-prof-name">Q-xAI</div>
+          <div class="qbot-prof-role">Quantum Physics Agentic AI · RBRU 2027</div>
           <span class="qbot-prof-status">● AI Hologram Ready</span>
         </div>
       </div>
