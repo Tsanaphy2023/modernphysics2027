@@ -447,6 +447,7 @@
         <span id="ct-bar-student" style="color:#93c5fd;font-weight:700;">${student ? `${esc(student.student_id)} ${esc(student.full_name)}` : 'ผู้เรียนทั่วไป (Guest)'}</span>
       </div>
       <div class="ct-suite-actions">
+        <button type="button" class="ct-suite-btn" id="ct-theory-btn">📖 ทฤษฎี &amp; ภาพประกอบ</button>
         <button type="button" class="ct-suite-btn" id="ct-mode-btn">💡 โหมดแนวคิด</button>
         <button type="button" class="ct-suite-btn" id="ct-xr-btn">🥽 AR:XR</button>
         <button type="button" class="ct-suite-btn" id="ct-pick-stu-btn">👤 เลือกชื่อ</button>
@@ -671,6 +672,40 @@
       refreshDrawer();
     });
 
+    function loadScriptOnce(src) {
+      return new Promise((resolve) => {
+        if (document.querySelector(`script[src="${src}"]`)) { resolve(); return; }
+        const s = document.createElement('script');
+        s.src = src;
+        s.onload = () => resolve();
+        s.onerror = () => resolve();
+        document.head.appendChild(s);
+      });
+    }
+
+    async function openTheoryModal() {
+      if (!document.querySelector('link[href*="katex.min.css"]')) {
+        const l = document.createElement('link');
+        l.rel = 'stylesheet';
+        l.href = 'https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css';
+        document.head.appendChild(l);
+      }
+      if (!window.katex) {
+        await loadScriptOnce('https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js');
+      }
+      if (typeof window.renderMathInElement !== 'function') {
+        await loadScriptOnce('https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js');
+      }
+      if (!window.MP27Lecture) {
+        await loadScriptOnce('../shared/lecture_theory.js');
+      }
+      if (window.MP27Lecture && typeof window.MP27Lecture.openPresentation === 'function') {
+        window.MP27Lecture.openPresentation(modKey);
+        trackTelemetry('theory_open');
+      }
+    }
+
+    bar.querySelector('#ct-theory-btn').addEventListener('click', openTheoryModal);
     bar.querySelector('#ct-mode-btn').addEventListener('click', () => {
       const next = document.body.classList.contains('mode-conceptual') ? 'equations' : 'conceptual';
       applyUiMode(next);
