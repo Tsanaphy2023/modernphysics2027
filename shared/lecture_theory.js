@@ -485,7 +485,7 @@
       concept:
         'โปรตอนและนิวตรอนไม่ใช่อนุภาคที่เล็กที่สุด แต่ประกอบขึ้นจาก "ควาร์ก" (Quarks) ยึดกันด้วยกลูออน ส่วนอิเล็กตรอนจัดอยู่ในตระกูล "เลปตอน" (Leptons) ทุกปฏิสัมพันธ์ในธรรมชาติเกิดขึ้นผ่านการแลกเปลี่ยนอนุภาคสื่อแรง (Gauge Bosons) และมีโบซอนฮิกส์เป็นตัวให้มวล',
       deep:
-        'แบบจำลองมาตรฐานแบ่งอนุภาคมูลฐานเป็น 2 กลุ่มใหญ่: (1) เฟอร์มิออน (Spin $1/2$) ได้แก่ ควาร์ก 6 รสชาติ ($u, d, c, s, t, b$) และเลปตอน 6 ชนิด ($e, \\nu_e, \\mu, \\nu_\\mu, \\tau, \\nu_\\tau$) (2) โบซอนสื่อแรง (Spin $1$) ได้แก่ กลูออน (Strong), โฟตอน (EM), $W^\\pm/Z^0$ (Weak) และฮิกส์โบซอน (Spin $0$)',
+        'แบบจำลองมาตรฐานแบ่งอนุภาคมูลฐานเป็น 2 กลุ่มใหญ่: (1) เฟอร์มิออน (Spin $1/2$) ได้แก่ ควาร์ก 6 รสชาติ ($u, d, c, s, t, b$) และเลปตอน 6 ชนิด ($e, \\nu_e, \\mu, \\nu_\\mu, \\tau, \\nu_\\tau$) (2) โบซอนสื่อแรง (Spin $1$) ได้แก่ กลูออน (Strong), โฟตอน (EM), $W^\\pm/Z^0$ (Weak) และฮิกส์โบซอน (Spin $0$) นอกจากนี้ หลังเหตุการณ์บิกแบง (Big Bang) ที่อุณหภูมิสูงยิ่งยวด แรงทั้ง 4 เคยรวมเป็นหนึ่งเดียวก่อนจะเกิดการทำลายสมมาตร (Symmetry Breaking) แยกตัวออกมาตามลำดับ: แรงโน้มถ่วง ($10^{-43}\\text{ s}$) $\\to$ แรงเข้ม ($10^{-36}\\text{ s}$) $\\to$ แรงอ่อนและแรงแม่เหล็กไฟฟ้าแยกจาก Electroweak ($10^{-12}\\text{ s}$)',
       equations: [
         {
           latex: 'p = uud\\;\\left(+\\frac{2}{3} + \\frac{2}{3} - \\frac{1}{3} = +1e\\right), \\qquad n = udd\\;(0)',
@@ -571,6 +571,33 @@
           <text x="444" y="168" text-anchor="middle" font-size="9" font-weight="700" fill="#166534">■ Leptons (Spin 1/2)</text>
           <text x="444" y="184" text-anchor="middle" font-size="9" font-weight="700" fill="#b91c1c">■ Gauge Bosons (Spin 1)</text>
           <text x="444" y="200" text-anchor="middle" font-size="9" font-weight="700" fill="#b45309">■ Higgs (Spin 0)</text>
+        </svg>
+        <svg viewBox="0 0 520 175" width="100%" style="margin-top:10px;" role="img" aria-label="การแยกตัวของแรงพื้นฐาน 4 ชนิดหลังบิกแบงและเส้นแรง">
+          <rect x="6" y="6" width="508" height="163" rx="12" fill="#0b1526" stroke="#334155"/>
+          <text x="18" y="25" font-size="11.5" font-weight="800" fill="#7dd3fc">การแยกตัวของแรงพื้นฐานหลังบิกแบง (Big Bang Symmetry Breaking) &amp; เส้นแรง</text>
+          <!-- Big Bang Origin -->
+          <circle cx="48" cy="92" r="16" fill="#fbbf24" opacity="0.9">
+            <animate attributeName="r" values="14;18;14" dur="2s" repeatCount="indefinite"/>
+          </circle>
+          <text x="48" y="95" text-anchor="middle" font-size="8.5" font-weight="800" fill="#0f172a">Big Bang</text>
+          <text x="48" y="120" text-anchor="middle" font-size="8" fill="#fde68a">t = 0</text>
+          <!-- Branches -->
+          <path d="M64,92 L135,92 L220,44 L485,44" fill="none" stroke="#f59e0b" stroke-width="2.4"/>
+          <path d="M135,92 L230,78 L485,78" fill="none" stroke="#a855f7" stroke-width="2.4"/>
+          <path d="M135,92 L290,114 L485,114" fill="none" stroke="#34d399" stroke-width="2.4"/>
+          <path d="M290,114 L360,144 L485,144" fill="none" stroke="#38bdf8" stroke-width="2.4"/>
+          <!-- Epoch Nodes -->
+          <circle cx="135" cy="92" r="4.5" fill="#f8fafc"/>
+          <text x="135" y="109" text-anchor="middle" font-size="7.5" fill="#cbd5e1">10⁻⁴³ s (Planck)</text>
+          <circle cx="220" cy="78" r="4.5" fill="#c084fc"/>
+          <text x="220" y="95" text-anchor="middle" font-size="7.5" fill="#d8b4fe">10⁻³⁶ s (GUT)</text>
+          <circle cx="290" cy="114" r="4.5" fill="#34d399"/>
+          <text x="290" y="131" text-anchor="middle" font-size="7.5" fill="#6ee7b7">10⁻¹² s (Electroweak)</text>
+          <!-- Force Labels & Field Lines Summary -->
+          <text x="492" y="47" text-anchor="end" font-size="9" font-weight="700" fill="#fbbf24">Gravity (เส้นแรงโน้มถ่วง ∞ · 10⁻³⁹)</text>
+          <text x="492" y="81" text-anchor="end" font-size="9" font-weight="700" fill="#c084fc">Strong (ฟลักซ์สี g · ~1 fm · 1)</text>
+          <text x="492" y="117" text-anchor="end" font-size="9" font-weight="700" fill="#34d399">Weak (W±, Z⁰ · 10⁻¹⁸ m · 10⁻⁶)</text>
+          <text x="492" y="147" text-anchor="end" font-size="9" font-weight="700" fill="#38bdf8">EM (เส้นสนามไฟฟ้า γ · ∞ · 1/137)</text>
         </svg>`,
     },
   };

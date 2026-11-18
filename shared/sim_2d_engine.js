@@ -427,7 +427,27 @@
       g.fillStyle = fg; g.font = '700 13px system-ui, sans-serif';
       if (subMod === 'forces') {
         const fType = (document.querySelector('#forceSelect')?.value || 'em').toLowerCase();
+        const fView = (document.querySelector('#forceView')?.value || 'exchange').toLowerCase();
         const d = numVal('#distance', 1) * 18;
+        if (fView === 'bigbang') {
+          g.fillText('2D การแยกตัวของแรงพื้นฐาน 4 ชนิดหลังบิกแบง (Big Bang Symmetry Breaking)', 14, 22);
+          const bx = 54, by = cy;
+          g.fillStyle = '#fbbf24'; g.beginPath(); g.arc(bx, by, 14 + Math.sin(t * 4) * 2, 0, Math.PI * 2); g.fill();
+          g.fillStyle = '#0f172a'; g.font = '700 9px sans-serif'; g.fillText('t=0', bx - 7, by + 3);
+          const lines = [
+            [[[bx, by], [120, by], [190, cy - 66], [W - 140, cy - 66]], '#f59e0b', 'Gravity (10⁻⁴³ s · ∞)'],
+            [[[120, by], [200, cy - 22], [W - 140, cy - 22]], '#a855f7', 'Strong (10⁻³⁶ s · g)'],
+            [[[120, by], [260, cy + 22], [W - 140, cy + 22]], '#34d399', 'Weak (10⁻¹² s · W±,Z⁰)'],
+            [[[260, cy + 22], [320, cy + 66], [W - 140, cy + 66]], '#38bdf8', 'EM (10⁻¹² s · γ)'],
+          ];
+          lines.forEach(([pts, col, txt]) => {
+            g.strokeStyle = col; g.lineWidth = 2.5; g.beginPath();
+            pts.forEach((p, idx) => idx ? g.lineTo(p[0], p[1]) : g.moveTo(p[0], p[1]));
+            g.stroke();
+            const last = pts[pts.length - 1];
+            g.fillStyle = col; g.font = '700 11px sans-serif'; g.fillText(txt, last[0] + 8, last[1] + 4);
+          });
+        } else {
         const labels = {
           em: '2D แรงแม่เหล็กไฟฟ้า (EM) • ตัวกลาง: โฟตอน (γ) • พิสัย ∞',
           strong: '2D แรงเข้ม (Strong) • Color Confinement • ตัวกลาง: กลูออน (g)',
@@ -485,6 +505,7 @@
           const bx = (cx - 50 - d) + ((t * 1.3) % 1) * (100 + 2 * d);
           g.fillStyle = '#fbbf24'; g.beginPath(); g.arc(bx, cy - Math.sin(((t * 1.3) % 1) * Math.PI) * 26, 7, 0, Math.PI * 2); g.fill();
           g.fillText('γ', bx - 3, cy - 34);
+        }
         }
       } else if (subMod === 'particles') {
         const pid = document.querySelector('#particleSelect')?.value || 'e';

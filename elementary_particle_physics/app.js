@@ -106,6 +106,25 @@ function buildScene(){
 
   if(activeTab==='forces'){
     const d=Number($('distance').value),f=FORCES[selectedForce],gap=1.1+d*.45;
+    if($('forceView').value==='bigbang'){
+      // 3D Big Bang Unification & Symmetry Breaking Tree
+      visualGroup.add(makeTextSprite('การแยกตัวของแรงทั้ง 4 หลังบิกแบง (Symmetry Breaking)',0,3.1,0,'#fbbf24',1.85));
+      makeSphere(0.48,0xfbbf24,-3.1,0,0,{emissiveIntensity:0.65});
+      visualGroup.add(makeTextSprite('Big Bang (t=0)',-3.1,0.75,0,'#fde68a',0.95));
+      const branches=[
+        {pts:[[-3.1,0,0],[-2.0,0,0],[-0.8,1.7,0],[2.8,1.7,0]],col:0xf59e0b,lbl:'Gravity (10⁻⁴³ s)'},
+        {pts:[[-2.0,0,0],[-0.9,0.6,0],[2.8,0.6,0]],col:0xa855f7,lbl:'Strong (10⁻³⁶ s)'},
+        {pts:[[-2.0,0,0],[0.3,-0.6,0],[2.8,-0.6,0]],col:0x34d399,lbl:'Weak (10⁻¹² s)'},
+        {pts:[[0.3,-0.6,0],[1.2,-1.7,0],[2.8,-1.7,0]],col:0x38bdf8,lbl:'EM (10⁻¹² s)'},
+      ];
+      branches.forEach((b,idx)=>{
+        makeLine(b.pts,b.col,0.95);
+        const end=b.pts[b.pts.length-1];
+        makeSphere(0.22,b.col,end[0],end[1],0,{userData:{bosonOrb:true,idx}});
+        visualGroup.add(makeTextSprite(b.lbl,end[0],end[1]+0.42,0,colorHex(b.col),0.85));
+      });
+      return;
+    }
     visualGroup.add(makeTextSprite(`${f.name} • ตัวกลาง: ${f.carrier}`,0,3.05,0,colorHex(f.color),1.8));
     if(selectedForce==='strong'){
       // 3-Quark Color Confinement (RGB) + Gluon Flux Tubes
