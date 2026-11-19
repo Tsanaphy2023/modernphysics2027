@@ -1828,6 +1828,15 @@
     });
   }
 
+  function renderMath(el) {
+    if (el && typeof window.renderMathInElement === 'function') {
+      window.renderMathInElement(el, {
+        delimiters: [{ left: '$$', right: '$$', display: true }, { left: '$', right: '$', display: false }],
+        throwOnError: false,
+      });
+    }
+  }
+
   function initModules05To09() {
     // 05 Atomic Models
     const runAtomic = (saveProgress = false) => {
@@ -1838,14 +1847,6 @@
       const theta = 2 * Math.atan((8.98755e9 * 2 * 79 * 1.60218e-19) / (2 * E * 1e6 * b * 1e-15)) * (180 / Math.PI);
       const dE = (-13.6 / (nf * nf)) - (-13.6 / (ni * ni));
       const lam = Math.abs(dE) > 1e-9 ? 1239.842 / Math.abs(dE) : 0;
-      const renderMath = (el) => {
-        if (el && typeof window.renderMathInElement === 'function') {
-          window.renderMathInElement(el, {
-            delimiters: [{ left: '$$', right: '$$', display: true }, { left: '$', right: '$', display: false }],
-            throwOnError: false,
-          });
-        }
-      };
       const out = $('#am-out');
       if (out) {
         out.innerHTML = `
@@ -2344,17 +2345,18 @@
       applyPortalMode(next);
       trackPerEvent('portal', 'mode_switch', { mode: next });
     });
-    initGlobalEvents();
-    initPreTest();
-    initModule01();
-    initModule02();
-    initModule03();
-    initModule04();
-    initModules05To09();
-    initResearchLab();
-    injectSemiCards();
-    initModule05();
-    initSubmissionModal();
-    loadRoster();
+    const safeRun = (fn) => { try { fn(); } catch (e) { console.error(e); } };
+    safeRun(initGlobalEvents);
+    safeRun(initSubmissionModal);
+    safeRun(loadRoster);
+    safeRun(initPreTest);
+    safeRun(initModule01);
+    safeRun(initModule02);
+    safeRun(initModule03);
+    safeRun(initModule04);
+    safeRun(initModules05To09);
+    safeRun(initResearchLab);
+    safeRun(injectSemiCards);
+    safeRun(initModule05);
   });
 })();
